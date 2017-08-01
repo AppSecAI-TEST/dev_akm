@@ -277,7 +277,7 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
     private void initData() {
         tvCode.setText(MyApplication.getInstance().getMachine_sn() + SysConfig.VERSIONTAG);
         ivDrink.setImageResource(homePageIc_select);
-
+        //如果后台设置中没有连接格子柜，则购买界面就不显示格子柜标签
         if (MyApplication.getInstance().getBindGeZis().size() > 0 && MyApplication.getInstance().getGeziList().size() > 0) {
             ivFood.setVisibility(View.VISIBLE);
         }

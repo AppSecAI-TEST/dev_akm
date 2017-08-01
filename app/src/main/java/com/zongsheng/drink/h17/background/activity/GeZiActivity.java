@@ -23,14 +23,12 @@ import com.bigkoo.alertview.AlertView;
 import com.bigkoo.alertview.OnItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.rabbitmq.client.AMQP;
 import com.yolanda.nohttp.RequestMethod;
 import com.yolanda.nohttp.rest.Response;
 import com.zongsheng.drink.h17.ComActivity;
 import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.background.bean.BindDesk;
 import com.zongsheng.drink.h17.base.BasePresenter;
-import com.zongsheng.drink.h17.common.L;
 import com.zongsheng.drink.h17.observable.MyObservable;
 import com.zongsheng.drink.h17.R;
 import com.zongsheng.drink.h17.background.MarkLog;
@@ -61,19 +59,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 
 /**
  * Created by 谢家勋 on 2016/9/13.
+ * 用于管理格子柜
  */
 public class GeZiActivity extends ComActivity implements View.OnTouchListener, IVSICallback2View<String>, INetWorkRequCallBackListener {
-
-
+    private static final String TAG = "GeZiActivity";
+    /**
+     * 显示格子柜的ListView
+     */
     @BindView(R.id.lv_gezi)
     ListView lvGezi;
+    /**
+     * 显示副柜的ListView
+     */
     @BindView(R.id.lv_desk)
     ListView lvDesk;
     @BindView(R.id.ll_gezi_list)
@@ -98,7 +101,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     private int w;
     private int h;
     private int nVSIGiziSize = 0;//vsi绑定的格子柜个数
-    private int bgeziSize = 0;
+    private int bindGeziSize = 0;
     private int nVSIDeskSize = 0;
     private int bindDeskSize = 0;
 
@@ -107,11 +110,11 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     private Realm realm;
     // 添加的的list
     private List<MachineInfo> searchList = new ArrayList<>();
-    private GeZiAdapter adapter;
+    private GeZiAdapter geziAdapter;
     private DeskAdapter deskAdapter;
     private CharSequence temp;
     private boolean btmp = false;
-    private MyAdapter myAdapter;
+    private MyAdapter searchAdapter;
     private INetWorkRequInterface iNetWorkRequInterface = null;
     private String delmachine_Sn;
     private String addmachine_Sn;
@@ -126,12 +129,14 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         ButterKnife.bind(this);
         // 从数据库里获取本机绑定的所有的格子柜
         realm = Realm.getDefaultInstance();
+        //填充列表，显示连接的格子柜和副柜
         initView();
+        //从服务器获取绑定的格子柜，并更新本地数据，更新显示的格子柜和副柜
         requestBindGeZiList();
         MyObservable.getInstance().registObserver(this);
 
-        myAdapter = new MyAdapter(searchList);
-        lvSearchList.setAdapter(myAdapter);
+        searchAdapter = new MyAdapter(searchList);
+        lvSearchList.setAdapter(searchAdapter);
         lvSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -154,13 +159,13 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         initView();
                         putBinding(searchList.get(position).getMachineSn());
                         searchList.clear();
-                        myAdapter.notifyDataSetChanged();
+                        searchAdapter.notifyDataSetChanged();
                         lvSearchList.removeAllViewsInLayout();
                     } else if (nVSIDeskSize != -1 && bindDeskSize >= nVSIDeskSize) {
                         ToastUtils.showToast(GeZiActivity.this, "绑定的副柜数量已经超过限制！");
                     }
                 } else {
-                    if (bgeziSize < nVSIGiziSize) {
+                    if (bindGeziSize < nVSIGiziSize) {
                         // 点击条目后关掉选择格子柜的页面
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
@@ -178,9 +183,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         initView();
                         putBinding(searchList.get(position).getMachineSn());
                         searchList.clear();
-                        myAdapter.notifyDataSetChanged();
+                        searchAdapter.notifyDataSetChanged();
                         lvSearchList.removeAllViewsInLayout();
-                    } else if (nVSIGiziSize != -1 && bgeziSize >= nVSIGiziSize) {
+                    } else if (nVSIGiziSize != -1 && bindGeziSize >= nVSIGiziSize) {
                         ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_02);
                     }
                 }
@@ -218,7 +223,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                     RealmResults<MachineInfo> quanbu = realm.where(MachineInfo.class).findAll();
                     searchList.clear();
                     searchList.addAll(realm.copyFromRealm(quanbu));
-                    myAdapter.notifyDataSetChanged();
+                    searchAdapter.notifyDataSetChanged();
                     return;
                 }
 
@@ -227,7 +232,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         .findAll();
                 searchList.clear();
                 searchList.addAll(realm.copyFromRealm(geZiInfo));
-                myAdapter.notifyDataSetChanged();
+                searchAdapter.notifyDataSetChanged();
 
             }
         });
@@ -282,32 +287,33 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     }
 
     private void initView() {
+        //从本地获得连接的所有副柜信息
+        RealmResults<BindDesk> bindDesks = realm.where(BindDesk.class).findAll().sort("createTime", Sort.ASCENDING);
+        MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(bindDesks));
 
-        RealmResults<BindDesk> binddesks = realm.where(BindDesk.class).findAll().sort("createTime", Sort.ASCENDING);
-        MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(binddesks));
+        // 从本地数据库里取出绑定的格子柜
+        RealmResults<BindGeZi> bindGezis = realm.where(BindGeZi.class).findAll();
+        bindGezis = bindGezis.sort("createTime", Sort.ASCENDING);
+        MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(bindGezis));
 
-        // 从本地数据库里 取出绑定的格子柜
-        RealmResults<BindGeZi> bgezi = realm.where(BindGeZi.class).findAll();
-        bgezi = bgezi.sort("createTime", Sort.ASCENDING);
-        MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(bgezi));
-
-        bgeziSize = bgezi.size();
-        bindDeskSize = binddesks.size();
+        bindGeziSize = bindGezis.size();
+        bindDeskSize = bindDesks.size();
         // 如果格子柜的数量为不为空
-        if (bgezi.size() == 0 && binddesks.size() == 0) {
-            // 如果当前的查询卜到数据,显示空布局来填充activity
+        if (bindGezis.size() == 0 && bindDesks.size() == 0) {
+            // 如果当前的查询不到数据,显示空布局来填充activity
             rlNoGezilist.setVisibility(View.VISIBLE);
             llGeziList.setVisibility(View.GONE);
         } else {
             // 如果查到数据,给geziList设置数据
             rlNoGezilist.setVisibility(View.GONE);
             llGeziList.setVisibility(View.VISIBLE);
-            geziList = realm.copyFromRealm(bgezi);
-            deskList = realm.copyFromRealm(binddesks);
-            adapter = new GeZiAdapter();
+            geziList = realm.copyFromRealm(bindGezis);
+            deskList = realm.copyFromRealm(bindDesks);
+            geziAdapter = new GeZiAdapter();
             deskAdapter = new DeskAdapter();
-            lvGezi.setAdapter(adapter);
+            lvGezi.setAdapter(geziAdapter);
             lvDesk.setAdapter(deskAdapter);
+            Log.d(TAG,"更新绑定的格子柜和副柜列表");
         }
     }
 
@@ -315,6 +321,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * 获取格子柜的列表
      */
     private void requestBindGeZiList() {
+        Log.d(TAG,"请求获得服务端定义的绑定的格子柜和副柜信息");
         String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/geziguilist";
         if (iNetWorkRequInterface == null) {
             iNetWorkRequInterface = new NetWorkRequImpl(this);
@@ -326,6 +333,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * 获取可以添加的格子柜的列表
      */
     private void requestGeZiList() {
+        Log.d(TAG,"从服务器请求可以添加的格子柜和副柜列表");
         String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/geziguiinfolist";
         if (iNetWorkRequInterface == null) {
             iNetWorkRequInterface = new NetWorkRequImpl(this);
@@ -361,6 +369,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             String string = str[str.length - 1];
             nVSIGiziSize = getGeziSizeByVSI(string);
             nVSIDeskSize = getDeskSizeByVSI(string);
+            Log.d(TAG,"VMC返回实际连接的格子柜数 "+nVSIGiziSize);
+            Log.d(TAG,"VMC返回实际连接的副柜数 "+nVSIDeskSize);
             if (nVSIGiziSize == -1) {
                 ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_01);
             }
@@ -421,7 +431,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                     e.printStackTrace();
                 }
                 switch (what) {
-                    case 0:
+                    //从服务器下载所有可以添加的格子柜和副柜信息
+                    case GEZI_INFO:
                         try {
                             if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                                 Gson gson = new Gson();
@@ -431,7 +442,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                 if (result != null) {
                                     searchList.clear();
                                     searchList.addAll(result);
-                                    myAdapter.notifyDataSetChanged();
+                                    searchAdapter.notifyDataSetChanged();
                                     if (!realm.isInTransaction()) {
                                         realm.beginTransaction();
                                     }
@@ -446,6 +457,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                         realm.copyToRealmOrUpdate(info);
                                     }
                                     realm.commitTransaction();
+                                    Log.d(TAG,"从服务端成功获取到绑定的格子柜和副柜信息并更新列表");
                                 }
                             }
                         } catch (Exception e) {
@@ -485,21 +497,25 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                             putDeleteBindBackground(delmachine_Sn);
                         }
                         break;
-                    case GEZI_TAG: //获取主机绑定的格子柜
+                    case GEZI_TAG:
+                        //获取主机绑定的格子柜
+                        Log.d(TAG,"从服务器获取主机绑定的格子柜和副柜信息");
                         if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                             Gson gson = new Gson();
 
                             Type type1 = new TypeToken<MachineInfo>() {
                             }.getType();
-                            final List<MachineInfo> machineInfosList = gson.fromJson(jsonResult.getString("machineList"), type1);
-                            if (machineInfosList.size() == 0) {
-                                deleteAllBindGeZiOrDesk();   // 删除本地所有的格子柜
+                            final List<MachineInfo> machineInfoList = gson.fromJson(jsonResult.getString("machineList"), type1);
+                            if (machineInfoList.size() == 0) {
+                                //删除本地所有的格子柜和副柜信息
+                                deleteAllBindGeZiOrDesk();
                                 break;
                             }
-                            List<String> machinesnList = new ArrayList();   //  存储获取到的格子柜或者副柜编号
-                            for (int i = 0; i < machinesnList.size(); i++) {
-                                machinesnList.add(machineInfosList.get(i).getMachineSn());
-                                Log.e("柜型列表", machineInfosList.get(i).getMachineSn());
+                            //存储获取到的格子柜或者副柜编号
+                            List<String> machinesnList = new ArrayList();
+                            for (int i = 0; i < machineInfoList.size(); i++) {
+                                machinesnList.add(machineInfoList.get(i).getMachineSn());
+                                Log.e("柜型列表", machineInfoList.get(i).getMachineSn());
                             }
                             deleteBindGeziOrDesk(machinesnList);
 
@@ -526,6 +542,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 
     @Override
     public void onFailed(int what, String url, Object tag, Exception exception, int responseCode, long networkMillis) {
+        Log.d(TAG,"网络请求失败");
         if (networkMillis > 5000) {
 //                ToastUtils.showToast(GeZiActivity.this, "服务器繁忙,请稍后再试");
 //                finish();
@@ -608,12 +625,15 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                 break;
             case R.id.iv_add:
             case R.id.iv_bg_add:
+                Log.d(TAG,"请求VMC报告实际连接的格子柜和副柜数信息");
                 btmp = false;
+                //请求VMC报告实际连接的格子柜信息，信息被保存到nVSIGeziSize,nVSIDeskSize
                 getMachineStatus(this);
                 if (searchList.size() > 0) {
                     searchList.clear();
                 }
-                myAdapter.notifyDataSetChanged();
+                //显示空白列表
+                searchAdapter.notifyDataSetChanged();
                 llGeziSearch.setVisibility(View.VISIBLE);
                 etSearchGezi.setText("");
                 final RealmResults<MachineInfo> quanbu = realm.where(MachineInfo.class).findAll();
@@ -632,7 +652,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             case R.id.ll_gezi_search:
                 llGeziSearch.setVisibility(View.GONE);
                 searchList.clear();
-                myAdapter.notifyDataSetChanged();
+                searchAdapter.notifyDataSetChanged();
                 lvSearchList.removeAllViewsInLayout();
                 break;
             case R.id.ll_list:
@@ -645,7 +665,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // TODO Auto-generated method stub
+            // TODO：这个可以用AlertDialog代替
             float y = event.getRawY();
             float x = event.getRawX();
             int[] locations = new int[2];
@@ -827,10 +847,12 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     /**
      * 从PC获取所有本地的格子柜，本地多余的删掉
      *
-     * @param list
+     * @param list 服务器获得的格子柜和副柜编码列表
      */
-    private void deleteBindGeziOrDesk(List list) {
+    private void deleteBindGeziOrDesk(List<String> list) {
+        //可以有多个格子柜
         List<BindGeZi> bindGeZis = realm.where(BindGeZi.class).findAll();
+        //只有一个副柜
         BindDesk bindDesk = realm.where(BindDesk.class).findFirst();
 
         for (int i = 0; i < bindGeZis.size(); i++) {
@@ -840,6 +862,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                 if (!realm.isInTransaction()) {
                     realm.beginTransaction();
                 }
+                //如果服务端的List中不包含本地的格子柜，则删除本地的格子柜
                 bindGeZi.deleteFromRealm();
                 realm.commitTransaction();
                 // 删除格子柜的商品
@@ -866,7 +889,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 //                realm.commitTransaction();
 //            }
 //        }
-
+        //如果服务端的List中不包含本地的副柜，则删除本地的副柜
         String deskMachineSn = bindDesk.getMachineSn();
         if (!list.contains(deskMachineSn)) {
             if (!realm.isInTransaction()) {
@@ -885,6 +908,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                 realm.commitTransaction();
             }
         }
+        //TODO:这里直接更新列表会好一些，不用重复创建Adapter
         initView();
     }
 
