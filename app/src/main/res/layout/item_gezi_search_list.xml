@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="626dp"
+    android:layout_height="75dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:gravity="center_vertical"
+    >
+        <TextView
+            android:id="@+id/tv_gezi_sn"
+            android:layout_marginStart="25dp"
+            android:textSize="30sp"
+            android:text="1123456"
+            android:textColor="#9b9b9b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_gezi_name"
+            android:layout_alignParentEnd="true"
+            android:textSize="30sp"
+            android:text="格子柜"
+            android:textColor="#9b9b9b"
+            android:layout_marginEnd="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+</RelativeLayout>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/back_black">
+
+        <RelativeLayout
+            android:id="@+id/rl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="50dp"
+                android:singleLine="true"
+                android:text="返回"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="重启"
+            android:textColor="@android:color/white"
+            android:textSize="30sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="60dp"
+            android:singleLine="true"
+            android:text="是否开启定时重启"
+            android:textColor="@android:color/white"
+            android:textSize="36sp" />
+
+        <Switch
+            android:id="@+id/sw_isopen"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="46dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:thumbTextPadding="10dp"
+            android:textSize="30sp"
+            android:layout_height="60dp"
+            android:maxHeight="60dp"
+            android:layout_centerHorizontal="true"
+            android:textOn="开启"
+            android:textOff="关闭"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#ffffff"/>
+
+    <RelativeLayout
+        android:id="@+id/rel_time"
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="60dp"
+            android:singleLine="true"
+            android:text="时间"
+            android:textColor="@android:color/white"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="117dp"
+            android:singleLine="true"
+            android:text="13:29"
+            android:textColor="@android:color/white"
+            android:textSize="72sp" />
+
+        <ImageView
+            android:id="@+id/iv_set_time"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="75dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#ffffff"/>
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="260dp"
+        android:id="@+id/tv_how_long"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:text="3小时11分钟后重启"
+        android:textColor="#999999"
+        android:textSize="28sp" />
+
+    <Button
+        android:id="@+id/btn_"
+        android:layout_width="465dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="300dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_red"
+        android:gravity="center"
+        android:text="完成"
+        android:textColor="@android:color/white"
+        android:textSize="30sp" />
+
+</LinearLayout>

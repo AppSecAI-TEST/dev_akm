@@ -1,0 +1,8 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="topbar_height">80dp</dimen>
+    <item name="loading" type="drawable">@drawable/loading_bgs</item>
+    <item name="ic_logo_adapter" type="drawable">@drawable/ic_logo7</item>
+</resources>

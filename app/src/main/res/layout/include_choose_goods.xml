@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_choose"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99232323"
+    android:focusableInTouchMode="false"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:id="@+id/ly_chooseinfo"
+        android:layout_width="650dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ly_shaixuan"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/common_green">
+
+            <RelativeLayout
+                android:id="@+id/rl_drink_click"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_drink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="全部"
+                    android:textColor="@android:color/white"
+                    android:textSize="26sp" />
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:layout_toEndOf="@+id/tv_drink"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_more" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_all_click"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="全部"
+                    android:textColor="@android:color/white"
+                    android:textSize="26sp" />
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:layout_toEndOf="@+id/tv_all"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_more" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <com.zongsheng.drink.h17.common.sortlistview.ClearEditText
+            android:id="@+id/filter_edit"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/search_bar_edit_selector"
+            android:drawableLeft="@drawable/ic_search"
+            android:hint="  请输入关键字或者拼音字母"
+            android:padding="15dp"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:textColor="@color/word_black"
+            android:textSize="21sp" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="30dp">
+
+            <ListView
+                android:id="@+id/country_lvcountry"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:divider="@null" />
+
+            <TextView
+                android:id="@+id/dialog"
+                android:layout_width="80.0dip"
+                android:layout_height="80.0dip"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_keyboard"
+                android:gravity="center"
+                android:textColor="@color/common_red"
+                android:textSize="40sp"
+                android:visibility="gone" />
+
+            <com.zongsheng.drink.h17.common.sortlistview.SideBar
+                android:id="@+id/sidrbar"
+                android:layout_width="50dp"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right|center" />
+        </FrameLayout>
+
+    </LinearLayout>
+</RelativeLayout>

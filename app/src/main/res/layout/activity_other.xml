@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topbar_height"
+        android:background="@color/back_black">
+
+        <RelativeLayout
+            android:id="@+id/rl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="50dp"
+                android:singleLine="true"
+                android:text="返回"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="其他"
+            android:textColor="@android:color/white"
+            android:textSize="30sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_set_machinesn"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="设置机器编码"
+            android:textColor="@color/word_black"
+            android:textSize="30sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_temp_setting"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="温度设置"
+            android:textColor="@color/word_black"
+            android:textSize="30sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_road_test"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="料道测试"
+            android:textColor="@color/word_black"
+            android:textSize="30sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_ontime_restart"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="定时重启"
+            android:textColor="@color/word_black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_log"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="操作日志"
+            android:textColor="@color/word_black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_record"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="销售记录"
+            android:textColor="@color/word_black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="软件信息"
+            android:textColor="@color/word_black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_show_setting"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_keyboard"
+            android:gravity="center"
+            android:text="显示设置"
+            android:textColor="@color/word_black"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+</RelativeLayout>

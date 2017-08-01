@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99232323"
+    android:visibility="gone">
+
+    <RelativeLayout
+        android:layout_width="458dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_white">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:text="最大库存"
+            android:textColor="@color/word_black"
+            android:textSize="26sp" />
+
+        <EditText
+            android:id="@+id/edt_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:hint="请输入新的最大库存数"
+            android:imeOptions="actionDone"
+            android:maxLength="6"
+            android:inputType="number"
+            android:textSize="26sp"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/tv_dialog_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:background="@drawable/bg_btn_confirm"
+            android:gravity="center"
+            android:text="确认"
+            android:textColor="@android:color/white"
+            android:textSize="26sp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_close"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="6dp"
+            android:padding="13dp"
+            android:src="@drawable/ic_close_gary" />
+    </RelativeLayout>
+
+</RelativeLayout>

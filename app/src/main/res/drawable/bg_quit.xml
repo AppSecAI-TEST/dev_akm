@@ -1,0 +1,22 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <!-- 实心 -->
+            <solid android:color="#ff8218de" />
+            <!-- 指定圆角矩形的4个圆角的半径 -->
+            <corners android:radius="4dp" />
+            <!-- 指定边框线条的宽度和颜色 -->
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <!-- 实心 -->
+            <solid android:color="#ff4E078C" />
+            <!-- 指定圆角矩形的4个圆角的半径 -->
+            <corners android:radius="4dp" />
+            <!-- 指定边框线条的宽度和颜色 -->
+        </shape>
+    </item>
+
+</selector>

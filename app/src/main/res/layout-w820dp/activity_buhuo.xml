@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/back_black">
+
+        <RelativeLayout
+            android:id="@+id/rl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="50dp"
+                android:singleLine="true"
+                android:text="返回"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_top_click"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="饮料柜"
+                android:textColor="@android:color/white"
+                android:textSize="26sp" />
+
+            <ImageView
+                android:id="@+id/iv_homepage_down"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="4dp"
+                android:src="@drawable/ic_down_select" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/fragment_drink1"
+        android:name="com.zongsheng.drink.h17.background.fragment.DrinkFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_yinliao" />
+
+    <fragment
+        android:id="@+id/fragment_desk1"
+        android:name="com.zongsheng.drink.h17.background.fragment.DeskFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_desk" />
+
+    <fragment
+        android:id="@+id/fragment_gezi1"
+        android:name="com.zongsheng.drink.h17.background.fragment.GeZiFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_gezi" />
+
+    <RelativeLayout
+        android:id="@+id/rl_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#99232323"
+        android:visibility="gone" />
+</RelativeLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_show"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:visibility="gone">
+
+    <RelativeLayout
+        android:id="@+id/rl_detail"
+        android:layout_width="660dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="80dp"
+            android:minHeight="200dp">
+
+            <RelativeLayout
+                android:id="@+id/rl_question"
+                android:layout_width="660dp"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_id1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="82.5dp"
+                    android:includeFontPadding="false"
+                    android:text="问题原因："
+                    android:textColor="@color/question_selected"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/tv_reason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_id1"
+                    android:layout_marginEnd="82.5dp"
+                    android:layout_marginStart="82.5dp"
+                    android:layout_marginTop="20dp"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxEms="20"
+                    android:maxLines="2"
+                    android:text=""
+                    android:textColor="@color/word_black"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/tv_id2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_reason"
+                    android:layout_marginStart="82.5dp"
+                    android:layout_marginTop="40dp"
+                    android:includeFontPadding="false"
+                    android:text="解决办法："
+                    android:textColor="@color/question_selected"
+                    android:textSize="30sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_intro"
+                android:layout_width="660dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:paddingTop="20dp"
+                android:visibility="visible">
+
+                <WebView
+                    android:id="@+id/wv_help_intro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="82.5dp"
+                    android:layout_marginStart="82.5dp"
+                    android:background="@android:color/white"
+                    android:scrollbars="none" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_close_show"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/ic_close_gary" />
+    </RelativeLayout>
+
+</RelativeLayout>

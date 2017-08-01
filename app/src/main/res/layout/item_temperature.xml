@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/item_sel_bg">
+
+    <RelativeLayout
+        android:id="@+id/rl_bg"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_temp_model"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="22dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="#373A3C"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="22dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="#373A3C"
+            android:textSize="16sp" />
+    </RelativeLayout>
+</RelativeLayout>

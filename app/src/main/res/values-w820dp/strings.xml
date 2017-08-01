@@ -1,0 +1,25 @@
+<resources>
+    <!--澳柯玛23-->
+    <!--窗口模式左右两边到屏幕的间距DP-->
+    <string name="margin_alert_left_right">400</string>
+    <!--管理页面menu的弹窗宽度占屏幕的几分之一-->
+    <string name="manger_Menu_wigth_percent">6</string>
+    <!--管理页面子menu点击占自身宽度的几倍-->
+    <string name="manager_submenu_width_multiple">2.5</string>
+    <!--管理页面更多按钮弹窗宽度倍数-->
+    <string name="more_btn_pop_width_multiple">6</string>
+    <!--版本类型-->
+    <string name="versionType">aokema23</string>
+
+    <string name="head">这里是HeadView</string>
+    <string name="pull_to_refresh">下拉刷新</string>
+    <string name="release_to_refresh">释放立即刷新</string>
+    <string name="refreshing">正在刷新...</string>
+    <string name="refresh_succeed">刷新成功</string>
+    <string name="refresh_fail">刷新失败</string>
+    <string name="pullup_to_load">上拉加载更多</string>
+    <string name="release_to_load">释放立即加载</string>
+    <string name="loading">正在加载...</string>
+    <string name="load_succeed">加载成功</string>
+    <string name="load_fail">加载失败</string>
+</resources>

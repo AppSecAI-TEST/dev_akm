@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:id="@+id/tv_submit"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="108dp"
+            android:background="@drawable/bg_green"
+            android:gravity="center"
+            android:text="提交"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_buman"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_green"
+            android:gravity="center"
+            android:text="全部补满"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="108dp"
+            android:background="@drawable/bg_green"
+            android:gravity="center"
+            android:text="更多"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="130dp"
+            android:padding="7dp"
+            android:src="@drawable/ic_more" />
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gv_goods"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="30dp"
+        android:horizontalSpacing="30dp"
+        android:numColumns="4"
+        android:scrollbars="none"
+        android:verticalSpacing="20dp" />
+    <include layout="@layout/include_dialog"/>
+    <include layout="@layout/include_muban"/>
+    <include layout="@layout/include_pandian"/>
+    <include layout="@layout/include_keyboard"/>
+    <include layout="@layout/include_choose_goods"/>
+</RelativeLayout>

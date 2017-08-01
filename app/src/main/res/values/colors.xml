@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="background">#263238</color>
+    <color name="time_color">#B2B9BF</color>
+    <color name="question">#DDDDDD</color>
+    <color name="question_selected">#ED463D</color>
+    <color name="word_black">#343434</color>
+    <color name="bg_pay">#FFF8DE</color>
+    <color name="word_blue">#1C8ECA</color>
+    <color name="bg_keyboard_btn">#EBEFF0</color>
+    <color name="bg_keyboard">#777F82</color>
+    <color name="text_detail">#B8B8BA</color>
+    <color name="text_number">#595F65</color>
+    <color name="bg_selected">#263238</color>
+    <color name="bg_unselected">#1A2126</color>
+    <color name="common_green">#00B58C</color>
+    <color name="common_withe">#FFFFFF</color>
+    <color name="touming">#FFFFFFFF</color>
+    <color name="back_black">#030303</color>
+    <color name="common_red">#ED463D</color>
+    <color name="bg_keyboard_btn_press">#B3B6B7</color>
+    <color name="common_bg">#FFf4f4f4</color>
+
+    <color name="goods_name">#151B1F</color>
+    <color name="list_item_presss_color">#e7e7e7</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#aaaaaa</color>
+    <color name="light_blue">#6593cb</color>
+
+</resources>

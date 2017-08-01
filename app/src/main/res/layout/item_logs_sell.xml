@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white">
+
+        <TextView
+            android:id="@+id/tv_operatetime"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="test"
+            android:textColor="@color/word_black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_grossonline"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="test"
+            android:textColor="@color/word_black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_grossoffline"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="test"
+            android:textColor="@color/word_black"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_salesvolume"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="test"
+            android:textColor="@color/word_black"
+            android:textSize="16sp" />
+    </LinearLayout>
+</RelativeLayout>

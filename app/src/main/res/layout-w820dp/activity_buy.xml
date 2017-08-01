@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/iv_xinhao"
+            android:layout_width="27dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/ic_state_5" />
+
+        <TextClock
+            android:id="@+id/textClock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/iv_xinhao"
+            android:format12Hour="yyyy-MM-dd hh:mm"
+            android:textColor="#385056"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_logo_adapter" />
+
+        <TextView
+            android:id="@+id/tv_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/iv_logo"
+            android:text=""
+            android:textColor="#385056"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/fragment_drink"
+        android:name="com.zongsheng.drink.h17.front.fragment.NewBuyFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_drink" />
+
+    <fragment
+        android:id="@+id/fragment_gezi"
+        android:name="com.zongsheng.drink.h17.front.fragment.GeziFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_drink" />
+
+    <fragment
+        android:id="@+id/fragment_desk"
+        android:name="com.zongsheng.drink.h17.front.fragment.DeskBuyFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_drink" />
+
+    <fragment
+        android:id="@+id/fragment_get"
+        android:name="com.zongsheng.drink.h17.front.fragment.GetFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_drink" />
+
+    <fragment
+        android:id="@+id/fragment_help"
+        android:name="com.zongsheng.drink.h17.front.fragment.HelpFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_top"
+        tools:layout="@layout/fragment_help" />
+
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:background="#ff676f74">
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingBottom="10dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="10dp"
+                android:src="@drawable/ic_close" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="784dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_drink_selected" />
+
+            <ImageView
+                android:id="@+id/iv_food"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_gezi_unselected"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_desk"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_desk_unselected"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_get"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_get_unselected"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/iv_help"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_question_unselected" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <com.zongsheng.drink.h17.common.MyVideoView
+            android:id="@+id/vv_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/iv_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/text_detail"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/btn_go_buy"
+            android:layout_width="256dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="#26FFFFFF"
+            android:text="点击屏幕购买商品"
+            android:textColor="@android:color/white"
+            android:textSize="26sp" />
+    </RelativeLayout>
+</RelativeLayout>

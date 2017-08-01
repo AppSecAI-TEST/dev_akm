@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    >
+
+    <ListView
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="200dp"
+        android:id="@+id/lv_help_question"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:dividerHeight="15dp"
+        android:divider="@null"
+        android:fadingEdge="vertical"
+        />
+
+    <include layout="@layout/include_problem" />
+</RelativeLayout>

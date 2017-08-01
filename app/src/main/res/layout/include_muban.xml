@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_muban"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99232323"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:id="@+id/ll_muban"
+        android:layout_width="720dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="35dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_list_top"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="模板名称"
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+            <ImageView
+                android:id="@+id/iv_close_muban"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/ic_close_gary"
+                android:padding="10dp"/>
+        </LinearLayout>
+
+        <com.zongsheng.drink.h17.common.MyListView
+            android:id="@+id/mlv_muban"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:divider="#eceeef"
+            android:listSelector="@android:color/transparent"
+            android:dividerHeight="0.5dp" />
+    </LinearLayout>
+
+</RelativeLayout>

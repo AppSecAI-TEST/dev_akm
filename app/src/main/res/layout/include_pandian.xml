@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_pandian"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99232323"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:id="@+id/ll_pandian"
+        android:layout_width="650dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_list_top"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="补货时间"
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="线上交易额"
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="现金交易额"
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:text="总销量"
+                android:textColor="@color/word_black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <com.zongsheng.drink.h17.background.pullrefresh.PullToRefreshLayout
+            android:id="@+id/refresh_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <!-- 支持所有实现Pullable接口的View -->
+
+            <com.zongsheng.drink.h17.background.pullrefresh.PullableListView
+                android:id="@+id/content_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:divider="#eceeef"
+                android:dividerHeight="0.5dp"
+                android:scrollbars="none" />
+
+            <include layout="@layout/load_more" />
+
+        </com.zongsheng.drink.h17.background.pullrefresh.PullToRefreshLayout>
+    </LinearLayout>
+
+</RelativeLayout>

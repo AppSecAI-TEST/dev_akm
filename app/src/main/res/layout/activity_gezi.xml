@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topbar_height"
+        android:background="@color/back_black">
+
+        <RelativeLayout
+            android:id="@+id/rl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="50dp"
+                android:singleLine="true"
+                android:text="返回"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="4dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_add_gezi" />
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="副柜/格子柜管理"
+            android:textColor="@android:color/white"
+            android:textSize="26sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:layout_below="@+id/rl_top"
+        android:id="@+id/ll_gezi_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="26sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="顺序"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <TextView
+                android:gravity="center"
+                android:textSize="26sp"
+                android:text="机器编号"
+                android:layout_weight="1.5"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <TextView
+                android:textSize="26sp"
+                android:text="类型"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <TextView
+                android:textSize="26sp"
+                android:text="删除"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lv_desk"
+            android:scrollbars="none"
+            android:layout_marginTop="20dp"
+            android:divider = "@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+
+        <ListView
+            android:id="@+id/lv_gezi"
+            android:scrollbars="none"
+            android:layout_marginTop="20dp"
+            android:divider = "@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_no_gezilist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+
+        <ImageView
+            android:id="@+id/iv_bg_add"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/bg_add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_bg_add"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="30dp"
+            android:text="请点击右上角添加机器型号"
+            android:textColor="@android:color/white"
+            android:textSize="36sp" />
+    </RelativeLayout>
+
+    <include layout="@layout/include_gezi_search" />
+
+
+</RelativeLayout>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/back_black">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="宗盛"
+            android:textColor="@android:color/white"
+            android:textSize="30sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="301dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_buhuo"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_buhuo">
+
+            <ImageView
+                android:id="@+id/iv_buhuo"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_buhuo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_buhuo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="补货管理"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_buman"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:layout_marginStart="44dp"
+            android:layout_toEndOf="@+id/rl_buhuo"
+            android:background="@drawable/bg_buman">
+
+            <ImageView
+                android:id="@+id/iv_buman"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_buman" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_buman"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="一键补满"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_first"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_tongbu"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_tongbu">
+
+            <ImageView
+                android:id="@+id/iv_tongbu"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_tongbu" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_tongbu"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="同步管理"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_add_gezi"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:layout_marginStart="44dp"
+            android:layout_toEndOf="@+id/rl_tongbu"
+            android:background="@drawable/bg_gezi">
+
+            <ImageView
+                android:id="@+id/iv_add"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_gezi" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_add"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="副柜/格子柜管理"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_second"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_other"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_other">
+
+            <ImageView
+                android:id="@+id/iv_other"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_other" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_other"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="其他"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_quit"
+            android:layout_width="256dp"
+            android:layout_height="160dp"
+            android:layout_marginStart="44dp"
+            android:layout_toEndOf="@+id/rl_other"
+            android:background="@drawable/bg_quit">
+
+            <ImageView
+                android:id="@+id/iv_quit"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_quit" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_quit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="安全退出"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
