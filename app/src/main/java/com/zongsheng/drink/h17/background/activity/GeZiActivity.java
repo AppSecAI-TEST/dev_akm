@@ -321,7 +321,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * 获取格子柜的列表
      */
     private void requestBindGeZiList() {
-        Log.d(TAG,"请求获得服务端定义的绑定的格子柜和副柜信息");
+//        Log.d(TAG,"请求获得服务端定义的绑定的格子柜和副柜信息");
         String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/geziguilist";
         if (iNetWorkRequInterface == null) {
             iNetWorkRequInterface = new NetWorkRequImpl(this);
@@ -333,7 +333,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * 获取可以添加的格子柜的列表
      */
     private void requestGeZiList() {
-        Log.d(TAG,"从服务器请求可以添加的格子柜和副柜列表");
+//        Log.d(TAG,"从服务器请求可以添加的格子柜和副柜列表");
         String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/geziguiinfolist";
         if (iNetWorkRequInterface == null) {
             iNetWorkRequInterface = new NetWorkRequImpl(this);
