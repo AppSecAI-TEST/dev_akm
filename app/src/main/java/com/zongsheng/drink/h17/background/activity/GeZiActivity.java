@@ -503,9 +503,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                             Gson gson = new Gson();
 
-                            Type type1 = new TypeToken<MachineInfo>() {
+                            Type machineInfoType = new TypeToken<List<MachineInfo>>() {
                             }.getType();
-                            final List<MachineInfo> machineInfoList = gson.fromJson(jsonResult.getString("machineList"), type1);
+                            final List<MachineInfo> machineInfoList = gson.fromJson(jsonResult.getString("machineList"), machineInfoType);
                             if (machineInfoList.size() == 0) {
                                 //删除本地所有的格子柜和副柜信息
                                 deleteAllBindGeZiOrDesk();
