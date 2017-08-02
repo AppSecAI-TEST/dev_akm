@@ -227,59 +227,7 @@
                             android:padding="10dp"
                             android:src="@drawable/ic_wenhao" />
 
-                        <!--<ImageView-->
-                            <!--android:id="@+id/iv_weixin"-->
-                            <!--android:layout_width="46dp"-->
-                            <!--android:layout_height="46dp"-->
-                            <!--android:layout_alignParentBottom="true"-->
-                            <!--android:layout_marginBottom="35dp"-->
-                            <!--android:layout_marginStart="78dp"-->
-                            <!--android:src="@drawable/ic_weixin" />-->
 
-                        <!--<TextView-->
-                        <!--android:id="@+id/tv_weixin"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_alignParentBottom="true"-->
-                        <!--android:layout_marginBottom="40dp"-->
-                        <!--android:layout_marginStart="4dp"-->
-                        <!--android:layout_toEndOf="@+id/iv_weixin"-->
-                        <!--android:includeFontPadding="false"-->
-                        <!--android:text="微信支付"-->
-                        <!--android:textColor="@color/word_black"-->
-                        <!--android:textSize="20sp" />-->
-
-                        <!--<ImageView-->
-                            <!--android:id="@+id/iv_alipay"-->
-                            <!--android:layout_width="46dp"-->
-                            <!--android:layout_height="46dp"-->
-                            <!--android:layout_alignParentBottom="true"-->
-                            <!--android:layout_marginBottom="35dp"-->
-                            <!--android:layout_marginStart="178dp"-->
-                            <!--android:layout_toEndOf="@+id/tv_weixin"-->
-                            <!--android:src="@drawable/ic_alipay" />-->
-
-                        <!--<TextView-->
-                        <!--android:id="@+id/tv_alipay"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_alignParentBottom="true"-->
-                        <!--android:layout_marginBottom="40dp"-->
-                        <!--android:layout_marginStart="4dp"-->
-                        <!--android:layout_toEndOf="@+id/iv_alipay"-->
-                        <!--android:includeFontPadding="false"-->
-                        <!--android:text="支付宝支付"-->
-                        <!--android:textColor="@color/word_black"-->
-                        <!--android:textSize="20sp" />-->
-                        <!--<ImageView-->
-                            <!--android:id="@+id/iv_jingdong"-->
-                            <!--android:layout_width="46dp"-->
-                            <!--android:layout_height="46dp"-->
-                            <!--android:layout_alignParentBottom="true"-->
-                            <!--android:layout_marginBottom="35dp"-->
-                            <!--android:layout_marginStart="278dp"-->
-                            <!--android:layout_toEndOf="@+id/tv_weixin"-->
-                            <!--android:src="@drawable/ic_jingdong" />-->
                         <GridLayout
                             android:layout_width="match_parent"
                             android:layout_height="30dp"

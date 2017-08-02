@@ -286,10 +286,11 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                 }
                 for (PayM payMethod : enabledPayMethods){
                     ImageView icon=new ImageView(context);
-                    //TODO:这里应该从本地加载图片
+                    //TODO:这里应该从本地加载图片，首先对图片进行缩放
+                    //思路：获取GridLayout高度，以此作为边长
                     Bitmap bitmap = BitmapFactory.decodeFile(FileUtils.getPayIconFullFilePath(payMethod.getId()));
                     icon.setImageBitmap(bitmap);
-//                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     GridLayout.Spec row= GridLayout.spec(0);
                     GridLayout.Spec col=GridLayout.spec(tempCount);
                     tempCount++;
@@ -300,49 +301,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
                     gd_payMethod.addView(icon,layoutParams);
                 }
-//                //是否支持微信支付
-//                if (payMethod.isWeiXinEnable()){
-//                    ImageView icon=new ImageView(context);
-//                    icon.setImageResource(R.drawable.ic_weixin);
-////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//                    GridLayout.Spec row= GridLayout.spec(0);
-//                    GridLayout.Spec col=GridLayout.spec(tempCount);
-//                    tempCount++;
-//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
-//                    layoutParams.setGravity(Gravity.CENTER);
-//                    layoutParams.width=itemWidth;
-//                    layoutParams.height=itemHeight;
-//
-//                    gd_payMethod.addView(icon,layoutParams);
-//                }
-//                //是否支持支付宝支付
-//                if (payMethod.isaLiPayEnable()){
-//                    ImageView icon=new ImageView(context);
-//                    icon.setImageResource(R.drawable.ic_alipay);
-////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//                    GridLayout.Spec row= GridLayout.spec(0);
-//                    GridLayout.Spec col=GridLayout.spec(tempCount);
-//                    tempCount++;
-//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
-//                    layoutParams.setGravity(Gravity.CENTER);
-//                    layoutParams.width=itemWidth;
-//                    layoutParams.height=itemHeight;
-//                    gd_payMethod.addView(icon,layoutParams);
-//                }
-//                //是否支持京东支付
-//                if (payMethod.isJingDongEnable()){
-//                    ImageView icon=new ImageView(context);
-//                    icon.setImageResource(R.drawable.ic_jingdong);
-////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//                    GridLayout.Spec row= GridLayout.spec(0);
-//                    GridLayout.Spec col=GridLayout.spec(tempCount);
-//                    tempCount++;
-//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
-//                    layoutParams.setGravity(Gravity.CENTER);
-//                    layoutParams.width=itemWidth;
-//                    layoutParams.height=itemHeight;
-//                    gd_payMethod.addView(icon,layoutParams);
-//                }
+
             }
         });
     }

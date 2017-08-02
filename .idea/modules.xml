@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/alertview/alertview.iml" filepath="$PROJECT_DIR$/alertview/alertview.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/remoteUpdate/remoteUpdate.iml" filepath="$PROJECT_DIR$/remoteUpdate/remoteUpdate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/remoteUpdate/remoteUpdate.iml" filepath="$PROJECT_DIR$/remoteUpdate/remoteUpdate.iml" />
       <module fileurl="file://$PROJECT_DIR$/zongsheng_dev_akm.iml" filepath="$PROJECT_DIR$/zongsheng_dev_akm.iml" />
     </modules>
   </component>
