@@ -246,11 +246,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 //        iv_qrcode.setOnClickListener(this);
         mRlNetError.setOnClickListener(this);
 
-        //显示的网络支付方式
+        //显示支持的网络支付方式
         gd_payMethod=(GridLayout)view.findViewById(R.id.gridLayout_payMethod);
-        //加载支付方式图标
-        //TODO:在Application中完成PayMethod初始化后可以在这里获取支持的网络支付方式
-
         List<PayM> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
         setPayMethod(enabledPayMethods);
     }
@@ -288,7 +285,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     ImageView icon=new ImageView(context);
                     //TODO:这里应该从本地加载图片，首先对图片进行缩放
                     //思路：获取GridLayout高度，以此作为边长
-                    Bitmap bitmap = BitmapFactory.decodeFile(FileUtils.getPayIconFullFilePath(payMethod.getId()));
+//                    Bitmap bitmap = BitmapFactory.decodeFile(FileUtils.getPayIconFullFilePath(payMethod.getId()));
+                    Bitmap bitmap = decodeBitmapFromFile(FileUtils.getPayIconFullFilePath(payMethod.getId()),height,height);
                     icon.setImageBitmap(bitmap);
                     icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     GridLayout.Spec row= GridLayout.spec(0);
@@ -305,7 +303,26 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
             }
         });
     }
-
+    private Bitmap decodeBitmapFromFile(String filePath,int requireWidth,int requireHeight){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath,options);
+        //计算缩放率
+        int height = options.outHeight;
+        int width = options.outWidth;
+        //默认为1，表示不缩放
+        int inSimpleSize = 1;
+        if (height > requireHeight || width > requireWidth){
+            int halfHeight = height/2;
+            int halfWidth = width/2;
+            while ((halfHeight/inSimpleSize >= requireHeight) && (halfWidth/inSimpleSize >= requireWidth)){
+                inSimpleSize *= 2;
+            }
+        }
+        options.inSampleSize = inSimpleSize;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath,options);
+    }
     private OnDismissListener onDismissListener = new OnDismissListener() {
         @Override
         public void onDismiss() {
