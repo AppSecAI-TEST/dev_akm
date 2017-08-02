@@ -284,9 +284,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                 }
                 for (PayMethod payMethod : enabledPayMethods){
                     ImageView icon=new ImageView(context);
-                    //TODO:这里应该从本地加载图片，首先对图片进行缩放
-                    //思路：获取GridLayout高度，以此作为边长
-//                    Bitmap bitmap = BitmapFactory.decodeFile(FileUtils.getPayIconFullFilePath(payMethod.getId()));
+                    //对图片加载之前进行缩放，获取GridLayout高度，以此作为边长
+                    //也可以使用Glide直接加载图片
                     Bitmap bitmap = decodeBitmapFromFile(FileUtils.getPayIconFullFilePath(payMethod.getId()),height,height);
                     icon.setImageBitmap(bitmap);
                     icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
