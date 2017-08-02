@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.igexin.sdk.GTIntentService;
+import com.igexin.sdk.PushManager;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
 import com.zongsheng.drink.h17.background.bean.BindDesk;
@@ -270,6 +272,10 @@ public class MyApplication extends Application {
             }, 6000);
             deleteCache();
         }
+        //初始化个推
+        PushManager.getInstance().initialize(this,null);
+        //注册接收信息的Service
+        PushManager.getInstance().registerPushIntentService(this, GTIntentService.class);
     }
 
     private void deleteCache() {

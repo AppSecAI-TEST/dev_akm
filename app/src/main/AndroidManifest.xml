@@ -178,6 +178,8 @@
         <!-- 需要替换成开发者自己的BroadcastReceiver文件全名 -->
 
         <activity android:name=".background.activity.FileListActivity" />
+        <!--个推-->
+        <service android:name=".service.GeTuiService"/>
     </application>
 
 </manifest>

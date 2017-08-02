@@ -20,6 +20,9 @@ android {
                 GETUI_APP_SECRET: "IH5WaJtZ5X9a2NnJV5HNg6",
                 PACKAGE_NAME    : applicationId
         ]
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86_64","arm64-v8a","mips","mips64","x86"
+        }
 
     }
     buildTypes {
@@ -99,7 +102,7 @@ buildscript {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.rabbitmq:amqp-client:4.0.2'
     // butterknife
     compile 'com.jakewharton:butterknife:8.0.1'
@@ -113,8 +116,10 @@ dependencies {
     compile 'com.yolanda.nohttp:nohttp:1.0.2'
     compile 'com.google.code.gson:gson:2.7'
     // 个推
-    //  compile 'com.getui:sdk:+'
-    compile 'com.android.support:support-v4:25.3.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.getui:sdk:2.10.2.0'
+    compile 'com.android.support:support-v4:+'
+
     compile files('libs/httpclient-4.3.5.jar')
     compile files('libs/httpcore-4.3.2.jar')
     compile files('libs/httpmime-4.3.5.jar')
