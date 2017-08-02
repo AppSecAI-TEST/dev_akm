@@ -1,5 +1,6 @@
 package com.zongsheng.drink.h17.util;
 
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.common.Constant;
 import com.zongsheng.drink.h17.common.L;
 import java.io.File;
@@ -69,5 +70,23 @@ public class FileUtils {
         if(file.exists()){
             file.delete();
         }
+    }
+
+    /**
+     * 在保存支付方式图标时用到，从id获得文件名
+     * @param id 支付方式id
+     * @return 文件名
+     */
+    public static String getPayIconFileName(String id){
+        return "icon_"+id+".png";
+    }
+
+    /**
+     * 在取出支付方式图标时用到，从id获得完整路径
+     * @param id 支付方式id
+     * @return 文件的完整路径
+     */
+    public static String getPayIconFullFilePath(String id){
+        return MyApplication.getInstance().getSdCardPath()+"/zongs/pay_icon/"+getPayIconFileName(id);
     }
 }

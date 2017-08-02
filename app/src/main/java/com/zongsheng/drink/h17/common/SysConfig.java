@@ -161,4 +161,8 @@ public class SysConfig {
 
     public static final String ZPush                                                                = "ZPush";
     public static final String MT                                                                   = "mt";
+
+    //支付相关
+    public static final String AUTO_PAY_PICTURE                                                     = "autoPayPicture";
+    public static final String PAY_TYPE                                                             = "payType";
 }

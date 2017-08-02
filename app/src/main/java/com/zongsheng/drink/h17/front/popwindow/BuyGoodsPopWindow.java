@@ -2,6 +2,8 @@ package com.zongsheng.drink.h17.front.popwindow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
@@ -30,13 +32,16 @@ import com.zongsheng.drink.h17.common.ToastUtils;
 import com.zongsheng.drink.h17.common.aes.AESUtil;
 import com.zongsheng.drink.h17.front.activity.BuyActivity;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
+import com.zongsheng.drink.h17.front.bean.PayM;
 import com.zongsheng.drink.h17.front.bean.PayMethod;
 import com.zongsheng.drink.h17.front.bean.ShipmentModel;
 import com.zongsheng.drink.h17.interfaces.IBuyGoodsPopWindowView;
+import com.zongsheng.drink.h17.util.FileUtils;
 import com.zongsheng.drink.h17.util.QRCodeUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -245,27 +250,22 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         gd_payMethod=(GridLayout)view.findViewById(R.id.gridLayout_payMethod);
         //加载支付方式图标
         //TODO:在Application中完成PayMethod初始化后可以在这里获取支持的网络支付方式
-//        PayMethod payMethod=MyApplication.getInstance().getEnabledPayMethod();
-//        Log.d("payMethod","payMethod");
-        //测试用设置三种支付方式
-        PayMethod payMethod=new PayMethod();
-        payMethod.setaLiPayEnable(true);
-        payMethod.setJingDongEnable(true);
-        payMethod.setWeiXinEnable(true);
-        setPayMethod(payMethod);
+
+        List<PayM> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
+        setPayMethod(enabledPayMethods);
     }
     /**
      * 初始化显示支付图标的GridLayout
-     * @param payMethod 保存有支持的网络支付方式
+     * @param enabledPayMethods 支持的网络支付方式
      */
-    private void setPayMethod(final PayMethod payMethod){
+    private void setPayMethod(final List<PayM> enabledPayMethods){
         view.post(new Runnable() {
             @Override
             public void run() {
                 int width=gd_payMethod.getMeasuredWidth();
                 int height=gd_payMethod.getMeasuredHeight();
 
-                int payMethodCount=payMethod.getPayMethodCount();
+                int payMethodCount=enabledPayMethods.size();
                 int itemWidth=width/payMethodCount;
                 int itemHeight=height;
                 int tempCount=0;
@@ -284,10 +284,11 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     gd_payMethod.addView(textView,layoutParams);
                     return;
                 }
-                //是否支持微信支付
-                if (payMethod.isWeiXinEnable()){
+                for (PayM payMethod : enabledPayMethods){
                     ImageView icon=new ImageView(context);
-                    icon.setImageResource(R.drawable.ic_weixin);
+                    //TODO:这里应该从本地加载图片
+                    Bitmap bitmap = BitmapFactory.decodeFile(FileUtils.getPayIconFullFilePath(payMethod.getId()));
+                    icon.setImageBitmap(bitmap);
 //                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     GridLayout.Spec row= GridLayout.spec(0);
                     GridLayout.Spec col=GridLayout.spec(tempCount);
@@ -299,34 +300,49 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
                     gd_payMethod.addView(icon,layoutParams);
                 }
-                //是否支持支付宝支付
-                if (payMethod.isaLiPayEnable()){
-                    ImageView icon=new ImageView(context);
-                    icon.setImageResource(R.drawable.ic_alipay);
-//                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    GridLayout.Spec row= GridLayout.spec(0);
-                    GridLayout.Spec col=GridLayout.spec(tempCount);
-                    tempCount++;
-                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
-                    layoutParams.setGravity(Gravity.CENTER);
-                    layoutParams.width=itemWidth;
-                    layoutParams.height=itemHeight;
-                    gd_payMethod.addView(icon,layoutParams);
-                }
-                //是否支持京东支付
-                if (payMethod.isJingDongEnable()){
-                    ImageView icon=new ImageView(context);
-                    icon.setImageResource(R.drawable.ic_jingdong);
-//                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    GridLayout.Spec row= GridLayout.spec(0);
-                    GridLayout.Spec col=GridLayout.spec(tempCount);
-                    tempCount++;
-                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
-                    layoutParams.setGravity(Gravity.CENTER);
-                    layoutParams.width=itemWidth;
-                    layoutParams.height=itemHeight;
-                    gd_payMethod.addView(icon,layoutParams);
-                }
+//                //是否支持微信支付
+//                if (payMethod.isWeiXinEnable()){
+//                    ImageView icon=new ImageView(context);
+//                    icon.setImageResource(R.drawable.ic_weixin);
+////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    GridLayout.Spec row= GridLayout.spec(0);
+//                    GridLayout.Spec col=GridLayout.spec(tempCount);
+//                    tempCount++;
+//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
+//                    layoutParams.setGravity(Gravity.CENTER);
+//                    layoutParams.width=itemWidth;
+//                    layoutParams.height=itemHeight;
+//
+//                    gd_payMethod.addView(icon,layoutParams);
+//                }
+//                //是否支持支付宝支付
+//                if (payMethod.isaLiPayEnable()){
+//                    ImageView icon=new ImageView(context);
+//                    icon.setImageResource(R.drawable.ic_alipay);
+////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    GridLayout.Spec row= GridLayout.spec(0);
+//                    GridLayout.Spec col=GridLayout.spec(tempCount);
+//                    tempCount++;
+//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
+//                    layoutParams.setGravity(Gravity.CENTER);
+//                    layoutParams.width=itemWidth;
+//                    layoutParams.height=itemHeight;
+//                    gd_payMethod.addView(icon,layoutParams);
+//                }
+//                //是否支持京东支付
+//                if (payMethod.isJingDongEnable()){
+//                    ImageView icon=new ImageView(context);
+//                    icon.setImageResource(R.drawable.ic_jingdong);
+////                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    GridLayout.Spec row= GridLayout.spec(0);
+//                    GridLayout.Spec col=GridLayout.spec(tempCount);
+//                    tempCount++;
+//                    GridLayout.LayoutParams layoutParams=new GridLayout.LayoutParams(row,col);
+//                    layoutParams.setGravity(Gravity.CENTER);
+//                    layoutParams.width=itemWidth;
+//                    layoutParams.height=itemHeight;
+//                    gd_payMethod.addView(icon,layoutParams);
+//                }
             }
         });
     }

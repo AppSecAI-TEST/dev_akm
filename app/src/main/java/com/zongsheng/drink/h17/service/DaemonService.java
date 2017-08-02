@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Created by dongxiaofei on 16/9/10.
+ * 当应用崩溃的时候，此Service被启动
+ * TODO:它只是启动售货App和更新App，这里使用IntentService更合适
  */
 
 public class DaemonService extends Service {
@@ -60,7 +62,7 @@ public class DaemonService extends Service {
             Log.e("service", appPackageName + "未安装");
         }
     }
-
+    //此方法是正常生命周期方法
     public void onDestroy()
     {
         Intent localIntent = new Intent();

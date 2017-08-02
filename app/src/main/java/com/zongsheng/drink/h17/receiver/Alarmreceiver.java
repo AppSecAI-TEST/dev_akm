@@ -9,6 +9,7 @@ import com.zongsheng.drink.h17.service.DaemonService;
 /**
  *
  * Created by dongxiaofei on 16/9/10.
+ * 当应用崩溃的时候重启App
  */
 
 public class Alarmreceiver extends BroadcastReceiver {

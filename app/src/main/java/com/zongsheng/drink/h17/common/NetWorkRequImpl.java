@@ -3,6 +3,8 @@ package com.zongsheng.drink.h17.common;
 
 import com.yolanda.nohttp.NoHttp;
 import com.yolanda.nohttp.RequestMethod;
+import com.yolanda.nohttp.download.DownloadListener;
+import com.yolanda.nohttp.download.DownloadRequest;
 import com.yolanda.nohttp.rest.CacheMode;
 import com.yolanda.nohttp.rest.Request;
 import com.yolanda.nohttp.rest.Response;
@@ -31,6 +33,17 @@ public class NetWorkRequImpl implements INetWorkRequInterface, HttpListener<Stri
     }
 
     @Override
+    public void request(String url, int what, RequestMethod requestMethod, HttpListener<String> httpListener) {
+        request = NoHttp.createStringRequest(url, requestMethod);
+        //设置为必须网络
+        request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
+        if (request != null) {
+            // 添加到请求队列
+            CallServer.getRequestInstance().add(MyApplication.getInstance(), what, request, httpListener, true, false);
+        }
+    }
+
+    @Override
     public void request(String url, int what, RequestMethod requestMethod, Map<String, String> paraMap) {
         request = NoHttp.createStringRequest(url, requestMethod);
         //设置为必须网络
@@ -44,13 +57,20 @@ public class NetWorkRequImpl implements INetWorkRequInterface, HttpListener<Stri
 
     @Override
     public void request(String url, int what, RequestMethod requestMethod) {
-        request = NoHttp.createStringRequest(url, requestMethod);
-        //设置为必须网络
-        request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
-        if (request != null) {
-            // 添加到请求队列
-            CallServer.getRequestInstance().add(MyApplication.getInstance(), what, request, this, true, false);
-        }
+//        request = NoHttp.createStringRequest(url, requestMethod);
+//        //设置为必须网络
+//        request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
+//        if (request != null) {
+//            // 添加到请求队列
+//            CallServer.getRequestInstance().add(MyApplication.getInstance(), what, request, this, true, false);
+//        }
+        request(url,what,requestMethod,this);
+    }
+
+    @Override
+    public void downLoadRequest(String url,int what, String dirPath, String fileName, boolean isRange, boolean isDeleteOld, DownloadListener downloadListener){
+        DownloadRequest downloadRequest = NoHttp.createDownloadRequest(url,dirPath,fileName,isRange,isDeleteOld);
+        CallServer.getDownloadInstance().add(what,downloadRequest,downloadListener);
     }
 
     @Override

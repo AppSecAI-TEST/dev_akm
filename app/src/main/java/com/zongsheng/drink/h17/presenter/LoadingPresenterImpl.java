@@ -7,7 +7,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yolanda.nohttp.Headers;
 import com.yolanda.nohttp.RequestMethod;
+import com.yolanda.nohttp.download.DownloadListener;
 import com.yolanda.nohttp.rest.Response;
 import com.zongsheng.drink.h17.Model.ILoadingModel;
 import com.zongsheng.drink.h17.Model.LoadingModelImpl;
@@ -24,12 +26,15 @@ import com.zongsheng.drink.h17.common.SharedPreferencesUtils;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.AdInfo;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
+import com.zongsheng.drink.h17.front.bean.PayM;
 import com.zongsheng.drink.h17.front.bean.ServerHelpInfo;
 import com.zongsheng.drink.h17.interfaces.ILoadingInterface;
 import com.zongsheng.drink.h17.interfaces.INetWorkRequCallBackListener;
 import com.zongsheng.drink.h17.interfaces.INetWorkRequInterface;
 import com.zongsheng.drink.h17.loading.LoadingActivity;
 import com.zongsheng.drink.h17.service.HexinService;
+import com.zongsheng.drink.h17.util.FileUtils;
+import com.zongsheng.drink.h17.util.LogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +66,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
     private ILoadingInterface iLoadingInterface = null;
     private INetWorkRequInterface iNetWorkRequInterface = null;
     private ILoadingModel iLoadingModel = null;
+    private LogUtil logUtil;
 
     public LoadingPresenterImpl(ILoadingInterface iLoadingInterface) {
         bindView(iLoadingInterface);
@@ -70,6 +76,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         if (iLoadingModel == null) {
             iLoadingModel = new LoadingModelImpl();
         }
+        logUtil = new LogUtil(this.getClass().getSimpleName());
     }
 
     @Override
@@ -142,6 +149,9 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                                 MyApplication.getInstance().setAutomaticRefundState(jsonObject.getString(SysConfig.JSON_KEY_REFUNDSTATE));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_MQIP, jsonObject.getString(SysConfig.JSON_KEY_MQIP));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_USEDSTATUS, jsonObject.getString(SysConfig.JSON_KEY_USEDSTATUS));
+                                //TODO:取出服务器定义的支付方式，下载图片
+                                parsePayMethod(jsonObject.getString(SysConfig.AUTO_PAY_PICTURE),jsonObject.getString(SysConfig.PAY_TYPE));
+
                                 Intent intent = new Intent();
                                 intent.setClass((Context) iLoadingInterface, HexinService.class);
                                 MyApplication.getInstance().startService(intent);
@@ -342,5 +352,65 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
             e.printStackTrace();
         }
         return files;
+    }
+
+    /**
+     * 初始化支持的网络支付方式
+     * @param allMethodJson 所有的支付方式
+     * @param enabledMethodStr 支持的支付方式
+     */
+    private void parsePayMethod(String allMethodJson,String enabledMethodStr){
+        List<PayM> enabledPayMethods = new ArrayList<>();
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<PayM>>(){}.getType();
+        List<PayM> allPayMethods = gson.fromJson(allMethodJson,type);
+        logUtil.d("所有的支付方式 : "+allPayMethods);
+        //TODO:下载所有的支付方式图片，目录是/sdcard/zongs/pay_icon
+        String dir = MyApplication.getInstance().getSdCardPath()+"/zongs/pay_icon/";
+        for (PayM payM : allPayMethods){
+            String fileName = FileUtils.getPayIconFileName(payM.getId());
+            //这里配置了默认不覆盖已有的文件
+            iNetWorkRequInterface.downLoadRequest(payM.getPicUrl(),Integer.parseInt(payM.getId()),dir,fileName,true,false,new DownLoadListener());
+        }
+        //过滤支持的支付方式
+        String[] enabledMethodID = enabledMethodStr.split(",");
+        for (String idStr : enabledMethodID){
+            for (PayM payM : allPayMethods){
+                if (payM.getId().equals(idStr)){
+                    //说明支持此支付方式，把它添加到支持列表中
+                    enabledPayMethods.add(payM);
+                }
+            }
+        }
+        logUtil.d("支持的支付方式 : "+enabledPayMethods);
+        MyApplication.getInstance().setEnabledPayMethod(enabledPayMethods);
+    }
+
+    private class DownLoadListener implements DownloadListener{
+        @Override
+        public void onDownloadError(int what, Exception exception) {
+            logUtil.d("下载支付方式图标失败 id = "+what);
+        }
+
+        @Override
+        public void onStart(int what, boolean isResume, long rangeSize, Headers responseHeaders, long allCount) {
+            logUtil.d("开始下载支付方式图标 id = "+what);
+
+        }
+
+        @Override
+        public void onProgress(int what, int progress, long fileCount) {
+
+        }
+
+        @Override
+        public void onFinish(int what, String filePath) {
+            logUtil.d("下载支付方式图标成功 id = "+what+" 路径为 : "+filePath);
+        }
+
+        @Override
+        public void onCancel(int what) {
+
+        }
     }
 }

@@ -28,6 +28,7 @@ public class GeTuiService extends GTIntentService{
 
     @Override
     public void onReceiveClientId(Context context, String s) {
+        //每次初始化都会执行
         //接收CID ef3237dc0b13f9c848f5c1e0cc30d5f4
         logUtil.d("CID is "+s);
     }
