@@ -15,9 +15,9 @@ android {
         resValue "string", "app_name", "澳柯玛"
 
         manifestPlaceholders = [
-                GETUI_APP_ID    : "abQjR5eY5099XjbEzyQyY9",
-                GETUI_APP_KEY   : "YQqC00HPsp7A3eqSUkuf79",
-                GETUI_APP_SECRET: "IH5WaJtZ5X9a2NnJV5HNg6",
+                GETUI_APP_ID    : "h2adKY2Fry6c5rcDvN5pY8",
+                GETUI_APP_KEY   : "6C1pDz5ADV8asaIZtutGeA",
+                GETUI_APP_SECRET: "SIjvTO7hwS6SkY9LXfCYp4",
                 PACKAGE_NAME    : applicationId
         ]
         ndk {

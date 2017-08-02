@@ -28,7 +28,7 @@ public class GeTuiService extends GTIntentService{
 
     @Override
     public void onReceiveClientId(Context context, String s) {
-        //接收CID
+        //接收CID ef3237dc0b13f9c848f5c1e0cc30d5f4
         logUtil.d("CID is "+s);
     }
 

@@ -24,6 +24,7 @@ import com.zongsheng.drink.h17.front.bean.GoodsInfo;
 import com.zongsheng.drink.h17.front.bean.PayMethod;
 import com.zongsheng.drink.h17.loading.bean.ZongsRealmMigration;
 import com.zongsheng.drink.h17.service.BackGroundRequestService;
+import com.zongsheng.drink.h17.service.GeTuiService;
 import com.zongsheng.drink.h17.service.QueBiUploadService;
 import com.zongsheng.drink.h17.service.QueHuoUploadService;
 import com.zongsheng.drink.h17.service.ServerHeartBeatRequestService;
@@ -275,7 +276,7 @@ public class MyApplication extends Application {
         //初始化个推
         PushManager.getInstance().initialize(this,null);
         //注册接收信息的Service
-        PushManager.getInstance().registerPushIntentService(this, GTIntentService.class);
+        PushManager.getInstance().registerPushIntentService(this, GeTuiService.class);
     }
 
     private void deleteCache() {
