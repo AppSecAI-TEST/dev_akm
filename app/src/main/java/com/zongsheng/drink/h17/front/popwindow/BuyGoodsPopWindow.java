@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.zongsheng.drink.h17.ComActivity;
 import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.R;
 import com.zongsheng.drink.h17.common.Constant;
@@ -32,11 +31,11 @@ import com.zongsheng.drink.h17.common.ToastUtils;
 import com.zongsheng.drink.h17.common.aes.AESUtil;
 import com.zongsheng.drink.h17.front.activity.BuyActivity;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
-import com.zongsheng.drink.h17.front.bean.PayM;
 import com.zongsheng.drink.h17.front.bean.PayMethod;
 import com.zongsheng.drink.h17.front.bean.ShipmentModel;
 import com.zongsheng.drink.h17.interfaces.IBuyGoodsPopWindowView;
 import com.zongsheng.drink.h17.util.FileUtils;
+import com.zongsheng.drink.h17.util.LogUtil;
 import com.zongsheng.drink.h17.util.QRCodeUtil;
 
 import java.text.SimpleDateFormat;
@@ -135,10 +134,12 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
      */
     private String selectType = "";
 
+    private LogUtil logUtil;
 
     public BuyGoodsPopWindow(Context context) {
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
+        logUtil = new LogUtil(this.getClass().getSimpleName());
         init();
     }
 
@@ -248,14 +249,14 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
         //显示支持的网络支付方式
         gd_payMethod=(GridLayout)view.findViewById(R.id.gridLayout_payMethod);
-        List<PayM> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
+        List<PayMethod> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
         setPayMethod(enabledPayMethods);
     }
     /**
      * 初始化显示支付图标的GridLayout
      * @param enabledPayMethods 支持的网络支付方式
      */
-    private void setPayMethod(final List<PayM> enabledPayMethods){
+    private void setPayMethod(final List<PayMethod> enabledPayMethods){
         view.post(new Runnable() {
             @Override
             public void run() {
@@ -281,7 +282,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     gd_payMethod.addView(textView,layoutParams);
                     return;
                 }
-                for (PayM payMethod : enabledPayMethods){
+                for (PayMethod payMethod : enabledPayMethods){
                     ImageView icon=new ImageView(context);
                     //TODO:这里应该从本地加载图片，首先对图片进行缩放
                     //思路：获取GridLayout高度，以此作为边长
@@ -303,6 +304,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
             }
         });
     }
+    //加载图片之前进行缩放，这种方式可以减少Bitmap的内存占用
     private Bitmap decodeBitmapFromFile(String filePath,int requireWidth,int requireHeight){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -321,6 +323,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         }
         options.inSampleSize = inSimpleSize;
         options.inJustDecodeBounds = false;
+        logUtil.d("缩放率 = "+inSimpleSize);
         return BitmapFactory.decodeFile(filePath,options);
     }
     private OnDismissListener onDismissListener = new OnDismissListener() {

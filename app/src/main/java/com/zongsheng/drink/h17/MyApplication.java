@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 
-import com.igexin.sdk.GTIntentService;
 import com.igexin.sdk.PushManager;
 import com.yolanda.nohttp.Logger;
 import com.yolanda.nohttp.NoHttp;
@@ -21,7 +20,6 @@ import com.zongsheng.drink.h17.common.SharedPreferencesUtils;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.AdInfo;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
-import com.zongsheng.drink.h17.front.bean.PayM;
 import com.zongsheng.drink.h17.front.bean.PayMethod;
 import com.zongsheng.drink.h17.loading.bean.ZongsRealmMigration;
 import com.zongsheng.drink.h17.service.BackGroundRequestService;
@@ -218,7 +216,7 @@ public class MyApplication extends Application {
      * 本机启用的网络支付方式，应该在getMqServerIP()中初始化
      * TODO: 应该和MQIP一起从服务器获取支持的网络支付方式，在LoadingActivity中被执行，在BuyGoodsPopWindow中动态显示
      */
-    private List<PayM> enabledPayMethod;
+    private List<PayMethod> enabledPayMethod;
 
     public static MyApplication getInstance() {
         return instance;
@@ -675,11 +673,11 @@ public class MyApplication extends Application {
         return deskConnState;
     }
 
-    public List<PayM> getEnabledPayMethod() {
+    public List<PayMethod> getEnabledPayMethod() {
         return enabledPayMethod;
     }
 
-    public void setEnabledPayMethod(List<PayM> enabledPayMethod) {
+    public void setEnabledPayMethod(List<PayMethod> enabledPayMethod) {
         this.enabledPayMethod = enabledPayMethod;
     }
 }

@@ -1,50 +1,55 @@
 package com.zongsheng.drink.h17.front.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
- * Created by Administrator on 17/7/24.
- * 定义可以使用的网络支付方式
+ * Created by Administrator on 17/8/2.
  */
 
 public class PayMethod {
-    private boolean aLiPay;
-    private boolean weiXin;
-    private boolean jingDong;
 
-    public void setaLiPayEnable(boolean aLiPay) {
-        this.aLiPay = aLiPay;
+    private String id;
+    @SerializedName("pay_name")
+    private String payName;
+    @SerializedName("pic_url")
+    private String picUrl;
+    @SerializedName("del_flag")
+    private String delFlag;
+
+    public String getDelFlag() {
+        return delFlag;
     }
 
-    public boolean isaLiPayEnable() {
-        return aLiPay;
+    public String getId() {
+        return id;
     }
 
-    public void setWeiXinEnable(boolean weiXin) {
-        this.weiXin = weiXin;
+    public String getPayName() {
+        return payName;
     }
 
-    public boolean isWeiXinEnable() {
-        return weiXin;
+    public String getPicUrl() {
+        return picUrl;
     }
 
-    public void setJingDongEnable(boolean jingDong) {
-        this.jingDong = jingDong;
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
     }
 
-    public boolean isJingDongEnable() {
-        return jingDong;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public int getPayMethodCount(){
-        int count=0;
-        if (isaLiPayEnable()){
-            count++;
-        }
-        if (isJingDongEnable()){
-            count++;
-        }
-        if (isWeiXinEnable()){
-            count++;
-        }
-        return count;
+    public void setPayName(String payName) {
+        this.payName = payName;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    @Override
+    public String toString() {
+        return payName;
     }
 }
