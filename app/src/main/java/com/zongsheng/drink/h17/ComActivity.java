@@ -1168,7 +1168,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         Log.i(TAG, "故障信息:" + s);
                         // 添加故障信息存入数据库
                         addFaultInfo(s);
-                    } else if ("007B".equals(sub)) {// 货道信息
+                    } else if ("007B".equals(sub)) {// 主机和格子柜货道信息是否缺货信息
                         long now = new Date().getTime();
                         s = s.replace("007B", "");
                         if (now - emptyIntoGetTime < 1000) {

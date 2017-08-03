@@ -191,7 +191,7 @@ public class MyApplication extends Application {
     private List<Integer> deskRoadList = new ArrayList<>();
 
     /**
-     * 澳柯玛格子柜库存信息 Map<箱号, Map<货道号, 是否有货 0:有 1:无>>
+     * 澳柯玛格子柜库存信息 Map<箱号, Map<货道号, 是否有货 0:有 1:无>>，VMC在BuyActivity启动之前报告
      */
     private Map<Integer, Map<Integer, String>> aokemaGeZiKuCunMap = new HashMap<>();
 

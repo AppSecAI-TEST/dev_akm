@@ -788,6 +788,7 @@ public class ComAokema {
      * 解析各料道是否有货
      */
     private void analyseChannelHaveThings(byte[] buf) {//fe 55 ef d 7b 0 f1 f9 1f 0 0 0 0 0 0 0 91
+        //各料道是否有货，从第1料道开始，0表示缺货，1表示有货
         String stockhave = "";
         int k = 1;
         L.e(TAG, "是否有货货道类型:" + buf[5] + "货道有货信息" + Arrays.toString(buf));
