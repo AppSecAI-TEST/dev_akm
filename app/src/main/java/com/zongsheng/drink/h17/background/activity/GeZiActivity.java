@@ -125,6 +125,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(true);
         setContentView(R.layout.activity_gezi);
         ButterKnife.bind(this);
         // 从数据库里获取本机绑定的所有的格子柜
@@ -135,9 +138,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         requestBindGeZiList();
         MyObservable.getInstance().registObserver(this);
 
-        logUtil = new LogUtil(this.getClass().getSimpleName());
-        //这里控制是否打印Log
-        logUtil.setShouldPrintLog(false);
 
         searchAdapter = new MyAdapter(searchList);
         lvSearchList.setAdapter(searchAdapter);
@@ -318,7 +318,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             deskAdapter = new DeskAdapter();
             lvGezi.setAdapter(geziAdapter);
             lvDesk.setAdapter(deskAdapter);
-            logUtil.d("更新绑定的格子柜和副柜列表");
+            logUtil.d("更新绑定的格子柜、副柜列表");
         }
     }
 
@@ -326,7 +326,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * 获取格子柜的列表
      */
     private void requestBindGeZiList() {
-        logUtil.d("请求获得服务端定义的绑定的格子柜和副柜信息");
+        logUtil.d("从服务器请求服务端定义的绑定的格子柜和副柜信息");
         String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/geziguilist";
         if (iNetWorkRequInterface == null) {
             iNetWorkRequInterface = new NetWorkRequImpl(this);
@@ -461,7 +461,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                         realm.copyToRealmOrUpdate(info);
                                     }
                                     realm.commitTransaction();
-                                    logUtil.d("从服务端成功获取到绑定的格子柜和副柜信息并更新列表");
+                                    logUtil.d("从服务端拿到所有可绑定的格子柜、副柜信息 = "+searchList);
                                 }
                             }
                         } catch (Exception e) {
@@ -503,7 +503,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         break;
                     case GEZI_TAG:
                         //获取主机绑定的格子柜
-                        logUtil.d("从服务器获取主机绑定的格子柜和副柜信息");
                         if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                             Gson gson = new Gson();
 
@@ -519,8 +518,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                             List<String> machinesnList = new ArrayList();
                             for (int i = 0; i < machineInfoList.size(); i++) {
                                 machinesnList.add(machineInfoList.get(i).getMachineSn());
-                                logUtil.d("服务器获得的格子柜编号 "+machineInfoList.get(i).getMachineSn());
                             }
+                            logUtil.d("从服务器拿到绑定的格子柜、副柜编号 = "+machinesnList);
                             deleteBindGeziOrDesk(machinesnList);
 
 //                            Type type = new TypeToken<ArrayList<BindGeZi>>() {

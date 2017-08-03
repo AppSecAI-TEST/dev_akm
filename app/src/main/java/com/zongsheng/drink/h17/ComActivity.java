@@ -114,7 +114,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         realm = Realm.getDefaultInstance();
         // 启动和主控VSI的通讯
         Log.e(TAG, "初始化COMVSI");
-//        comVSI = ComAokema.getInstance();
+        comVSI = ComAokema.getInstance2();
         boolean isInit = false;
         if (comVSI == null) {
             isInit = true;

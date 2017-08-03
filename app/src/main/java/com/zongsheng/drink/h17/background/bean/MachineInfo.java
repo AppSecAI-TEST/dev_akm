@@ -145,6 +145,11 @@ public class MachineInfo extends RealmObject implements Serializable {
         this.roadCount = roadCount;
     }
 
+    @Override
+    public String toString() {
+        return machineSn;
+    }
+
     /** 机器编号 */
     @PrimaryKey
     String machineSn;

@@ -55,9 +55,9 @@ public class ComAokema {
 
     private static ComAokema instance = null;
 
-//    public static ComAokema getInstance2() {
-//        return instance;
-//    }
+    public static ComAokema getInstance2() {
+        return instance;
+    }
 
 
     public static ComAokema getInstance() {
@@ -72,6 +72,9 @@ public class ComAokema {
     }
 
     private ComAokema() {
+        logUtil = new LogUtil("pc_vmc");
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(true);
         //(1) 串口定义
         serialPort = new SerialPortOpt();
         serialPort.mDevNum = 0;   //串口序号  ttyO2
@@ -80,9 +83,6 @@ public class ComAokema {
         serialPort.mStopBits = 1;//停止位
         serialPort.mParity = 'n';//校验位
 
-        logUtil = new LogUtil("pc_vmc");
-        //这里控制是否打印Log
-        logUtil.setShouldPrintLog(true);
     }
 
     public void openSerialPort() {
@@ -247,7 +247,7 @@ public class ComAokema {
         if (!((buf[0] == VMC_HEAD_ONE) && (buf[1] == VMC_HEAD_TWO) && (buf[2] == VMC_HEAD_THREE)))
             return;
 //        L.dHex(TAG, "接收>>>       ", buf);
-        logUtil.d("接收 "+bytesToHexString(buf,buf.length));
+//        logUtil.d("接收 "+bytesToHexString(buf,buf.length));
         //}
         // 校验和
         byte sum = 0;
@@ -258,7 +258,7 @@ public class ComAokema {
             return;
         switch (buf[4]) {
             case CMD_CONNECT:// 签到、设备联线
-                logUtil.d("签到");
+                logUtil.d("接收 签到 = "+bytesToHexString(buf,buf.length));
                 if (!isConnected) {
                     isConnected = true;
                     // 连接上了
@@ -269,58 +269,58 @@ public class ComAokema {
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_SET_STATUS:// 料道设置状态
-                logUtil.d("0x73 主机、副柜、格子柜料道有效状态");
+                logUtil.d("接收 0x73 机器料道有效状态 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_CHANNEL_SET_STATUS);
                 analyseChannelSetStatus(buf);
                 break;
             case CMD_DEVICE_RUN_INFO:// 设备运行状态信息
-                logUtil.d("0x7d 设备运行状态信息");
+                logUtil.d("接收 0x7d 设备运行状态信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_DEVICE_RUN_INFO);
                 analyseDevRunStatus(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_DEVICE_ERR_STATUS:// 系统故障状态
-                logUtil.d("0x79 系统故障状态");
+                logUtil.d("接收 0x79 系统故障状态 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_DEVICE_ERR_STATUS);
                 analyseSystemErr(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_ERR_STATUS:// 料道故障状态，只对弹簧机有效
-                logUtil.d("0x7a 料道故障状态");
+                logUtil.d("接收 0x7a 料道故障状态 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_CHANNEL_ERR_STATUS);
                 //analyseChannelErrStatus(buf); 没有弹簧综合机,不处理
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_THINGS_INFO:// 料道有无货信息
-                logUtil.d("0x7b 主机和格子柜的各料道有无货信息");
+                logUtil.d("接收 0x7b 主机和格子柜的各料道有无货信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_CHANNEL_THINGS_INFO);
                 analyseChannelHaveThings(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_LOOP:// 轮询
-                logUtil.d("0x76 轮询");
+                logUtil.d("接收 0x76 轮询 = "+bytesToHexString(buf,buf.length));
                 analyseLoopData(buf);
                 break;
             case CMD_OUT_THINGS:// 出货信息
-                logUtil.d("0x7c 出货信息");
+                logUtil.d("接收 0x7c 出货信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_OUT_THINGS);
                 analyseOutThingsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_BUY_INFO:// 购买信息
-                logUtil.d("0x77 购买信息");
+                logUtil.d("接收 0x77 购买信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_BUY_INFO);
                 analyseBuyInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_STATISTICS_INFO:// 统计信息
-                logUtil.d("0x74 统计信息");
+                logUtil.d("接收 0x74 统计信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_STATISTICS_INFO);
                 //analyseStatisticsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             default:
-                logUtil.d("无视的VMC指令"+buf[4]);
+                logUtil.d("接收 无视的VMC指令 = "+buf[4]);
 //                L.e(TAG, "无视的VMC指令:" + buf[4]);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
@@ -521,7 +521,6 @@ public class ComAokema {
                         break;
                 }
 //                L.v(TAG, "------------> " + result);
-                logUtil.d("接收的轮询 "+result);
                 returnConsumeInfo("007603", result);
                 //一键开门开始计数,到50停止
                 if (MyApplication.getInstance().isCount()) {
@@ -612,7 +611,7 @@ public class ComAokema {
         }
 
 //        L.e(TAG, "附加箱设置:" + fujianguiInfo);
-        logUtil.d("附加箱有效信息，箱号从1开始 = "+fujianguiInfo);
+        logUtil.d("---------------附加箱有效信息，箱号从1开始 = "+fujianguiInfo);
 
         // 售货机编号 Y22 Y23
         // 按键对应设备地址 Y24 获取箱号：0-饮料 1-食品 ，2...-格子柜
@@ -638,7 +637,7 @@ public class ComAokema {
                 fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + " | ";
             }
 //            L.e(TAG, "附加箱设置:" + fujianguiInfo);
-            logUtil.d("饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);
+            logUtil.d("---------------饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);
             returnConsumeInfo("0073", "" + trackNum + "," + fujianguiInfo);
         } else if (1 == buf[5]) {
             //弹簧机有效货到数
@@ -667,7 +666,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0080 弹簧机;有效货道编号 1,2,3,4……
-            logUtil.d("副柜弹簧机有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------副柜弹簧机有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0080", "1;" + roadCount + ";" + effectiveRoad);
 
         } else if (2 == buf[5]) { // 箱号为2的格子柜
@@ -677,7 +676,7 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
@@ -689,7 +688,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号2格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号2格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "2;" + roadCount + ";" + effectiveRoad);
         } else if (3 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -698,7 +697,7 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
@@ -710,7 +709,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号3格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号3格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "3;" + roadCount + ";" + effectiveRoad);
         } else if (4 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -731,7 +730,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号4格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号4格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "4;" + roadCount + ";" + effectiveRoad);
         } else if (5 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -752,7 +751,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号5格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号5格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "5;" + roadCount + ";" + effectiveRoad);
         } else if (6 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -761,7 +760,7 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
@@ -773,7 +772,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号6格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号6格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "6;" + roadCount + ";" + effectiveRoad);
         } else if (7 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -782,7 +781,7 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
@@ -794,7 +793,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logUtil.d("箱号7格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logUtil.d("---------------箱号7格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "7;" + roadCount + ";" + effectiveRoad);
         }
     }
@@ -824,7 +823,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("主机料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------主机料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007B", stockhave);
                 break;
             case 0x02:// 格子柜
@@ -837,7 +836,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号2格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号2格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "2;" + stockhave);
                 break;
             case 0x03:// 格子柜
@@ -850,7 +849,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号3格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号3格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "3;" + stockhave);
                 break;
             case 0x04:// 格子柜
@@ -863,7 +862,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号4格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号4格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "4;" + stockhave);
                 break;
             case 0x05:// 格子柜
@@ -876,7 +875,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号5格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号5格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "5;" + stockhave);
                 break;
             case 0x06:// 格子柜
@@ -889,7 +888,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号6格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号6格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "6;" + stockhave);
                 break;
             case 0x07:// 格子柜
@@ -902,7 +901,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logUtil.d("箱号7格子柜料道是否有货（从1开始） = "+stockhave);
+                logUtil.d("---------------箱号7格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "7;" + stockhave);
                 break;
             default:
@@ -992,7 +991,7 @@ public class ComAokema {
             // Y12保留
             // Y13--Y20各附柜驱动板版本号
 //            L.e(TAG, "签到结果:" + Arrays.toString(buf));
-            logUtil.d("签到信息 : "+"主控板本 = "+mVMCmainVersion+" ; 驱动版本号 = "+mQDversion+" ; 售货机编号 = "+mDeviceNum+" ; 主机类型 = "+mDeviceType);
+            logUtil.d("---------------签到信息 : "+"主控板本 = "+mVMCmainVersion+" ; 驱动版本号 = "+mQDversion+" ; 售货机编号 = "+mDeviceNum+" ; 主机类型 = "+mDeviceType);
             returnConsumeInfo("0078", "" + mVMCmainVersion + ","
                     + mQDversion + ","
                     + mDeviceNum + "," + mDeviceType);
