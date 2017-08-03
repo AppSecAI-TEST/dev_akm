@@ -140,6 +140,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
         logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(false);
         init();
     }
 
@@ -267,8 +269,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                 int itemWidth=width/payMethodCount;
                 int itemHeight=height;
                 int tempCount=0;
-//                Log.d("payMethod","width = "+width);
-//                Log.d("payMethod","itemWidth = "+itemWidth);
+                logUtil.d("payMethod","width = "+width);
+                logUtil.d("payMethod","itemWidth = "+itemWidth);
                 //如果网络支付方式为0，应该显示提示信息
                 if (payMethodCount==0){
                     TextView textView=new TextView(context);
@@ -388,8 +390,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     is_qcode_error = true;
                 }
             } else if (MyApplication.getInstance().getMqIP().equals("")) {
-                String requestinterface = "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/mqserverip?simCode=" + MyApplication.getInstance().getMachine_ccid();
-                DataUtil.addBackGroundRequest(requestinterface, "", Constant.BACKGROUND_WHAT_MQ, true);
+                String requestInterface = "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/mqserverip?simCode=" + MyApplication.getInstance().getMachine_ccid();
+                DataUtil.addBackGroundRequest(requestInterface, "", Constant.BACKGROUND_WHAT_MQ, true);
             } else if (!MyApplication.getInstance().isSnexist()) {
                 ToastUtils.showToast((Activity) context, SysConfig.ERROR_INFO_NOEXIST);
             } else if (!MyApplication.getInstance().getUsedStatus().equals(SysConfig.IS_AUTHENTICATION)) {

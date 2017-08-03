@@ -136,6 +136,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         MyObservable.getInstance().registObserver(this);
 
         logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
         logUtil.setShouldPrintLog(false);
 
         searchAdapter = new MyAdapter(searchList);

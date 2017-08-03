@@ -23,8 +23,8 @@ import java.util.Locale;
  */
 public class ComAokema {
 
-    //打印实际通信指令
-    private LogUtil logUtil = new LogUtil("pc_vmc");
+    //打印实际通信指令，使用Monitor的filter方便追踪
+    private LogUtil logUtil;
 
     private static final String TAG = "ComAokema";
 
@@ -79,6 +79,10 @@ public class ComAokema {
         serialPort.mDataBits = 8;//数据位
         serialPort.mStopBits = 1;//停止位
         serialPort.mParity = 'n';//校验位
+
+        logUtil = new LogUtil("pc_vmc");
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(true);
     }
 
     public void openSerialPort() {

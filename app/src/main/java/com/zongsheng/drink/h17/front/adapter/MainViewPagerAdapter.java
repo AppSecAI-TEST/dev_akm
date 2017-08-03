@@ -15,6 +15,7 @@ import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.R;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
+import com.zongsheng.drink.h17.util.LogUtil;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ import jp.wasabeef.glide.transformations.GrayscaleTransformation;
  */
 
 public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickListener{
-    private static final String TAG="MainViewPagerAdapter";
+    private LogUtil logUtil;
     private List<GoodsInfo> goodsInfoList;
     private Context context;
     private OnGoodsClickListener onGoodsClickListener;
@@ -51,6 +52,11 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
         this.goodsInfoList=list;
         this.context=context;
         this.onGoodsClickListener=onGoodsClickListener;
+
+        logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(false);
+
         //根据屏幕尺寸设置每页的商品数
         if (MyApplication.getInstance().getVersionType().equals(SysConfig.AOKEMA23)){
             itemsCountInPage=12;
@@ -66,12 +72,12 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
 
         pageCount=goodsInfoList.size()/itemsCountInPage+(goodsInfoList.size()%itemsCountInPage==0?0:1);
 
-//        Log.d(TAG,"pageCount = "+goodsInfoList.size()/itemsCountInPage);
-//        Log.d(TAG,"pageCount = "+(goodsInfoList.size()%itemsCountInPage==0?0:1));
-//        Log.d(TAG,"pageCount = "+pageCount);
-//        Log.d(TAG,"goodsCount = "+goodsInfoList.size());
-//        Log.d(TAG,"rowCount = "+rowInPage);
-//        Log.d(TAG,"colCount = "+colInPage);
+        logUtil.d("pageCount = "+goodsInfoList.size()/itemsCountInPage);
+        logUtil.d("pageCount = "+(goodsInfoList.size()%itemsCountInPage==0?0:1));
+        logUtil.d("pageCount = "+pageCount);
+        logUtil.d("goodsCount = "+goodsInfoList.size());
+        logUtil.d("rowCount = "+rowInPage);
+        logUtil.d("colCount = "+colInPage);
         viewCache=new LinkedHashMap<>();
     }
 
@@ -118,8 +124,8 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
         width=container.getMeasuredWidth();
         //这里无法获得ViewPager正确的高度,所以进行了处理
         height=container.getMeasuredHeight()-offsetHeight;
-//        Log.d(TAG,"GridLayout.width = "+width);
-//        Log.d(TAG,"GridLayout.height = "+height);
+        logUtil.d("GridLayout.width = "+width);
+        logUtil.d("GridLayout.height = "+height);
         //该页面的商品数
         int count;
         if (pagePosition==pageCount-1){
@@ -132,11 +138,11 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
         //itemView的尺寸
         int itemHeight=height/rowInPage;
         int itemWidth=width/colInPage;
-//        Log.d(TAG,"width = "+width);
-//        Log.d(TAG,"height = "+height);
-//        Log.d(TAG,"itemWidth = "+itemWidth);
-//        Log.d(TAG,"iteHeight = "+itemHeight);
-//        Log.d(TAG,"goodsCountInCurrentPage = "+count);
+        logUtil.d("width = "+width);
+        logUtil.d("height = "+height);
+        logUtil.d("itemWidth = "+itemWidth);
+        logUtil.d("iteHeight = "+itemHeight);
+        logUtil.d("goodsCountInCurrentPage = "+count);
 
         for (int i=0;i<count;i++){
             View view= LayoutInflater.from(context).inflate(R.layout.buy_goods_item,null,false);
@@ -144,7 +150,7 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
             index=i+pagePosition*itemsCountInPage;
             GoodsInfo goodsInfo=goodsInfoList.get(index);
 
-//            Log.d(TAG,"GoodsIndexInList = "+index+" | name = "+goodsInfo.getGoodsName());
+            logUtil.d("GoodsIndexInList = "+index+" | name = "+goodsInfo.getGoodsName());
             if (goodsInfo==null||!goodsInfo.isValid()){
                 continue;
             }
@@ -170,7 +176,6 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
                         .fitCenter()
                         .into(viewHolder.iv_goodsImg);
             }
-//            viewHolder.iv_goodsImg.setImageResource(android.R.mipmap.sym_def_app_icon);
             viewHolder.ll_goodsItem.setTag(goodsInfo);
             viewHolder.ll_goodsItem.setOnClickListener(this);
             //将itemView添加到GridLayout中

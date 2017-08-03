@@ -20,6 +20,8 @@ public class GeTuiService extends GTIntentService{
     public void onCreate() {
         super.onCreate();
         logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(true);
     }
 
     @Override

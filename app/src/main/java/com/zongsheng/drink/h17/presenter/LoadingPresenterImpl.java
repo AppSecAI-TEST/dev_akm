@@ -75,7 +75,10 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         if (iLoadingModel == null) {
             iLoadingModel = new LoadingModelImpl();
         }
+
         logUtil = new LogUtil(this.getClass().getSimpleName());
+        //这里控制是否打印Log
+        logUtil.setShouldPrintLog(false);
     }
 
     @Override
