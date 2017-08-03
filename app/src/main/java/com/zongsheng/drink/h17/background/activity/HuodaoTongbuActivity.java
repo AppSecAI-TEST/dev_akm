@@ -426,7 +426,7 @@ public class HuodaoTongbuActivity extends ComActivity implements INetWorkRequCal
                                     return;
                                 }
                                 // 请求机器更改主柜货道信息
-                                if (!machineConncted) {
+                                if (!isMachineConnected) {
                                     // 机器未连接
                                     dialogPingtai.dismiss();
                                     ToastUtils.showToast(HuodaoTongbuActivity.this, Constant.MAIN_MACHINA_DONOT_CON);

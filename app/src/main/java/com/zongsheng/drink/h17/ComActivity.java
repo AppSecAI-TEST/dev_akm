@@ -53,9 +53,10 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     // 机器链接程序
     private ComAokema comVSI;
     // 主机链接状态
-    public boolean machineConncted = false;
+    public boolean isMachineConnected = false;
     private String TAG = "ComActivity";
-    private Reference<IVSICallback2View> ivsiCallback2ViewWeakReference = null;
+    //在GeziActivity中用到，回调
+    private Reference<IVSICallback2View> iVSICallback2ViewWeakReference = null;
     public boolean isNeedInitMachineInfo = false;
     MachineInfoGetTimer machineInfoGetTimer;
     public Realm realm;
@@ -113,7 +114,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         realm = Realm.getDefaultInstance();
         // 启动和主控VSI的通讯
         Log.e(TAG, "初始化COMVSI");
-        comVSI = ComAokema.getInstance2();
+//        comVSI = ComAokema.getInstance();
         boolean isInit = false;
         if (comVSI == null) {
             isInit = true;
@@ -488,7 +489,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     protected void getMachineStatus(IVSICallback2View ivsiCallback2View) {
-        ivsiCallback2ViewWeakReference = new WeakReference<>(ivsiCallback2View);
+        iVSICallback2ViewWeakReference = new WeakReference<>(ivsiCallback2View);
         String str = comVSI.checkMachineStatus();
         if (!"".equals(str)) {
             new Handler().postDelayed(new Runnable() {
@@ -715,7 +716,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 @Override
                 public void run() {
                     String str = comVSI.checkThingsHaveOrNot(0);
-                    if (!"".equals(str) && comVSI.isConnecting) {
+                    if (!"".equals(str) && comVSI.isConnected) {
                         // 信息获取完成后处理
                         AfterMachineInfoGetOver();
                     }
@@ -961,9 +962,9 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (realm != null) {
             realm.close();
         }
-        if (ivsiCallback2ViewWeakReference != null) {
-            ivsiCallback2ViewWeakReference.clear();
-            ivsiCallback2ViewWeakReference = null;
+        if (iVSICallback2ViewWeakReference != null) {
+            iVSICallback2ViewWeakReference.clear();
+            iVSICallback2ViewWeakReference = null;
         }
         if (presenter != null) {
             presenter.detacheView();
@@ -987,7 +988,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     String s = msg.obj.toString();
                     String sub = s.substring(0, 4);
                     if (!sub.equals("1001")) {
-                        machineConncted = true;
+                        isMachineConnected = true;
                     }
                     // 时间过来的话,更新输入框信息
                     if (sub.equals("E203")) {
@@ -1007,7 +1008,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     } else if (sub.equals("1001")) {
                         Log.i(TAG, "主机连接上了");
                         // 主机连接上了
-                        machineConncted = true;
+                        isMachineConnected = true;
                     } else if ("1000".equals(sub)) {
                         // 启动十秒后
                         if (!isNeedInitMachineInfo && (new Date().getTime() - startTime) > 20000 && !isInBackPage) {
@@ -1016,14 +1017,14 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             finish();
                         }
                         // 主机断开链接
-                        machineConncted = false;
-                        Log.e(TAG, "主机断开连接:" + machineConncted + " " + isNeedInitMachineInfo);
+                        isMachineConnected = false;
+                        Log.e(TAG, "主机断开连接:" + isMachineConnected + " " + isNeedInitMachineInfo);
                     } else if ("0078".equals(sub)) {// 签到成功, 取得机器类型
                         s = s.replace("0078", "");
                         String[] info = s.split(",");
                         Log.e(TAG, "签到成功!: " + s);
                         MyApplication.getInstance().setMachineType(info[3]);
-                        machineConncted = true;
+                        isMachineConnected = true;
                         if (machineInfoGetTimer != null) {
                             machineInfoGetTimer.cancel();
                         }
@@ -1045,7 +1046,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 MyApplication.getInstance().getGeziList().add(i + 1);
                             }
                         }
-                        machineConncted = true;
+                        isMachineConnected = true;
                     } else if ("007C".equals(sub)) { // 出货记录
                         String result = comVSI.checkThingsHaveOrNotForNow(0);
                         if (!"".equals(result)) {
@@ -1159,8 +1160,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         String sysStatus = ss[0] + ",1," + ss[1] + ",1,1,0,0,0";
                         MyApplication.getInstance().setSystemStatus(sysStatus);
                         // 附加柜信息
-                        if (ivsiCallback2ViewWeakReference != null && ivsiCallback2ViewWeakReference.get() != null) {
-                            ivsiCallback2ViewWeakReference.get().MsgCallback(s);
+                        if (iVSICallback2ViewWeakReference != null && iVSICallback2ViewWeakReference.get() != null) {
+                            iVSICallback2ViewWeakReference.get().MsgCallback(s);
                         }
                     } else if ("0079".equals(sub)) {// 故障信息 TODO
                         s = s.replace("0079", "");

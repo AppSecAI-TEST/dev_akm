@@ -23,21 +23,22 @@ import java.util.Locale;
  */
 public class ComAokema {
 
-    private LogUtil logUtil = new LogUtil("apqx");
+    //打印实际通信指令
+    private LogUtil logUtil = new LogUtil("pc_vmc");
 
     private static final String TAG = "ComAokema";
 
-    private static final SimpleDateFormat formathms = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
+    private static final SimpleDateFormat formatHMS = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
 
-    private SerailPortOpt serialPort;
+    private SerialPortOpt serialPort;
 
-    private boolean readThreadisRunning = false;
+    private boolean isReadThreadRunning = false;
 
-    private boolean checkThreadisRunning = false;
+    private boolean isCheckThreadRunning = false;
 
     // 判断是否连接上
-    public boolean isConnecting = true;
-    private long getvsiinfotime = 0l;
+    public boolean isConnected = true;
+    private long getVSITime = 0l;
 
     // 需要传给VSI的指令信息
     private byte[] toVMCPara = null;
@@ -46,17 +47,17 @@ public class ComAokema {
     private List<byte[]> otherToVMCParaList = new ArrayList<>();
 
     // 货道数量
-    private int trackno = 21;
+    private int trackNum = 21;
 
     public void setRoadCount(int roadCount) {
-        this.trackno = roadCount;
+        this.trackNum = roadCount;
     }
 
     private static ComAokema instance = null;
 
-    public static ComAokema getInstance2() {
-        return instance;
-    }
+//    public static ComAokema getInstance2() {
+//        return instance;
+//    }
 
 
     public static ComAokema getInstance() {
@@ -72,7 +73,7 @@ public class ComAokema {
 
     private ComAokema() {
         //(1) 串口定义
-        serialPort = new SerailPortOpt();
+        serialPort = new SerialPortOpt();
         serialPort.mDevNum = 0;   //串口序号  ttyO2
         serialPort.mSpeed = 9600;//波特率
         serialPort.mDataBits = 8;//数据位
@@ -82,21 +83,21 @@ public class ComAokema {
 
     public void openSerialPort() {
         // (2) 打开串口
-        if (serialPort.mFd == null || !readThreadisRunning) {
+        if (serialPort.mFd == null || !isReadThreadRunning) {
             serialPort.openDev(serialPort.mDevNum);
             logUtil.d("打开串口-------------------------");
 
             serialPort.setSpeed(serialPort.mFd, serialPort.mSpeed);
             serialPort.setParity(serialPort.mFd, serialPort.mDataBits, serialPort.mStopBits, serialPort.mParity);
 
-            readThreadisRunning = true;
+            isReadThreadRunning = true;
             ReadThread mReadThread = new ReadThread();
-            mReadThread.setName("VSI的串口线程：" + formathms.format(new Date(System.currentTimeMillis())));
+            mReadThread.setName("VSI的串口线程：" + formatHMS.format(new Date(System.currentTimeMillis())));
             mReadThread.start();
 
-            checkThreadisRunning = true;
+            isCheckThreadRunning = true;
             CheckisConnect mCheckisConnect = new CheckisConnect();
-            mCheckisConnect.setName("checkis的串口线程：" + formathms.format(new Date(System.currentTimeMillis())));
+            mCheckisConnect.setName("checkis的串口线程：" + formatHMS.format(new Date(System.currentTimeMillis())));
             mCheckisConnect.start();
 
             L.v(SysConfig.MT, "创建线程打开串口。。。" + mReadThread.hashCode() + "    " + mCheckisConnect.hashCode());
@@ -106,12 +107,12 @@ public class ComAokema {
     public void closeSerialPort() {
 
 //        if (mReadThread != null) {
-//            readThreadisRunning = false;
+//            isReadThreadRunning = false;
 //            SystemClock.sleep(50);    //暂停0.05秒保证mReadThread线程结束
 //        }
 //
 //        if (mCheckisConnect != null) {
-//            checkThreadisRunning = false;
+//            isCheckThreadRunning = false;
 //            SystemClock.sleep(50);    //暂停0.05秒保证mCheckisConnect线程结束
 //        }
 //
@@ -124,12 +125,12 @@ public class ComAokema {
         @Override
         public void run() {
             super.run();
-            while (checkThreadisRunning) {
-                if (System.currentTimeMillis() - getvsiinfotime > 10000) {  // 10秒没有数据,那就认为失联
+            while (isCheckThreadRunning) {
+                if (System.currentTimeMillis() - getVSITime > 10000) {  // 10秒没有数据,那就认为失联
                     // 说明失联了
-                    if (isConnecting) {
+                    if (isConnected) {
                         L.i(TAG, "1000");
-                        isConnecting = false;
+                        isConnected = false;
                         returnConsumeInfo("1000", "");  // 表示失联
                     }
                 }
@@ -146,7 +147,7 @@ public class ComAokema {
         @Override
         public void run() {
             super.run();
-            while (readThreadisRunning) {
+            while (isReadThreadRunning) {
                 int size;
                 if (buf == null) {
                     //线程被中止了
@@ -155,16 +156,16 @@ public class ComAokema {
                     size = serialPort.readBytes(buf);
                 }
                 if (size > 0) {
-                    isConnecting = true;
+                    isConnected = true;
                     // 保存收到记录的时间
-                    getvsiinfotime = System.currentTimeMillis();
+                    getVSITime = System.currentTimeMillis();
                     // 发现有信息后就追加到临时变量
                     rxByteArrayTemp = ArrayAppend(rxByteArrayTemp, buf, size);
                 } else {
                     // 这次发现没有信息，如果以前有信息的，那就是我们要的数据
                     if (rxByteArrayTemp != null) {
                         byte[] rxByteArray = ArrayAppend(rxByteArrayTemp, null);
-                        isConnecting = true;
+                        isConnected = true;
                         analyseData(rxByteArray);
                         rxByteArrayTemp = null;
                     }
@@ -241,7 +242,7 @@ public class ComAokema {
             return;
         if (!((buf[0] == VMC_HEAD_ONE) && (buf[1] == VMC_HEAD_TWO) && (buf[2] == VMC_HEAD_THREE)))
             return;
-        L.dHex(TAG, "接收>>>       ", buf);
+//        L.dHex(TAG, "接收>>>       ", buf);
         logUtil.d("接收 "+bytesToHexString(buf,buf.length));
         //}
         // 校验和
@@ -254,8 +255,8 @@ public class ComAokema {
         switch (buf[4]) {
             case CMD_CONNECT:// 签到、设备联线
                 logUtil.d("签到");
-                if (!isConnecting) {
-                    isConnecting = true;
+                if (!isConnected) {
+                    isConnected = true;
                     // 连接上了
                     returnConsumeInfo("1001", "");
                 }
@@ -264,59 +265,59 @@ public class ComAokema {
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_SET_STATUS:// 料道设置状态
-                logUtil.d("料道设置状态");
+                logUtil.d("0x73 主机、副柜、格子柜料道有效状态");
                 responseForVMC(CMD_CHANNEL_SET_STATUS);
                 analyseChannelSetStatus(buf);
                 break;
             case CMD_DEVICE_RUN_INFO:// 设备运行状态信息
-                logUtil.d("设备运行状态信息");
+                logUtil.d("0x7d 设备运行状态信息");
                 responseForVMC(CMD_DEVICE_RUN_INFO);
                 analyseDevRunStatus(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_DEVICE_ERR_STATUS:// 系统故障状态
-                logUtil.d("系统故障状态");
+                logUtil.d("0x79 系统故障状态");
                 responseForVMC(CMD_DEVICE_ERR_STATUS);
                 analyseSystemErr(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
-            case CMD_CHANNEL_ERR_STATUS:// 料道故障状态
-                logUtil.d("料道故障状态");
+            case CMD_CHANNEL_ERR_STATUS:// 料道故障状态，只对弹簧机有效
+                logUtil.d("0x7a 料道故障状态");
                 responseForVMC(CMD_CHANNEL_ERR_STATUS);
                 //analyseChannelErrStatus(buf); 没有弹簧综合机,不处理
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_THINGS_INFO:// 料道有无货信息
-                logUtil.d("料道有无货信息");
+                logUtil.d("0x7b 主机和格子柜的各料道有无货信息");
                 responseForVMC(CMD_CHANNEL_THINGS_INFO);
                 analyseChannelHaveThings(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_LOOP:// 轮询
-                logUtil.d("轮询");
+                logUtil.d("0x76 轮询");
                 analyseLoopData(buf);
                 break;
             case CMD_OUT_THINGS:// 出货信息
-                logUtil.d("出货信息");
+                logUtil.d("0x7c 出货信息");
                 responseForVMC(CMD_OUT_THINGS);
                 analyseOutThingsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_BUY_INFO:// 购买信息
-                logUtil.d("购买信息");
+                logUtil.d("0x77 购买信息");
                 responseForVMC(CMD_BUY_INFO);
                 analyseBuyInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_STATISTICS_INFO:// 统计信息
-                logUtil.d("统计信息");
+                logUtil.d("0x74 统计信息");
                 responseForVMC(CMD_STATISTICS_INFO);
                 //analyseStatisticsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             default:
-                logUtil.d("无视的VMC指令");
-                L.e(TAG, "无视的VMC指令:" + buf[4]);
+                logUtil.d("无视的VMC指令"+buf[4]);
+//                L.e(TAG, "无视的VMC指令:" + buf[4]);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
         }
@@ -397,7 +398,7 @@ public class ComAokema {
                         for (int j = 0; j < 8; j++) {
                             stockhave = stockhave + ((buf[6 + i] >> j) & 0x01) + ",";
                             k++;
-                            if (k >= trackno) {
+                            if (k >= trackNum) {
                                 j = 8;
                                 i = 10;
                             }
@@ -417,6 +418,7 @@ public class ComAokema {
 
     /**
      * 解析对方发来的轮询数据
+     * 当VMC状态变化时，会携带一些状态信息，比如用户投币
      */
     private void analyseLoopData(byte[] buf) {
         String result = "";
@@ -447,7 +449,7 @@ public class ComAokema {
                     mDoorOpenIs = 1;
 
                 lastVMCPara = loopDataSend();
-
+                //TODO:这里接收并处理用户按键购买
                 returnConsumeInfo("007617", "" + mCanSale + "," + mDoorOpenIs
                         + "," + mPressDevNum + "," + mPressChannelNum + "," + mPressPrice
                         + "," + mPushMoney + "," + mLoopType);
@@ -514,7 +516,8 @@ public class ComAokema {
                         result = "FE校验错误";
                         break;
                 }
-                L.v(TAG, "------------> " + result);
+//                L.v(TAG, "------------> " + result);
+                logUtil.d("接收的轮询 "+result);
                 returnConsumeInfo("007603", result);
                 //一键开门开始计数,到50停止
                 if (MyApplication.getInstance().isCount()) {
@@ -532,7 +535,7 @@ public class ComAokema {
         if (toVMCPara != null) {
             serialPort.writeBytes(toVMCPara);
             logUtil.d("发送 "+bytesToHexString(toVMCPara,toVMCPara.length));
-            L.d(TAG, "发送<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
+//            L.d(TAG, "发送<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
             FileUtils.writeStringToFile(bytesToHexString(toVMCPara, toVMCPara.length));
             toVMCPara = null;
             return null;
@@ -545,7 +548,7 @@ public class ComAokema {
             }
             if (otherPara != null && otherPara.length > 1) {
                 serialPort.writeBytes(otherPara);
-                L.d(TAG, "发送<<<	       " + bytesToHexString(otherPara, otherPara.length));
+//                L.d(TAG, "发送<<<	       " + bytesToHexString(otherPara, otherPara.length));
                 logUtil.d("发送 "+bytesToHexString(otherPara,otherPara.length));
                 FileUtils.writeStringToFile(bytesToHexString(otherPara, otherPara.length));
                 return otherPara;
@@ -560,7 +563,7 @@ public class ComAokema {
             lp[7] = 0x00;
             lp[8] = 0x00;
             lp[9] = getCountCheck(lp, 3, 9);
-            L.d(TAG, "发送<<<	       " + bytesToHexString(lp, lp.length));
+//            L.d(TAG, "发送<<<	       " + bytesToHexString(lp, lp.length));
             logUtil.d("发送 "+bytesToHexString(lp,lp.length));
             serialPort.writeBytes(lp);
             return lp;
@@ -604,14 +607,15 @@ public class ComAokema {
             fujianguiInfo = fujianguiInfo + ((buf[21] >> j) & 0x01) + "|";
         }
 
-        L.e(TAG, "附加箱设置:" + fujianguiInfo);
+//        L.e(TAG, "附加箱设置:" + fujianguiInfo);
+        logUtil.d("附加箱有效信息，箱号从1开始 = "+fujianguiInfo);
 
         // 售货机编号 Y22 Y23
         // 按键对应设备地址 Y24 获取箱号：0-饮料 1-食品 ，2...-格子柜
         //statusInfoBean.mPressDev = buf[24];
         // 被按动的按键值 Y25
         int keycode = buf[25];
-        L.e(TAG, "设备状态信息:" + Arrays.toString(buf) + "Y[24]:" + buf[24]);
+//        L.e(TAG, "设备状态信息:" + Arrays.toString(buf) + "Y[24]:" + buf[24]);
         returnConsumeInfo("007D", "" + mCanSale + "," + mDoorOpen
                 + "," + keycode + "," + mPressChannelNum + "," + mPressPrice
                 + "," + mRemainOneYuanCoinNum + "," + mRemainFiveJiaoCoinNum + "," + fujianguiInfo);
@@ -621,16 +625,17 @@ public class ComAokema {
      * 解析料道配置信息
      */
     private void analyseChannelSetStatus(byte[] buf) {
-        L.e(TAG, "料道配置信息:" + buf[5]);
+//        L.e(TAG, "料道配置信息:" + buf[5]);
         if (0 == buf[5]) {// Y6是饮料机最大料道数
-            trackno = buf[6];
+            trackNum = buf[6];
             // 附加箱设置 Y21 (食品、格子柜 1 2...6) 1有效 0无效
             String fujianguiInfo = "";
             for (int j = 0; j < 7; j++) {
-                fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + "|";
+                fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + " | ";
             }
-            L.e(TAG, "附加箱设置:" + fujianguiInfo);
-            returnConsumeInfo("0073", "" + trackno + "," + fujianguiInfo);
+//            L.e(TAG, "附加箱设置:" + fujianguiInfo);
+            logUtil.d("饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);
+            returnConsumeInfo("0073", "" + trackNum + "," + fujianguiInfo);
         } else if (1 == buf[5]) {
             //弹簧机有效货到数
             int roadCount = 0;
@@ -645,7 +650,7 @@ public class ComAokema {
             for (int i = 0; i < floors; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockHave = (buf[6 + i] >> j) & 0x01;
-                    L.e(TAG, "弹簧机料道 " + ((i + 1) * 10 + j + 1) + "是否有效:" + stockHave);
+//                    L.e(TAG, "弹簧机料道 " + ((i + 1) * 10 + j + 1) + "是否有效:" + stockHave);
                     if (stockHave == 1) {
                         //货到有效
                         roadCount++;
@@ -653,11 +658,12 @@ public class ComAokema {
                     }
                 }
             }
-            L.e(TAG, "弹簧机货道:" + roadCount);
+//            L.e(TAG, "弹簧机货道:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0080 弹簧机;有效货道编号 1,2,3,4……
+            logUtil.d("副柜弹簧机有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0080", "1;" + roadCount + ";" + effectiveRoad);
 
         } else if (2 == buf[5]) { // 箱号为2的格子柜
@@ -674,11 +680,12 @@ public class ComAokema {
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号2格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "2;" + roadCount + ";" + effectiveRoad);
         } else if (3 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -694,11 +701,12 @@ public class ComAokema {
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号3格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "3;" + roadCount + ";" + effectiveRoad);
         } else if (4 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -707,18 +715,19 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号4格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "4;" + roadCount + ";" + effectiveRoad);
         } else if (5 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -727,18 +736,19 @@ public class ComAokema {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockhave = ((buf[6 + i] >> j) & 0x01);
-                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
+//                    L.e(TAG, "格子" + (i * 10 + j + 1) + "是否有效:" + stockhave);
                     if (stockhave == 1) {// 格子柜有设置
                         roadCount++;
                         effectiveRoad += (i * 10 + j + 1) + ",";
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号5格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "5;" + roadCount + ";" + effectiveRoad);
         } else if (6 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -754,11 +764,12 @@ public class ComAokema {
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号6格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "6;" + roadCount + ";" + effectiveRoad);
         } else if (7 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -774,11 +785,12 @@ public class ComAokema {
                     }
                 }
             }
-            L.e(TAG, "格子柜格子数:" + roadCount);
+//            L.e(TAG, "格子柜格子数:" + roadCount);
             if (effectiveRoad.endsWith(",")) {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
+            logUtil.d("箱号7格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "7;" + roadCount + ";" + effectiveRoad);
         }
     }
@@ -791,7 +803,7 @@ public class ComAokema {
         //各料道是否有货，从第1料道开始，0表示缺货，1表示有货
         String stockhave = "";
         int k = 1;
-        L.e(TAG, "是否有货货道类型:" + buf[5] + "货道有货信息" + Arrays.toString(buf));
+//        L.e(TAG, "是否有货货道类型:" + buf[5] + "货道有货信息" + Arrays.toString(buf));
         switch (buf[5]) {
             case 0x00:// 饮料机
                 for (int i = 0; i < 10; i++) {
@@ -799,7 +811,7 @@ public class ComAokema {
                         stockhave = stockhave + ((buf[6 + i] >> j) & 0x01) + ",";
 
                         k++;
-                        if (k > trackno) {
+                        if (k > trackNum) {
                             j = 8;
                             i = 10;
                         }
@@ -808,6 +820,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("主机料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007B", stockhave);
                 break;
             case 0x02:// 格子柜
@@ -820,6 +833,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号2格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "2;" + stockhave);
                 break;
             case 0x03:// 格子柜
@@ -832,6 +846,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号3格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "3;" + stockhave);
                 break;
             case 0x04:// 格子柜
@@ -844,6 +859,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号4格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "4;" + stockhave);
                 break;
             case 0x05:// 格子柜
@@ -856,6 +872,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号5格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "5;" + stockhave);
                 break;
             case 0x06:// 格子柜
@@ -868,6 +885,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号6格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "6;" + stockhave);
                 break;
             case 0x07:// 格子柜
@@ -880,6 +898,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
+                logUtil.d("箱号7格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "7;" + stockhave);
                 break;
             default:
@@ -968,8 +987,8 @@ public class ComAokema {
 //        int mVMCprotocolType = buf[11];
             // Y12保留
             // Y13--Y20各附柜驱动板版本号
-            L.e(TAG, "签到结果:" + Arrays.toString(buf));
-
+//            L.e(TAG, "签到结果:" + Arrays.toString(buf));
+            logUtil.d("签到信息 : "+"主控板本 = "+mVMCmainVersion+" ; 驱动版本号 = "+mQDversion+" ; 售货机编号 = "+mDeviceNum+" ; 主机类型 = "+mDeviceType);
             returnConsumeInfo("0078", "" + mVMCmainVersion + ","
                     + mQDversion + ","
                     + mDeviceNum + "," + mDeviceType);
@@ -1010,7 +1029,7 @@ public class ComAokema {
     public String deskChannelSet(int boxIndex, byte channelNo, int set) {
         byte cn;
         cn = (byte) Integer.parseInt(channelNo + "", 16);
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1044,7 +1063,7 @@ public class ComAokema {
         } else {
             cn = channelNumber;
         }
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
@@ -1124,7 +1143,7 @@ public class ComAokema {
             cn = channelNumber;
         }
 
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
@@ -1174,7 +1193,7 @@ public class ComAokema {
      * @return EF　55 FE 09 76 08 00 03 00 00 00 C8 52
      */
     public String setGeziChannelPrice(int boxNo, int roadNo, int price) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
@@ -1217,7 +1236,7 @@ public class ComAokema {
      */
     public String setVMCtime(byte year, byte month, byte day, byte hour,
                              byte min, byte sec) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
@@ -1250,7 +1269,7 @@ public class ComAokema {
      */
     public String toPay(int dealSerialNumber, byte channelNum, byte PAY_WAY, long payMoney, int boxIndex) {
 
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[27];
@@ -1325,7 +1344,7 @@ public class ComAokema {
      */
     public String toPayForNoCash(int dealSerialNumber, byte channelNum, byte PAY_WAY, long payMoney, int boxIndex) {
 
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[27];
@@ -1383,7 +1402,7 @@ public class ComAokema {
      */
     public String toPayForGezi(int dealSerialNumber, byte channelNum, byte PAY_WAY, long payMoney) {
 
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[27];
@@ -1436,7 +1455,7 @@ public class ComAokema {
      * 售货机料道价格设定 channelNumbe:料道号，
      */
     public String setChannelPrice(byte channelNumber, int price) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
@@ -1470,7 +1489,7 @@ public class ComAokema {
      * 售货机料道价格设定 channelNumbe:料道号，
      */
     public String setChannelGoodscode(byte channelNumber, int code) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[14];
@@ -1503,7 +1522,7 @@ public class ComAokema {
     }
 
     public String returnCoin(int fen) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[9];
@@ -1552,7 +1571,7 @@ public class ComAokema {
      * 查询主机或某一附机有无货信息 0x7B DEV_TYPE：箱号
      */
     public String checkThingsHaveOrNotForNow(int boxNo) {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1582,7 +1601,7 @@ public class ComAokema {
      * 获取饮料机配置
      */
     public String getMachineSetting() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1607,7 +1626,7 @@ public class ComAokema {
     }
 
     public String checkMachineStatus() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1632,7 +1651,7 @@ public class ComAokema {
     }
 
     public String checkSystemInfo() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1657,7 +1676,7 @@ public class ComAokema {
     }
 
     public String checkSystemErrorInfo() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1701,7 +1720,7 @@ public class ComAokema {
     }
 
     public String checkBuy_Money() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1726,7 +1745,7 @@ public class ComAokema {
     }
 
     public String checkBuy_HaveOrNot() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1751,7 +1770,7 @@ public class ComAokema {
     }
 
     public String pause() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];
@@ -1774,7 +1793,7 @@ public class ComAokema {
     }
 
     public String sale() {
-        if (!isConnecting)
+        if (!isConnected)
             return "1000/机器主控失联";
         if (toVMCPara == null) {
             byte[] resp = new byte[10];

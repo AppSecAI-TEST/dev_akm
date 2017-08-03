@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class SerailPortOpt extends SerialPortJNI{
+public class SerialPortOpt extends SerialPortJNI{
 
 private static final String TAG = "SerialPort";
 

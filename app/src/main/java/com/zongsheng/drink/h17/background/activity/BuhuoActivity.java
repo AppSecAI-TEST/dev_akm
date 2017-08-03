@@ -595,7 +595,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
             return;
         }
         // 请求机器更改主柜货道信息
-        if (!machineConncted) {
+        if (!isMachineConnected) {
             // 机器未连接
             ToastUtils.showToast(this, Constant.MAIN_MACHINA_DONOT_CON);
             return;
@@ -677,7 +677,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
             hasEmpty = false;
         }
 
-        if (!machineConncted) {
+        if (!isMachineConnected) {
             ToastUtils.showToast(this, Constant.MAIN_MACHINA_DONOT_CON);
             return;
         }
