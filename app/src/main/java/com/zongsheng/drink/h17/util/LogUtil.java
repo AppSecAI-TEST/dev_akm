@@ -9,18 +9,31 @@ import android.util.Log;
 
 public class LogUtil {
     private String TAG;
+    //控制所有实例是否打印Log
+    private volatile static boolean shouldPrintLogAllCtrl;
+    //控制单个实例是否打印Log
     private boolean shouldPrintLog;
     public LogUtil(String TAG){
         this.TAG = TAG;
         shouldPrintLog = true;
+        shouldPrintLogAllCtrl = true;
     }
+
 
     /**
      * 设置是否打印Log
-     * @param flag true 表示打印，false 表示不打印
+     * @param flag true 表示打印，false 表示不打印，默认为true
      */
     public void setShouldPrintLog(boolean flag){
         this.shouldPrintLog = flag;
+    }
+
+    /**
+     * 设置全局是否打印Log
+     * @param flag true 表示打印，false 表示不打印，默认为true
+     */
+    public void setShouldPrintLogAllCtrl(boolean flag){
+        shouldPrintLogAllCtrl = flag;
     }
 
     /**
@@ -37,7 +50,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void d(String TAG,String text){
-        if (shouldPrintLog){
+        if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.d(TAG,text);
         }
     }
@@ -56,7 +69,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void e(String TAG,String text){
-        if (shouldPrintLog){
+        if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.e(TAG,text);
         }
     }
@@ -74,7 +87,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void v(String TAG,String text){
-        if (shouldPrintLog){
+        if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.v(TAG,text);
         }
     }
@@ -92,7 +105,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void i(String TAG,String text){
-        if (shouldPrintLog){
+        if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.i(TAG,text);
         }
     }
@@ -110,7 +123,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void w(String TAG,String text){
-        if (shouldPrintLog){
+        if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.w(TAG,text);
         }
     }

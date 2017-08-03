@@ -28,6 +28,7 @@ import com.zongsheng.drink.h17.service.QueBiUploadService;
 import com.zongsheng.drink.h17.service.QueHuoUploadService;
 import com.zongsheng.drink.h17.service.ServerHeartBeatRequestService;
 import com.zongsheng.drink.h17.util.FileUtils;
+import com.zongsheng.drink.h17.util.LogUtil;
 import com.zongsheng.drink.h17.util.PhoneUtil;
 
 import java.io.BufferedReader;
@@ -106,6 +107,25 @@ public class MyApplication extends Application {
     private String machine_sn = "";
 
     private String machine_ccid = "";
+    /**
+     * 自营货道比率
+     */
+    private String roadRatio;
+
+    /**
+     * 是否维护状态
+     */
+    private boolean isWeihu = false;
+
+    /**
+     * 一键开门计数-标志位
+     */
+    private boolean isCount = false;
+
+    /**
+     * 一键开门计数-count
+     */
+    public int count = 0;
 
     /**
      * 本地SD卡路径
@@ -142,25 +162,6 @@ public class MyApplication extends Application {
      * 格子柜所有商品列表，在BuyActivity启动之前初始化
      */
     private List<GoodsInfo> cabinetTotalGoods = new ArrayList<>();
-    /**
-     * 自营货道比率
-     */
-    private String roadRatio;
-
-    /**
-     * 是否维护状态
-     */
-    private boolean isWeihu = false;
-
-    /**
-     * 一键开门计数-标志位
-     */
-    private boolean isCount = false;
-
-    /**
-     * 一键开门计数-count
-     */
-    public int count = 0;
 
     /**
      * 附加格子柜列表，当前连接的格子柜箱号列表，VMC在启动BuyActivity之前报告
@@ -221,12 +222,18 @@ public class MyApplication extends Application {
         return instance;
     }
 
+    public LogUtil logUtil;
 
     @Override
     public void onCreate() {
         super.onCreate();
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
+
+        //控制全局的日志打印
+        logUtil = new LogUtil(this.getClass().getSimpleName());
+        logUtil.setShouldPrintLogAllCtrl(true);
+
         if (getPackageName().equals(getCurProcessName(this))) {
             L.isDebug = true;
             FileUtils.isOpen = true;

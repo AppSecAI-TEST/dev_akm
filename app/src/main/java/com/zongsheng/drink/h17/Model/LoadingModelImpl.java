@@ -179,9 +179,10 @@ public class LoadingModelImpl implements ILoadingModel {
 
     @Override
     public void getGeZiInfo() {
-        RealmResults<BindGeZi> cabinetInfos = realm.where(BindGeZi.class).findAll();
-        cabinetInfos = cabinetInfos.sort("createTime", Sort.ASCENDING);
+        //从本地获得绑定的所有格子柜信息，并初始化Application的列表
+        RealmResults<BindGeZi> cabinetInfos = realm.where(BindGeZi.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(cabinetInfos));
+
         Log.e("失联格子柜数:", MyApplication.getInstance().getConnetFailGeziList().size() + "");
         if (cabinetInfos.size() > 0) {
             // 格子柜的map 机器编码, 箱号

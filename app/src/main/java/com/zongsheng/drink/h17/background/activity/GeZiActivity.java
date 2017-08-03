@@ -99,9 +99,13 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     private int yll;
     private int w;
     private int h;
-    private int nVSIGiziSize = 0;//vsi绑定的格子柜个数
+    //VMC报告实际连接的格子柜个数
+    private int nVSIGiziSize = 0;
+    //本地数据库中保存的绑定的格子柜个数
     private int bindGeziSize = 0;
+    //VMC报告实际连接的副柜个数
     private int nVSIDeskSize = 0;
+    //本地数据库中保存的绑定的个死贵个数
     private int bindDeskSize = 0;
 
     private List<BindGeZi> geziList;
@@ -130,8 +134,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         logUtil.setShouldPrintLog(true);
         setContentView(R.layout.activity_gezi);
         ButterKnife.bind(this);
-        // 从数据库里获取本机绑定的所有的格子柜
         realm = Realm.getDefaultInstance();
+        //从数据库里获取本机绑定的所有的格子柜
         //填充列表，显示连接的格子柜和副柜
         initView();
         //从服务器获取绑定的格子柜，并更新本地数据，更新显示的格子柜和副柜
@@ -292,11 +296,11 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     }
 
     private void initView() {
-        //从本地获得连接的所有副柜信息
+        //从本地获得绑定的所有副柜信息
         RealmResults<BindDesk> bindDesks = realm.where(BindDesk.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(bindDesks));
 
-        // 从本地数据库里取出绑定的格子柜
+        //从本地数据库里取出绑定的格子柜
         RealmResults<BindGeZi> bindGezis = realm.where(BindGeZi.class).findAll();
         bindGezis = bindGezis.sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(bindGezis));
