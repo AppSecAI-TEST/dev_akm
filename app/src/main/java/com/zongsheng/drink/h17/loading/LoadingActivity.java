@@ -89,6 +89,7 @@ public class LoadingActivity extends ComActivity implements ILoadingInterface{
     /** 机器信息获取完成后处理 */
     @Override
     protected void AfterMachineInfoGetOver() {
+        Log.d("ComAokema","AfterMachineInfoGetOver -----------------------------");
         iLoadingPresenter.AfterMachineInfoGetOver();
         closeComPort();
         new Handler().postDelayed(new Runnable() {
@@ -105,7 +106,6 @@ public class LoadingActivity extends ComActivity implements ILoadingInterface{
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG,"onBackPressed()");
         //不允许右键退出,必须使用按钮退出
         //super.onPause();
     }
