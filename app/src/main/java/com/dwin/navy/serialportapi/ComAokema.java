@@ -237,7 +237,7 @@ public class ComAokema {
             return;
         if (!((buf[0] == VMC_HEAD_ONE) && (buf[1] == VMC_HEAD_TWO) && (buf[2] == VMC_HEAD_THREE)))
             return;
-        L.dHex(TAG, "r>>>       ", buf);
+        L.dHex(TAG, "接收>>>       ", buf);
         //}
         // 校验和
         byte sum = 0;
@@ -400,7 +400,7 @@ public class ComAokema {
     private int nError0xFF = 0;
 
     /**
-     * 解析轮询数据
+     * 解析对方发来的轮询数据
      */
     private void analyseLoopData(byte[] buf) {
         String result = "";
@@ -515,7 +515,7 @@ public class ComAokema {
     private byte[] loopDataSend() {
         if (toVMCPara != null) {
             serialPort.writeBytes(toVMCPara);
-            L.d(TAG, "W<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
+            L.d(TAG, "发送<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
             FileUtils.writeStringToFile(bytesToHexString(toVMCPara, toVMCPara.length));
             toVMCPara = null;
             return null;

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 /**
  * Created by 谢家勋 on 2016/9/14.
+ * 读写SharedPreference的工具类
  */
 public class SharedPreferencesUtils {
     /**
@@ -17,7 +18,7 @@ public class SharedPreferencesUtils {
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
      * @param context
      * @param key
-     * @param object
+     * @param object 数据类型
      */
     public static void setParam(Context context , String key, Object object){
 
@@ -49,8 +50,8 @@ public class SharedPreferencesUtils {
      * 得到保存数据的方法，我们根据默认值得到保存的数据的具体类型，然后调用相对于的方法获取值
      * @param context
      * @param key
-     * @param defaultObject
-     * @return
+     * @param defaultObject 数据类型
+     * @return 获取到的数据，可以为null
      */
     public static Object getParam(Context context , String key, Object defaultObject){
         String type = defaultObject.getClass().getSimpleName();

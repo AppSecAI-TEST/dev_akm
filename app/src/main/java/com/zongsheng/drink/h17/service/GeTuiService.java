@@ -10,6 +10,7 @@ import com.zongsheng.drink.h17.util.LogUtil;
 /**
  * Created by 袁国栋 on 17/8/2.
  * 集成的个推推送服务
+ * TODO:具体逻辑未完成
  */
 
 public class GeTuiService extends GTIntentService{

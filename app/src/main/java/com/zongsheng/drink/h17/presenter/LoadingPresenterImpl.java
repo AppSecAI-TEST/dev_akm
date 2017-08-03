@@ -148,7 +148,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                                 MyApplication.getInstance().setAutomaticRefundState(jsonObject.getString(SysConfig.JSON_KEY_REFUNDSTATE));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_MQIP, jsonObject.getString(SysConfig.JSON_KEY_MQIP));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_USEDSTATUS, jsonObject.getString(SysConfig.JSON_KEY_USEDSTATUS));
-                                //TODO:取出服务器定义的支付方式，下载图片
+                                //取出服务器定义的支付方式，下载图片
                                 parsePayMethod(jsonObject.getString(SysConfig.AUTO_PAY_PICTURE),jsonObject.getString(SysConfig.PAY_TYPE));
 
                                 Intent intent = new Intent();
@@ -364,7 +364,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         Type type = new TypeToken<List<PayMethod>>(){}.getType();
         List<PayMethod> allPayMethods = gson.fromJson(allMethodJson,type);
         logUtil.d("所有的支付方式 : "+allPayMethods);
-        //TODO:下载所有的支付方式图片，目录是/sdcard/zongs/pay_icon
+        //下载所有的支付方式图片，目录是/sdcard/zongs/pay_icon
         String dir = MyApplication.getInstance().getSdCardPath()+"/zongs/pay_icon/";
         for (PayMethod payMethod : allPayMethods){
             String fileName = FileUtils.getPayIconFileName(payMethod.getId());

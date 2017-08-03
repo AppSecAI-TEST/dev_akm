@@ -3,7 +3,8 @@ package com.zongsheng.drink.h17.front.bean;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Administrator on 17/8/2.
+ * Created by 袁国栋 on 17/8/2.
+ * 网络支付方式
  */
 
 public class PayMethod {
