@@ -2,6 +2,8 @@ package com.dwin.navy.serialportapi;
 
 import android.util.Log;
 
+import com.zongsheng.drink.h17.util.LogUtil;
+
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -94,8 +96,8 @@ public int readBytes(byte[] buffer){
      * @return
      */
     public boolean writeBytes(byte[] buffer){
-    return super.writeBytes(mFd, buffer, buffer.length);
-}
+        return super.writeBytes(mFd, buffer, buffer.length);
+    }
 
 
 

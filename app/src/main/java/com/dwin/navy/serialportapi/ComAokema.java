@@ -9,6 +9,7 @@ import com.zongsheng.drink.h17.common.L;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.observable.SerialObservable;
 import com.zongsheng.drink.h17.util.FileUtils;
+import com.zongsheng.drink.h17.util.LogUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import java.util.Locale;
  * Created by chensean on 16/9/15.
  */
 public class ComAokema {
+
+    private LogUtil logUtil = new LogUtil("apqx");
 
     private static final String TAG = "ComAokema";
 
@@ -81,6 +84,7 @@ public class ComAokema {
         // (2) 打开串口
         if (serialPort.mFd == null || !readThreadisRunning) {
             serialPort.openDev(serialPort.mDevNum);
+            logUtil.d("打开串口-------------------------");
 
             serialPort.setSpeed(serialPort.mFd, serialPort.mSpeed);
             serialPort.setParity(serialPort.mFd, serialPort.mDataBits, serialPort.mStopBits, serialPort.mParity);
@@ -238,6 +242,7 @@ public class ComAokema {
         if (!((buf[0] == VMC_HEAD_ONE) && (buf[1] == VMC_HEAD_TWO) && (buf[2] == VMC_HEAD_THREE)))
             return;
         L.dHex(TAG, "接收>>>       ", buf);
+        logUtil.d("接收 "+bytesToHexString(buf,buf.length));
         //}
         // 校验和
         byte sum = 0;
@@ -248,6 +253,7 @@ public class ComAokema {
             return;
         switch (buf[4]) {
             case CMD_CONNECT:// 签到、设备联线
+                logUtil.d("签到");
                 if (!isConnecting) {
                     isConnecting = true;
                     // 连接上了
@@ -258,48 +264,58 @@ public class ComAokema {
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_SET_STATUS:// 料道设置状态
+                logUtil.d("料道设置状态");
                 responseForVMC(CMD_CHANNEL_SET_STATUS);
                 analyseChannelSetStatus(buf);
                 break;
             case CMD_DEVICE_RUN_INFO:// 设备运行状态信息
+                logUtil.d("设备运行状态信息");
                 responseForVMC(CMD_DEVICE_RUN_INFO);
                 analyseDevRunStatus(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_DEVICE_ERR_STATUS:// 系统故障状态
+                logUtil.d("系统故障状态");
                 responseForVMC(CMD_DEVICE_ERR_STATUS);
                 analyseSystemErr(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_ERR_STATUS:// 料道故障状态
+                logUtil.d("料道故障状态");
                 responseForVMC(CMD_CHANNEL_ERR_STATUS);
                 //analyseChannelErrStatus(buf); 没有弹簧综合机,不处理
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_THINGS_INFO:// 料道有无货信息
+                logUtil.d("料道有无货信息");
                 responseForVMC(CMD_CHANNEL_THINGS_INFO);
                 analyseChannelHaveThings(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_LOOP:// 轮询
+                logUtil.d("轮询");
                 analyseLoopData(buf);
                 break;
             case CMD_OUT_THINGS:// 出货信息
+                logUtil.d("出货信息");
                 responseForVMC(CMD_OUT_THINGS);
                 analyseOutThingsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_BUY_INFO:// 购买信息
+                logUtil.d("购买信息");
                 responseForVMC(CMD_BUY_INFO);
                 analyseBuyInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_STATISTICS_INFO:// 统计信息
+                logUtil.d("统计信息");
                 responseForVMC(CMD_STATISTICS_INFO);
                 //analyseStatisticsInfo(buf);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             default:
+                logUtil.d("无视的VMC指令");
                 L.e(TAG, "无视的VMC指令:" + buf[4]);
                 FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
@@ -515,6 +531,7 @@ public class ComAokema {
     private byte[] loopDataSend() {
         if (toVMCPara != null) {
             serialPort.writeBytes(toVMCPara);
+            logUtil.d("发送 "+bytesToHexString(toVMCPara,toVMCPara.length));
             L.d(TAG, "发送<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
             FileUtils.writeStringToFile(bytesToHexString(toVMCPara, toVMCPara.length));
             toVMCPara = null;
@@ -528,7 +545,8 @@ public class ComAokema {
             }
             if (otherPara != null && otherPara.length > 1) {
                 serialPort.writeBytes(otherPara);
-                L.d(TAG, "W<<<	       " + bytesToHexString(otherPara, otherPara.length));
+                L.d(TAG, "发送<<<	       " + bytesToHexString(otherPara, otherPara.length));
+                logUtil.d("发送 "+bytesToHexString(otherPara,otherPara.length));
                 FileUtils.writeStringToFile(bytesToHexString(otherPara, otherPara.length));
                 return otherPara;
             }
@@ -542,7 +560,8 @@ public class ComAokema {
             lp[7] = 0x00;
             lp[8] = 0x00;
             lp[9] = getCountCheck(lp, 3, 9);
-            L.d(TAG, "w<<<	       " + bytesToHexString(lp, lp.length));
+            L.d(TAG, "发送<<<	       " + bytesToHexString(lp, lp.length));
+            logUtil.d("发送 "+bytesToHexString(lp,lp.length));
             serialPort.writeBytes(lp);
             return lp;
         }
@@ -553,7 +572,7 @@ public class ComAokema {
      */
     private void analyseDevRunStatus(byte[] buf) {
 
-        // 被选中按钮的商品价格（单位：分）Y5-Y8
+        // 被选中按钮的商品价格（单位：分）Y5-Y8 之和
         int mPressPrice = (buf[5] & 0xFF) * 256 * 256 * 256
                 + (buf[6] & 0xFF) * 256 * 256 + (buf[7] & 0xFF) * 256
                 + (buf[8] & 0xFF);
@@ -562,16 +581,18 @@ public class ComAokema {
         int mRemainOneYuanCoinNum = buf[16];
         // 剩余5角硬币数量
         int mRemainFiveJiaoCoinNum = buf[17];
-        // 被按动的按键值对应料道值
+        // 被按动的按键值对应料道号
         int mPressChannelNum = buf[18];
-        // 运行状态
+        // 运行状态，是否暂停营业
         byte runStatus = buf[19];
         byte sale = (byte) ((runStatus >> 0) & 0x01);
+        //营业状态 0：暂停营业 1：正常营业
         int mCanSale = 1;
         if (sale == 1) // 暂停营业
             mCanSale = 0;
 
         byte doorOpen = (byte) ((runStatus >> 2) & 0x01);
+        //柜门开关状态 0：关闭状态 1：打开状态
         int mDoorOpen = 0;
         if (doorOpen == 1) // 门开着
             mDoorOpen = 1;
@@ -611,18 +632,22 @@ public class ComAokema {
             L.e(TAG, "附加箱设置:" + fujianguiInfo);
             returnConsumeInfo("0073", "" + trackno + "," + fujianguiInfo);
         } else if (1 == buf[5]) {
-            //弹簧机
+            //弹簧机有效货到数
             int roadCount = 0;
             int stockHave;
+            //弹簧机有效货道号列表
             String effectiveRoad = "";
-            //48弹簧机 Y6-Y15   buf[3] == 0x0d
-            //60弹簧机 Y6-Y23   buf[3] == 0x15
+            //48弹簧机 Y6-Y15   buf[3] == 0x0d 48个料道 读取6个字节即可
+            //60弹簧机 Y6-Y23   buf[3] == 0x15 60个料道 读取10个字节即可
+            //通过数据长度判断副柜类型
+            //TODO:只考虑48弹簧机
             int floors = (buf[3] == 0x0d) ? 6 : 6;
             for (int i = 0; i < floors; i++) {
                 for (int j = 0; j < 8; j++) {
                     stockHave = (buf[6 + i] >> j) & 0x01;
-                    L.e(TAG, "弹簧机" + ((i + 1) * 10 + j + 1) + "是否有效:" + stockHave);
+                    L.e(TAG, "弹簧机料道 " + ((i + 1) * 10 + j + 1) + "是否有效:" + stockHave);
                     if (stockHave == 1) {
+                        //货到有效
                         roadCount++;
                         effectiveRoad += ((i + 1) * 10 + j + 1) + ",";
                     }
@@ -635,7 +660,7 @@ public class ComAokema {
             // 0080 弹簧机;有效货道编号 1,2,3,4……
             returnConsumeInfo("0080", "1;" + roadCount + ";" + effectiveRoad);
 
-        } else if (2 == buf[5]) { // 格子柜
+        } else if (2 == buf[5]) { // 箱号为2的格子柜
             int roadCount = 0;
             int stockhave;
             String effectiveRoad = "";
@@ -964,6 +989,7 @@ public class ComAokema {
         resp[5] = 0x00;
         resp[6] = getCountCheck(resp, 3, 6);
         //Contents.mSS.sendBuf(resp);
+        logUtil.d("发送 "+bytesToHexString(resp,resp.length));
         serialPort.writeBytes(resp);
         L.d(TAG, "w<<<	       " + bytesToHexString(resp, resp.length));
         FileUtils.writeStringToFile(bytesToHexString(resp, resp.length));

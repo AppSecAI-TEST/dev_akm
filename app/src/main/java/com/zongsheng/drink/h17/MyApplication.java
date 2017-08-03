@@ -52,14 +52,6 @@ public class MyApplication extends Application {
     /** 系统参数 eg:1,23 [1:饮料机/其他综合机,货道数] */
 //    private String systemParam = "";
     /**
-     * 机器类型 1:饮料机 其他:综合机
-     */
-    private String machineType = "";
-    /**
-     * 货道数
-     */
-    private int roadCount = 0;
-    /**
      * 机器时间 eg:2016083016150303
      */
     private String systemTime = "";
@@ -72,7 +64,7 @@ public class MyApplication extends Application {
      */
     private String NoCashorderSn;
     /**
-     * 系统状态
+     * 系统状态，VMC在BuyActivity启动之前报告
      * eg:1,1,0,1,1,0,0,0
      * 第一位: 0:VMC销售状态:停止 1:VMC销售状态:可销售
      * 第二位: 1:工作模式:待机可销售模式 2:工作模式:投币后等待操作模式 4:工作模式:维护模式 其他:售货机销售暂停状态
@@ -85,7 +77,7 @@ public class MyApplication extends Application {
      */
     private String systemStatus = "";
     /**
-     * 有无故障 [空:无故障/故障编码]
+     * 有无故障 [空:无故障/故障编码]，VMC在BuyActivity启动之前报告
      */
     private String troubleStatus = "";
     /**
@@ -131,6 +123,14 @@ public class MyApplication extends Application {
     private Map<Integer, GoodsInfo> deskGoodInfos = new HashMap<>();
 
     /**
+     * 机器类型 1:饮料机 其他:综合机，VMC在启动BuyActivity之前报告
+     */
+    private String machineType = "";
+    /**
+     * 主机货道数，VMC在启动BuyActivity之前报告
+     */
+    private int roadCount = 0;
+    /**
      * 格子柜列表
      */
     private List<BindGeZi> bindGeZis = new ArrayList<>();
@@ -163,15 +163,15 @@ public class MyApplication extends Application {
     public int count = 0;
 
     /**
-     * 附加格子柜列表
+     * 附加格子柜列表，当前连接的格子柜箱号列表，VMC在启动BuyActivity之前报告
      */
     private List<Integer> geziList = new ArrayList<>();
     /**
-     * 格子柜货道数
+     * 指定箱号的格子柜有效货道数，VMC在启动BuyActivity之前报告
      */
     private Map<Integer, Integer> geziRoadCount = new HashMap<>();
     /**
-     * 格子柜有效货道列表
+     * 指定箱号的格子柜有效货道号列表，VMC在启动BuyActivity之前报告
      */
     private Map<Integer, List<Integer>> geziRoadListMap = new HashMap<>();
 
@@ -181,12 +181,12 @@ public class MyApplication extends Application {
     private List<BindDesk> bindDeskList;
 
     /**
-     * 弹簧机(副柜)货道数
+     * 弹簧机(副柜)有效货道数，VMC在启动BuyActivity之前报告
      */
     private int deskRoadCount;
 
     /**
-     * 弹簧机(副柜)有效货道数
+     * 弹簧机(副柜)有效货道号列表
      */
     private List<Integer> deskRoadList = new ArrayList<>();
 

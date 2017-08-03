@@ -209,7 +209,8 @@ public class FoodAdapter extends BaseAdapter {
                     DialogUtil dialogUtil = new DialogUtil(context);
                     dialogUtil.addItem("清空商品料道");
                     dialogUtil.addItem("修改价格");
-                    dialogUtil.addItem("修改最大库存");
+                    //TODO:这里注释了一行，待理解
+//                    dialogUtil.addItem("修改最大库存");
                     dialogUtil.setOnDialogListener(new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

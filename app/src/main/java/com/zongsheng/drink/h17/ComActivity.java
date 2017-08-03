@@ -1246,7 +1246,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             }
                         }
 
-                    } else if ("0080".equals(sub)) { //  弹簧机料道配置信息
+                    } else if ("0080".equals(sub)) { //  副柜弹簧机料道配置信息
                         try {
                             s = s.replace("0080", "");
                             String[] info = s.split(";");
