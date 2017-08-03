@@ -116,7 +116,7 @@ public class MyApplication extends Application {
      */
     private List<AdInfo> adFileList = new ArrayList<>();
     /**
-     * 主机筛选后的产品数据
+     * 主机筛选后的商品列表，查询本地数据库GoodsInfo，在BuyActivity启动之前初始化
      */
     private List<GoodsInfo> goodsInfos = new ArrayList<>();
 
@@ -131,15 +131,15 @@ public class MyApplication extends Application {
      */
     private int roadCount = 0;
     /**
-     * 格子柜列表
+     * 绑定的格子柜列表，查询本地数据库BindGezi，在BuyActivity启动之前初始化
      */
     private List<BindGeZi> bindGeZis = new ArrayList<>();
     /**
-     * 格子柜显示商品列表
+     * 格子柜显示商品列表，查询本地数据库，在BuyActivity启动之前初始化，售货界面显示的就是这个列表
      */
     private List<GoodsInfo> cabinetGoods = new ArrayList<>();
     /**
-     * 格子柜所有商品列表
+     * 格子柜所有商品列表，在BuyActivity启动之前初始化
      */
     private List<GoodsInfo> cabinetTotalGoods = new ArrayList<>();
     /**
@@ -176,7 +176,7 @@ public class MyApplication extends Application {
     private Map<Integer, List<Integer>> geziRoadListMap = new HashMap<>();
 
     /**
-     * 绑定的格子柜列表
+     * 绑定的副柜列表，查询本地数据库，在BuyActivity启动之前初始化
      */
     private List<BindDesk> bindDeskList;
 
@@ -186,7 +186,7 @@ public class MyApplication extends Application {
     private int deskRoadCount;
 
     /**
-     * 弹簧机(副柜)有效货道号列表
+     * 弹簧机(副柜)有效货道号列表，VMC在BuyActivity启动之前报告
      */
     private List<Integer> deskRoadList = new ArrayList<>();
 
@@ -196,7 +196,7 @@ public class MyApplication extends Application {
     private Map<Integer, Map<Integer, String>> aokemaGeZiKuCunMap = new HashMap<>();
 
     /**
-     * 连接失败的格子柜列表 List<箱号>
+     * 连接失败的格子柜列表 List<箱号>，VMC在BuyActivity启动之前报告
      */
     private List<Integer> connetFailGeziList = new ArrayList<>();
 
@@ -214,7 +214,6 @@ public class MyApplication extends Application {
 
     /**
      * 本机启用的网络支付方式，应该在getMqServerIP()中初始化
-     * TODO: 应该和MQIP一起从服务器获取支持的网络支付方式，在LoadingActivity中被执行，在BuyGoodsPopWindow中动态显示
      */
     private List<PayMethod> enabledPayMethod;
 

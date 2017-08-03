@@ -329,6 +329,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         ((LoadingActivity) iLoadingInterface).handleGoodsKuCun();
         // 取得格子柜信息
         iLoadingModel.getGeZiInfo();
+        //取得副柜信息
         iLoadingModel.getDeskInfo();
         iLoadingModel.getDeskGoods4Realm();
     }
