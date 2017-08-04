@@ -37,7 +37,7 @@ public class JsonControl {
                 jsonObject.put("DeliveryTime",payModel.getDeliveryTime());
                 jsonObject.put("MachineTradeNo",payModel.getMachineTradeNo());
                 jsonObject.put("MachineRoadNo",payModel.getMachineRoadNo());
-                jsonObject.put("DeliveryStatus",payModel.getDeliveryStatus());
+                jsonObject.put("deliveryStatus",payModel.getDeliveryStatus());
                 jsonArray.put(jsonObject);
             }
             sb.append(jsonArray.toString());

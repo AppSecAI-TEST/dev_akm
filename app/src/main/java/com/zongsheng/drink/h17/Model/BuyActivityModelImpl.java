@@ -65,7 +65,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
 
     @Override
     public void addPayModel2Realm(PayModel payModel, String orderSn, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库");
+        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+orderSn+" ; 商品名 : "+payModel.getGoodsName());
         final PayModel payModel1 = payModel.clone();
         payModel1.setOrderSn(orderSn);
         payModel1.setPayType(payType);

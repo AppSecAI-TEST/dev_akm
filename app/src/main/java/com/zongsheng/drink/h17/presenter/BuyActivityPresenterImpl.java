@@ -73,7 +73,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
 
     @Override
     public void receiverMQMsg(String msg) {
-        Log.e("here", msg);
+//        Log.e("here", msg);
         try {
             final JSONObject jsonObject = new JSONObject(msg);
             if ("".equals(jsonObject.getString("goods_id"))) {
@@ -91,18 +91,19 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 shipmentModel.setPay_type(jsonObject.getString(Constant.PAY_TYPE));
                 shipmentModel.setRoad_no(jsonObject.getString("road_num"));
                 iPayInfoModel.addMQReceiver(shipmentModel);
+                MyApplication.getInstance().getLogBuyAndShip().d("收到网络支付信息 = "+msg);
                 if (!isOrderSn(shipmentModel.getOrder_sn())) {
                     ShipStatusModel shipStatusModel = new ShipStatusModel();
                     shipStatusModel.setOrderSn(shipmentModel.getOrder_sn());
                     shipStatusModel.setMachineTime(simpleDateFormat.format(new Date()));
                     if (canShipment(shipmentModel.getOrder_sn())) {
-                        L.v(SysConfig.ZPush, "回调出货");
+//                        L.v(SysConfig.ZPush, "回调出货");
                         //回调出货
                         onlinePayShipment(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_SHIP);
                     } else {
                         //退款
-                        L.v(SysConfig.ZPush, "退款操作");
+//                        L.v(SysConfig.ZPush, "退款操作");
                         refundRequest(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_REFUND);
                     }
@@ -197,6 +198,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         try {
             isSaleing = false;
 //            Log.e(TAG, "出货成功!: goodsCode:" + goodsCode + " machineQueryType:" + machineQueryType);
+            MyApplication.getInstance().getLogBuyAndShip().d("出货成功 = 订单号 : "+saleOrderID+" ; 箱号 : "+boxIndex+" ; 货道号 : "+trade_no);
             MyApplication.getInstance().getLogBuyAndShip().d("");
             if (boxIndex == 0) { // 主柜
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
@@ -274,7 +276,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 // 购买页面显示出货信息
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
-                        L.e(TAG, "推送收到后匹配的产品:" + goodsInfo.getGoodsCode() + " " + goodsInfo.getGoodsName());
+                        MyApplication.getInstance().getLogBuyAndShip().d("主机 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -287,6 +289,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 // 购买页面显示出货信息
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getCabinetGoods()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
+                        MyApplication.getInstance().getLogBuyAndShip().d("格子柜 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -299,6 +302,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 Log.e("副柜", "here");
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getDeskGoodsInfo().values()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
+                        MyApplication.getInstance().getLogBuyAndShip().d("副柜 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -360,7 +364,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     costMoneyForCabinet(shipmentModel, 0, true);
                     ((ComActivity) iBuyActivityInterface).lastSaleTime = time;
                 }
-            } else {
+            } else {// 副柜
                 if (((ComActivity) iBuyActivityInterface).lastSaleTime != 0 && (time - ((ComActivity) iBuyActivityInterface).lastSaleTime) < 1000) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -582,7 +586,8 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
 
     /**
      * 订单中时间戳的格式为yyyyMMddHHmmss
-     * 判断支付时长是否合理
+     * 判断支付时长是否合理，90秒
+     * TODO:这里的流程可能有问题，90秒后可能支付窗口已经关闭
      */
     private boolean canShipment(String ordersn) {
         String time = ordersn.substring(ordersn.length() - 14, ordersn.length());

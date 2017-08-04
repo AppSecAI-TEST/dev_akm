@@ -990,7 +990,7 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
                 if (data == null) {
                     data = "";
                 }
-                L.e(TAG, "收到推送消息:" + data);
+                L.d(TAG, "收到推送消息:" + data);
                 if (iBuyActivityPresenter == null) {
                     iBuyActivityPresenter = (IBuyActivityPresenter) createPresenter();
                 }

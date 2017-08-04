@@ -61,7 +61,7 @@ public class PayModel extends RealmObject implements Serializable {
      */
     private String param;
     // 出货状态 0：未出货 1：已出货 2：出货失败
-    public String DeliveryStatus;
+    public String deliveryStatus;
 
     public PayModel() {
     }
@@ -70,7 +70,7 @@ public class PayModel extends RealmObject implements Serializable {
 
         this.PushMachineSn = payModel.getPushMachineSn();
         this.CreateTime = payModel.getCreateTime();
-        this.DeliveryStatus = payModel.getDeliveryStatus();
+        this.deliveryStatus = payModel.getDeliveryStatus();
         this.DeliveryTime = payModel.getDeliveryTime();
         this.GoodsBelong = payModel.getGoodsBelong();
         this.recordInfo = payModel.getRecordInfo();
@@ -112,7 +112,7 @@ public class PayModel extends RealmObject implements Serializable {
                 ", recordInfo='" + recordInfo + '\'' +
                 ", goodsName='" + goodsName + '\'' +
                 ", param='" + param + '\'' +
-                ", DeliveryStatus='" + DeliveryStatus + '\'' +
+                ", deliveryStatus='" + deliveryStatus + '\'' +
                 '}';
     }
     //原型模式
@@ -121,11 +121,11 @@ public class PayModel extends RealmObject implements Serializable {
     }
 
     public String getDeliveryStatus() {
-        return DeliveryStatus;
+        return deliveryStatus;
     }
 
     public void setDeliveryStatus(String deliveryStatus) {
-        DeliveryStatus = deliveryStatus;
+        this.deliveryStatus = deliveryStatus;
     }
 
     public String getParam() {

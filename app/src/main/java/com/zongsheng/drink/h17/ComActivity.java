@@ -220,7 +220,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 非现金出货（饮料机）
      */
     public void sellByNoCash(int goodsCode, String orderID, String saleOrderPrice) {
-        Log.i(TAG, "非现金出货前查询");
+        MyApplication.getInstance().getLogBuyAndShip().d("现金出货前查询");
+//        Log.i(TAG, "非现金出货前查询");
         saleOrderID = orderID;
         MyApplication.getInstance().setNoCashorderSn(orderID);
         machineQueryType = "2";// 非现金出货
@@ -232,30 +233,33 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (results.size() > 0) {
             String[] sellEmptyArr = MyApplication.getInstance().getSellEmptyInfo().split(",");
             // 有货的商品code
-            Map<Integer, Integer> goodsCodeRoadNoMap = new HashMap<Integer, Integer>();
+            //TODO:我用HashSet代替了HashMap
+            HashSet<Integer> goodsCodeRoadNoMap = new HashSet<Integer>();
             for (int i = 0; i < sellEmptyArr.length; i++) {
                 if ("0".equals(sellEmptyArr[i])) { // 有货
-                    goodsCodeRoadNoMap.put((i + 1), 0);
+                    goodsCodeRoadNoMap.add((i + 1));
                 }
             }
-            Log.i(TAG, "取得本地保存产品数据:" + results.size());
+//            Log.i(TAG, "取得本地保存产品数据:" + results.size());
             for (GoodsInfo goodsInfo : results) {
-                if (goodsCodeRoadNoMap.containsKey(goodsInfo.getRoad_no())) {
+                if (goodsCodeRoadNoMap.contains(goodsInfo.getRoad_no())) {
                     saleGoodsInfo = realm.copyFromRealm(goodsInfo);
                     break;
                 }
             }
         }
         if (saleGoodsInfo == null) {
+            MyApplication.getInstance().getLogBuyAndShip().d("所选商品已售空");
             ToastUtils.showToast(this, "所选商品已售空");
             return;
         }
-        Log.e(TAG, "推送后真实出货的货道数:" + saleGoodsInfo.getRoad_no() + " " + goodsCode);
+//        Log.e(TAG, "推送后真实出货的货道数:" + saleGoodsInfo.getRoad_no() + " " + goodsCode);
         // 安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
         final int dealSerialNumber = (int) new Date().getTime();
         String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) saleGoodsInfo.getRoad_no(), (byte) 1, 0, 0);
-        Log.e(TAG, "非现金出货结果:" + s);
+//        Log.e(TAG, "非现金出货结果:" + s);
         if (!"".equals(s)) {
+            MyApplication.getInstance().getLogBuyAndShip().d("机器正忙，延时0.5秒重新发送指令");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -573,6 +577,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
 
     private void cashPaySend2MQ(PayModel payModel, String payType, String DeliveryStatus) {
+        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -606,7 +611,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     private void shipmentFail(PayModel payModel, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库");
+        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -1080,7 +1085,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
 //                        Log.e(TAG, "出货记录!: " + s);
                         final String[] info = s.split(",");
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 = "+info[5]);
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]);
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
@@ -1111,6 +1116,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                     , MyApplication.getInstance().getBindDeskList().get(0).getMachineSn()).findFirst();
 
                         } else {
+                            //格子柜
                             String ss = Integer.toHexString(Integer.parseInt(info[0]));
                             if (ss.length() >= 2) {
                                 ss = ss.substring(ss.length() - 2);
@@ -1133,6 +1139,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             MyApplication.getInstance().getLogBuyAndShip().d("副柜出货成功，货道号 = "+roadNo);
                             updateDeskKucun(String.valueOf(roadNo));
                         }
+                        //TODO:判断支付方式可能有问题
                         machineQueryType = "";
                         int payType = 1;
                         if ("4".equals(info[4])) {// 支付了0元 非现金支付
@@ -1141,6 +1148,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         String record;
                         // 记录信息 交易号:212,交易时间:20160910104948,交易种类:1:现金,现金扣费:10角,非现金扣费:0角,出货结果:1成功,货道号:21,商品编号:10
                         if (payType == 49) { // 在线支付
+                            MyApplication.getInstance().getLogBuyAndShip().d("在线支付");
                             record = info[2] + "," + saleTime + "," + payType + ",0," + goodsInfo.getPrice() +
                                     "," + (info[7].equals("0") ? "1" : "2") + "," + roadNo + "," + goodsInfo.getGoodsCode();
                             if (info[7].equals(Constant.SHIPMENTSUCCESS)) {
@@ -1149,6 +1157,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 shipmentFail(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), false), info[4], Constant.DELIVERYFAIL);
                             }
                         } else { // 现金支付
+                            MyApplication.getInstance().getLogBuyAndShip().d("现金支付");
                             if (goodsInfo != null) {
                                 record = info[2] + "," + saleTime + "," + payType + "," + Integer.parseInt(info[1]) / 10 +
                                         ",0," + (info[7].equals("0") ? "1" : "2") + "," + roadNo + "," + goodsInfo.getGoodsCode();
@@ -1219,12 +1228,14 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                            Log.e(TAG, "用户选择了:" + info[3]);
                             MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[3]+" ; 货道号 = "+info[4]);
                             // 取得商品code
-                            //TODO:这里应该是info[4]
+                            //TODO:这里应该是info[4]，把箱号当成货道号的话不可能找到商品，因为货道号不可能为0
                             GoodsInfo goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(info[3])).findFirst();
                             if (goodsInfo != null && !"".equals(goodsInfo.getGoodsCode())) {
                                 //TODO:这里应该是info[4]
                                 MyApplication.getInstance().getLogBuyAndShip().d("找到按键对应的商品 = "+goodsInfo.getGoodsName()+" "+goodsInfo.getGoodsCode());
                                 selectGoodByButton(info[3], goodsInfo.getGoodsCode());
+                            }else {
+                                MyApplication.getInstance().getLogBuyAndShip().d("没有找到商品 = "+"箱号 = "+info[3]+" ; 货道号 = "+info[4]);
                             }
                             //如果用户投币的话，显示投币数
                             showCashCount(Integer.parseInt(info[5]) / 10);

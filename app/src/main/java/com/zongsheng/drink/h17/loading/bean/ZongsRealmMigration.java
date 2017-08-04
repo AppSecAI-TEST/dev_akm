@@ -136,7 +136,7 @@ public class ZongsRealmMigration implements RealmMigration {
                     .addField("recordInfo", String.class)
                     .addField("goodsName", String.class)
                     .addField("param", String.class)
-                    .addField("DeliveryStatus", String.class);
+                    .addField("deliveryStatus", String.class);
             oldVersion++;
         }
 
