@@ -745,6 +745,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
     /**
      * 处理产品的缺货信息 是否售空 0:未空 1:售空
+     * 根据VMC报告的缺货信息更新GoodsInfo数据库，间接影响售货界面和补货界面显示的货道是否有货情况
      */
     public void handleGoodsKuCun() {
         try {
@@ -752,6 +753,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
             if (MyApplication.getInstance().getSellEmptyInfo() == null || "".equals(MyApplication.getInstance().getSellEmptyInfo())) {
                 return;
             }
+            //获取主机各货道的缺货情况
             String[] sellEmptyArr = MyApplication.getInstance().getSellEmptyInfo().split(",");
             // 有货的货道
             Map<Integer, Integer> goodsCodeRoadNoMap = new HashMap<>();
@@ -1186,7 +1188,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         MyApplication.getInstance().setRoadCount(Integer.parseInt(s.split(",")[0]));
                     } else if ("007D".equals(sub)) {// 运行状态
                         s = s.replace("007D", "");
-                        Log.e(TAG, "运行状态!: " + s);
+//                        Log.e(TAG, "运行状态!: " + s);
 //                        "/运行状态,能否营业:" + s[0] + ",门开关:" + s[1] + ",选中的按键编号:" + s[2]
 //                                + ",选中的按键编号对应的料道编号:" + s[3]+ ",选中的按键编号对应的商品价格:" + s[4]+ ",1元个数:" + s[5]+ ",5角个数:" + s[6]
 //                          s[7] 附件柜信息(0,1,0,0,0,0,0)【食品柜、格子柜1、……6】;
@@ -1351,16 +1353,21 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         }
     });
 
-
+    /**
+     * 收到VMC发来的主机缺货信息后进行处理
+     * @param s
+     */
     private void doEmptyControl(String s) {
-        Log.i(TAG, "货道信息收到:" + s);
+//        Log.i(TAG, "货道信息收到:" + s);
+        //取反
         s = s.replace("1", "5").replace("0", "1").replace("5", "0");
 
-        Log.i(TAG, "货道信息HAH:" + s);
+//        Log.i(TAG, "货道信息HAH:" + s);
         // 如果有格子柜的话 不结束,继续去取得格子柜的货道是否售空信息
         if (MyApplication.getInstance().getGeziList().size() > 0) {
             geziKucunCheckCount = 1;
             // 获取格子柜货道售空信息
+            //TODO:这里只检查了1个格子柜
             String ss = comVSI.checkThingsHaveOrNot(MyApplication.getInstance().getGeziList().get(0));
         } else {
             // 信息获取完成后处理
@@ -1369,7 +1376,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 machineInfoGetTimer.cancel();
             }
         }
-        L.v(SysConfig.ZPush, "2-------->" + s);
+//        L.v(SysConfig.ZPush, "2-------->" + s);
+        //设置Application中表示主机货道是否缺货的全局变量
         MyApplication.getInstance().setSellEmptyInfo(s);
 
         if (!isNeedInitMachineInfo) {
@@ -1382,9 +1390,10 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
             }, 1000);
         }
-        Log.i(TAG, "货道售空情况:" + s);
-        // 判断是否缺货,缺货的话提交服务器
+//        Log.i(TAG, "货道售空情况:" + s);
+        // 判断是否缺货,缺货的话提交服务器，只是保存到数据库，由Service定时上传到服务器
         try {
+            //获取主机各货道是否缺货信息
             String[] emptyInfoArr = MyApplication.getInstance().getSellEmptyInfo().split(",");
             String roads = "";
             GoodsInfo goodsInfo;
@@ -1611,7 +1620,9 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     /**
-     * 机器缺货
+     * 处理机器缺货，将缺货信息写入数据库，被Service上传到服务器
+     * @param machineSn 机器编码
+     * @param roads 缺货的货道号
      */
     private void machineQuehuo(String machineSn, String roads) {
         // give sub method to do

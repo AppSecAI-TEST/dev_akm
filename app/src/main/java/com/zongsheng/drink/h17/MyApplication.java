@@ -82,7 +82,7 @@ public class MyApplication extends Application {
      */
     private String troubleStatus = "";
     /**
-     * 售空情况 eg:1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1 [第一货道o:有货/1:无货,第二货道……]
+     * 主机售空情况 eg:1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1 [第一货道o:有货/1:无货,第二货道……]，VMC在BuyActivity启动之前报告，且定时循环报告
      */
     private String sellEmptyInfo = "";
     /**

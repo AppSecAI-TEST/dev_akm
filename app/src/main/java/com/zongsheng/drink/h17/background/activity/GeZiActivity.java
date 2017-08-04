@@ -152,51 +152,113 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                 final MachineInfo info = searchList.get(position);
                 //以22开头的是副柜
                 if (info.getMachineSn().startsWith("22")) {
-                    if (bindDeskSize < nVSIDeskSize) {
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                final BindDesk desk = new BindDesk();
-                                desk.setMachineSn(info.getMachineSn());
-                                desk.setMachineName(info.getMachineName());
-                                desk.setRoadCount(info.getRoadCount());
-                                desk.setMachineType(info.getMachineType());
-                                desk.setCreateTime(new Date().getTime() + "");
-                                realm.copyToRealmOrUpdate(desk);
-                            }
-                        });
-                        initView();
-                        putBinding(searchList.get(position).getMachineSn());
-                        searchList.clear();
-                        searchAdapter.notifyDataSetChanged();
-                        lvSearchList.removeAllViewsInLayout();
-                    } else if (nVSIDeskSize != -1 && bindDeskSize >= nVSIDeskSize) {
-                        ToastUtils.showToast(GeZiActivity.this, "绑定的副柜数量已经超过限制！");
+                    //nVSIDeskSize只能为 0 或 1
+                    if (nVSIDeskSize == 0){
+                        ToastUtils.showToast(GeZiActivity.this, "副柜未连接或遥控器设置错误");
+                        MyApplication.getInstance().getLogBuHuo().d("VMC报告连接的副柜数为 0 添加失败");
+                    }else {
+                        if (bindDeskSize < nVSIDeskSize){
+                            MyApplication.getInstance().getLogBuHuo().d("添加副柜 = "+info.getMachineName());
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    final BindDesk desk = new BindDesk();
+                                    desk.setMachineSn(info.getMachineSn());
+                                    desk.setMachineName(info.getMachineName());
+                                    desk.setRoadCount(info.getRoadCount());
+                                    desk.setMachineType(info.getMachineType());
+                                    desk.setCreateTime(new Date().getTime() + "");
+                                    realm.copyToRealmOrUpdate(desk);
+                                }
+                            });
+                            initView();
+                            putBinding(searchList.get(position).getMachineSn());
+                            searchList.clear();
+                            searchAdapter.notifyDataSetChanged();
+                            lvSearchList.removeAllViewsInLayout();
+                        }else {
+                            MyApplication.getInstance().getLogBuHuo().d("添加副柜失败，超过限制数量");
+                            ToastUtils.showToast(GeZiActivity.this, "只能绑定一个副柜！");
+                        }
                     }
+//                    if (bindDeskSize < nVSIDeskSize) {
+//                        MyApplication.getInstance().getLogBuHuo().d("点击副柜");
+//                        realm.executeTransaction(new Realm.Transaction() {
+//                            @Override
+//                            public void execute(Realm realm) {
+//                                final BindDesk desk = new BindDesk();
+//                                desk.setMachineSn(info.getMachineSn());
+//                                desk.setMachineName(info.getMachineName());
+//                                desk.setRoadCount(info.getRoadCount());
+//                                desk.setMachineType(info.getMachineType());
+//                                desk.setCreateTime(new Date().getTime() + "");
+//                                realm.copyToRealmOrUpdate(desk);
+//                            }
+//                        });
+//                        initView();
+//                        putBinding(searchList.get(position).getMachineSn());
+//                        searchList.clear();
+//                        searchAdapter.notifyDataSetChanged();
+//                        lvSearchList.removeAllViewsInLayout();
+//                    } else if (nVSIDeskSize != -1 && bindDeskSize >= nVSIDeskSize) {
+//                        MyApplication.getInstance().getLogBuHuo().d("点击副柜，绑定的副柜数量 > 实际连接数量");
+//                        ToastUtils.showToast(GeZiActivity.this, "绑定的副柜数量已经超过限制！");
+//                    }
                 } else {
-                    if (bindGeziSize < nVSIGiziSize) {
-                        // 点击条目后关掉选择格子柜的页面
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                // 把点击的格子柜 添加到本地绑定的数据库里面
-                                final BindGeZi gezi = new BindGeZi();
-                                gezi.setMachineSn(info.getMachineSn());//编号
-                                gezi.setMachineName(info.getMachineName());//名称
-                                gezi.setRoadCount(info.getRoadCount());//格子数
-                                gezi.setMachineType(info.getMachineType());//类型;
-                                gezi.setCreateTime(new Date().getTime() + "");
-                                realm.copyToRealmOrUpdate(gezi);
-                            }
-                        });
-                        initView();
-                        putBinding(searchList.get(position).getMachineSn());
-                        searchList.clear();
-                        searchAdapter.notifyDataSetChanged();
-                        lvSearchList.removeAllViewsInLayout();
-                    } else if (nVSIGiziSize != -1 && bindGeziSize >= nVSIGiziSize) {
-                        ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_02);
+                    //nVSIGeziSize可以为 -1 0 1 ~
+                    if (nVSIGiziSize == -1 || nVSIGiziSize == 0){
+                        ToastUtils.showToast(GeZiActivity.this, "格子柜未连接或遥控器设置错误");
+                        MyApplication.getInstance().getLogBuHuo().d("VMC报告连接的格子柜数为 "+nVSIGiziSize+" 添加失败");
+                    }else {
+                        if (bindGeziSize < nVSIGiziSize){
+                            MyApplication.getInstance().getLogBuHuo().d("添加格子柜 = "+info.getMachineName());
+                            // 点击条目后关掉选择格子柜的页面
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    // 把点击的格子柜 添加到本地绑定的数据库里面
+                                    final BindGeZi gezi = new BindGeZi();
+                                    gezi.setMachineSn(info.getMachineSn());//编号
+                                    gezi.setMachineName(info.getMachineName());//名称
+                                    gezi.setRoadCount(info.getRoadCount());//格子数
+                                    gezi.setMachineType(info.getMachineType());//类型;
+                                    gezi.setCreateTime(new Date().getTime() + "");
+                                    realm.copyToRealmOrUpdate(gezi);
+                                }
+                            });
+                            initView();
+                            putBinding(searchList.get(position).getMachineSn());
+                            searchList.clear();
+                            searchAdapter.notifyDataSetChanged();
+                            lvSearchList.removeAllViewsInLayout();
+                        }else {
+                            MyApplication.getInstance().getLogBuHuo().d("添加格子柜失败，超过限制数量");
+                            ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_02);
+                        }
                     }
+//                    if (bindGeziSize < nVSIGiziSize) {
+//                        // 点击条目后关掉选择格子柜的页面
+//                        realm.executeTransaction(new Realm.Transaction() {
+//                            @Override
+//                            public void execute(Realm realm) {
+//                                // 把点击的格子柜 添加到本地绑定的数据库里面
+//                                final BindGeZi gezi = new BindGeZi();
+//                                gezi.setMachineSn(info.getMachineSn());//编号
+//                                gezi.setMachineName(info.getMachineName());//名称
+//                                gezi.setRoadCount(info.getRoadCount());//格子数
+//                                gezi.setMachineType(info.getMachineType());//类型;
+//                                gezi.setCreateTime(new Date().getTime() + "");
+//                                realm.copyToRealmOrUpdate(gezi);
+//                            }
+//                        });
+//                        initView();
+//                        putBinding(searchList.get(position).getMachineSn());
+//                        searchList.clear();
+//                        searchAdapter.notifyDataSetChanged();
+//                        lvSearchList.removeAllViewsInLayout();
+//                    } else if (nVSIGiziSize != -1 && bindGeziSize >= nVSIGiziSize) {
+//                        ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_02);
+//                    }
                 }
                 llGeziSearch.setVisibility(View.GONE);
             }
@@ -308,7 +370,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         bindGeziSize = bindGezis.size();
         bindDeskSize = bindDesks.size();
         // 如果格子柜的数量为不为空
-        if (bindGezis.size() == 0 && bindDesks.size() == 0) {
+        //TODO:我改了这里 && 变为 ||
+        if (bindGezis.size() == 0 || bindDesks.size() == 0) {
             // 如果当前的查询不到数据,显示空布局来填充activity
             rlNoGezilist.setVisibility(View.VISIBLE);
             llGeziList.setVisibility(View.GONE);
@@ -396,7 +459,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * @return
      */
     private int getGeziSizeByVSI(String str) {//  1|1|0|0|0|0|0|
+        //1表示连接，0表示未连接
         String string[] = str.split("\\|");
+        //TODO:为什么，难道默认格子柜按箱号顺序连接
         for (int i = 1; i < string.length - 1; i++) {
             if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
                 return -1;
