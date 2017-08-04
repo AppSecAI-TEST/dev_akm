@@ -1,5 +1,6 @@
 package com.zongsheng.drink.h17.Model;
 
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.background.bean.MQReceiver;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
 import com.zongsheng.drink.h17.front.bean.PayModel;
@@ -34,6 +35,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
 
     @Override
     public void updateLocalKuncun(String road_no) {
+        MyApplication.getInstance().getLogBuyAndShip().d("更新本地库存 : 货道号 = "+road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
         if (goodsInfo != null && goodsInfo.getKuCun() != null && !"".equals(goodsInfo.getKuCun())) {
@@ -63,6 +65,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
 
     @Override
     public void addPayModel2Realm(PayModel payModel, String orderSn, String payType, String DeliveryStatus) {
+        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库");
         final PayModel payModel1 = payModel.clone();
         payModel1.setOrderSn(orderSn);
         payModel1.setPayType(payType);

@@ -252,6 +252,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         //显示支持的网络支付方式
         gd_payMethod=(GridLayout)view.findViewById(R.id.gridLayout_payMethod);
         List<PayMethod> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
+        MyApplication.getInstance().getLogBuyAndShip().d("支持的网络支付方式 = "+enabledPayMethods);
         setPayMethod(enabledPayMethods);
     }
     /**
@@ -360,7 +361,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     String time = simpleDateFormat.format(new Date());
                     String push_machine_sn;
                     String goods_belong;
-                    if ("1".equals(goodsInfo.getGoodsBelong())) { // 1:主机 2:格子柜
+                    if ("1".equals(goodsInfo.getGoodsBelong())) { // 1:主机 2:格子柜 3:副柜
                         push_machine_sn = MyApplication.getInstance().getMachine_sn();
                         goods_belong = "1";
                     } else if ("2".equals(goodsInfo.getGoodsBelong())) {
@@ -383,8 +384,10 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                             + "&gc=" + goodsInfo.getGoodsCode() + "&gn=1&gi=" + goodsInfo.getGoodsID() + "&gb=" + goods_belong + "&gp=" + price_encrypt
                             + "&os=" + order_sn + "&pms=" + push_machine_sn + "&mt=" + time + "&op=1" + "&rn=" + goodsInfo.getRoad_no();
                     L.d(SysConfig.ZPush, "qCodeUrl------------------------------->" + qCodeUrl);
+                    MyApplication.getInstance().getLogBuyAndShip().d("成功生成二维码 = "+qCodeUrl);
                     iv_qrcode.setImageBitmap(QRCodeUtil.createImage(qCodeUrl, 400, 400, null));
                 } else {
+                    MyApplication.getInstance().getLogBuyAndShip().d("生成二维码失败");
                     iv_qrcode.setVisibility(View.GONE);
                     mRlNetError.setVisibility(View.VISIBLE);
                     is_qcode_error = true;
@@ -411,23 +414,28 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
     @Override
     public void setCashCount(int cashCount) {
+        MyApplication.getInstance().getLogBuyAndShip().d("投币 = "+cashCount*0.1+"元");
         tvCashCount.setText("已投入" + String.valueOf(cashCount * 0.1) + "元");
         if (soldOver) {
             return;
         }
         // 判断钱够不够 够的话出货并退币
         if (cashCount >= (int) Double.parseDouble(goodsInfo.getPrice())) {
-            Log.e("POP", "钱够了 出货吧" + goodsInfo.getPrice());
+            MyApplication.getInstance().getLogBuyAndShip().d("投币足够，开始出货");
+//            Log.e("POP", "钱够了 出货吧" + goodsInfo.getPrice());
             // 出货
             if ("1".equals(goodsInfo.getGoodsBelong())) {// 1:主机 2:格子柜
                 if ("0".equals(selectType)) {// 按钮选择的 机器自动处理
                     soldOver = true;
-                    Log.e("POP", "钱够了 出货吧 按钮选择的 机器自动处理");
+                    MyApplication.getInstance().getLogBuyAndShip().d("商品属于主机 机器按钮选择，自动处理出货");
+//                    Log.e("POP", "钱够了 出货吧 按钮选择的 机器自动处理");
                     return;
                 }
                 soldOver = true;
+                MyApplication.getInstance().getLogBuyAndShip().d("商品属于主机 通过App选择，PC处理出货");
                 ((BuyActivity) context).saleByCash(Integer.parseInt(goodsInfo.getGoodsCode()));
             } else if ("2".equals(goodsInfo.getGoodsBelong())) {
+                MyApplication.getInstance().getLogBuyAndShip().d("商品属于格子柜 通过App选择，PC处理出货");
                 soldOver = true;
                 // 请求主控扣费 扣费成功 请求格子柜出货
                 ShipmentModel shipmentModel = new ShipmentModel();
@@ -440,7 +448,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                 ((BuyActivity) context).costMoneyForCabinet(shipmentModel, (int) Double.parseDouble(goodsInfo.getPrice()), false);
             } else {
                 soldOver = true;
-                Log.e("POP", "" + goodsInfo.getRoad_no());
+//                Log.e("POP", "" + goodsInfo.getRoad_no());
                 ((BuyActivity) context).fuguiSaleTestByCash(goodsInfo.getRoad_no(), (int) Double.parseDouble(goodsInfo.getPrice()));
             }
         }
@@ -493,7 +501,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
     @Override
     public void shipmentSuccessByCash() {
-        Log.e("chuhuo", "出货成功");
+//        Log.e("chuhuo", "出货成功");
+        MyApplication.getInstance().getLogBuyAndShip().d("现金出货成功");
         soldOver = true;
         soleSuccess = true;
         tvCashCount.setVisibility(View.GONE);

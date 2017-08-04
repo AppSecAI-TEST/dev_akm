@@ -129,9 +129,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logUtil = new LogUtil(this.getClass().getSimpleName());
-        //这里控制是否打印Log
-        logUtil.setShouldPrintLog(true);
+
+        logUtil = MyApplication.getInstance().getLogBuHuo();
+
         setContentView(R.layout.activity_gezi);
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();

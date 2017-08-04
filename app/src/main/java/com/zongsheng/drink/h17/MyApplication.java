@@ -223,6 +223,14 @@ public class MyApplication extends Application {
     }
 
     public LogUtil logUtil;
+    //购买、出货流程的日志工具
+    public LogUtil logBuyAndShip;
+    //补货流程的日志工具
+    public LogUtil logBuHuo;
+    //PC、VMC底层通信的日志工具
+    public LogUtil logBasicCom;
+    //初始化流程的全局Log，包括各重要组件的初始化
+    public LogUtil logInit;
 
     @Override
     public void onCreate() {
@@ -233,6 +241,11 @@ public class MyApplication extends Application {
         //控制全局的日志打印
         logUtil = new LogUtil(this.getClass().getSimpleName());
         logUtil.setShouldPrintLogAllCtrl(true);
+
+        logBuHuo = new LogUtil("buHuo");
+        logBasicCom = new LogUtil("pc_vmv");
+        logBuyAndShip = new LogUtil("buyAndShip");
+        logInit = new LogUtil("init");
 
         if (getPackageName().equals(getCurProcessName(this))) {
             L.isDebug = true;
@@ -685,5 +698,37 @@ public class MyApplication extends Application {
 
     public void setEnabledPayMethod(List<PayMethod> enabledPayMethod) {
         this.enabledPayMethod = enabledPayMethod;
+    }
+
+    /**
+     * 用于支付、出货的全局Log工具
+     * @return LogUtil
+     */
+    public LogUtil getLogBuyAndShip() {
+        return logBuyAndShip;
+    }
+
+    /**
+     * 用于PC和VMC底层通信的全局Log工具
+     * @return LogUtil
+     */
+    public LogUtil getLogBasicCom() {
+        return logBasicCom;
+    }
+
+    /**
+     * 用于补货流程的全局Log工具
+     * @return LogUtil
+     */
+    public LogUtil getLogBuHuo() {
+        return logBuHuo;
+    }
+
+    /**
+     * 初始化流程的全局Log，包括各重要组件的初始化
+     * @return LogUtil
+     */
+    public LogUtil getLogInit() {
+        return logInit;
     }
 }

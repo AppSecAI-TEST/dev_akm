@@ -135,6 +135,7 @@ public class LoadingModelImpl implements ILoadingModel {
 
     @Override
     public void updateLocalKucun(String road_no) {
+        MyApplication.getInstance().getLogBuyAndShip().d("主机更新本地库存 : 货道号 = "+road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
         if (goodsInfo != null && goodsInfo.getKuCun() != null && !"".equals(goodsInfo.getKuCun())) {

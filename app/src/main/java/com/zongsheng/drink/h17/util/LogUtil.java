@@ -4,7 +4,7 @@ import android.util.Log;
 
 /**
  * Created by 袁国栋 on 17/8/1.
- * 一个日志工具，可以控制是否打印日志，避免频繁使用注释
+ * 一个日志工具，可以控制单实例或全局是否打印日志，避免频繁使用注释
  */
 
 public class LogUtil {

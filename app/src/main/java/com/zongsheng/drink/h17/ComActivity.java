@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -156,7 +157,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 现金出货
      */
     public void sellByCash(int goodsCode) {
-        Log.i(TAG, "现金出货前查询");
+//        Log.i(TAG, "现金出货前查询");
+        MyApplication.getInstance().getLogBuyAndShip().d("现金出货前查询");
         // 现金出货前查询
         machineQueryType = "1";// 现金出货
         // 根据goodsCode查找出货货道商品
@@ -166,41 +168,49 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         saleGoodsInfo = null;
         if (results.size() > 0) {
             String[] sellEmptyArr = MyApplication.getInstance().getSellEmptyInfo().split(",");
-            // 有货的商品code
-            Map<Integer, Integer> goodsCodeRoadNoMap = new HashMap<Integer, Integer>();
+            // 有货的商品货道号
+            //TODO:我用HashSet代替了HashMap
+            HashSet<Integer> goodsCodeRoadNum = new HashSet<Integer>();
             for (int i = 0; i < sellEmptyArr.length; i++) {
                 if ("0".equals(sellEmptyArr[i])) { // 有货
-                    goodsCodeRoadNoMap.put((i + 1), 0);
+                    goodsCodeRoadNum.add((i + 1));
                 }
             }
-            Log.i(TAG, "取得本地保存产品数据:" + results.size());
+//            Log.i(TAG, "取得本地保存产品数据:" + results.size());
             for (GoodsInfo goodsInfo : results) {
-                if (goodsCodeRoadNoMap.containsKey(goodsInfo.getRoad_no())) {
+                //如果有货的货道号列表中包含该商品所属货道号，说明有货
+                if (goodsCodeRoadNum.contains(goodsInfo.getRoad_no())) {
                     saleGoodsInfo = realm.copyFromRealm(goodsInfo);
                     break;
                 }
             }
         }
         if (saleGoodsInfo == null) {
+            MyApplication.getInstance().getLogBuyAndShip().d("所选商品已售空");
             ToastUtils.showToast(this, "所选商品已售空");
             return;
         }
         // 判断两次操作时间间隔
         long time = new Date().getTime();
+        //两次出货时间不能小于1秒
         if (lastSaleTime != 0 && time - lastSaleTime < 1000) {
             SystemClock.sleep(1000 - (time - lastSaleTime));
         }
         lastSaleTime = time;
         // 安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
         final int dealSerialNumber = (int) new Date().getTime();
-        String s = comVSI.toPay(dealSerialNumber, (byte) saleGoodsInfo.getRoad_no(), (byte) 1, ((int) Double.parseDouble(saleGoodsInfo.getPrice())) * 10, 0);
-        Log.e(TAG, "现金出货结果:" + s);
+        long payPrice = ((int) Double.parseDouble(saleGoodsInfo.getPrice())) * 10;
+//        MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+saleGoodsInfo.getRoad_no()+"支付方式 : 1 ; 价格 : "+payPrice+" ; 支付方式 : 现金");
+        String s = comVSI.toPay(dealSerialNumber, (byte) saleGoodsInfo.getRoad_no(), (byte) 1, payPrice, 0);
+//        Log.e(TAG, "现金出货结果:" + s);
+
         if (!"".equals(s)) {
+            MyApplication.getInstance().getLogBuyAndShip().d("机器正忙，延时0.5秒重新发送指令");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     String s = comVSI.toPay(dealSerialNumber, (byte) saleGoodsInfo.getRoad_no(), (byte) 1, ((int) Double.parseDouble(saleGoodsInfo.getPrice())) * 10, 0);
-                    Log.e(TAG, "现金出货结果:" + s);
+//                    Log.e(TAG, "现金出货结果:" + s);
                 }
             }, 500);
         }
@@ -596,6 +606,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     private void shipmentFail(PayModel payModel, String payType, String DeliveryStatus) {
+        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库");
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -689,6 +700,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * @param road_no
      */
     protected void updateDeskKucun(String road_no) {
+        //由LoadingActivity实现
     }
 
     /**
@@ -1047,7 +1059,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             }
                         }
                         isMachineConnected = true;
-                    } else if ("007C".equals(sub)) { // 出货记录
+                    } else if ("007C".equals(sub)) {
+                        // VMC发来出货记录
                         String result = comVSI.checkThingsHaveOrNotForNow(0);
                         if (!"".equals(result)) {
                             new Handler().postDelayed(new Runnable() {
@@ -1065,8 +1078,9 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                        "售卖料道编号:" + s[0]+ ",售卖金额:" + s[1] + ",出货序列号:" + s[2] + ",卡号=" + s[3] + ",支付方式=" + s[4]
 //                                + ",商品编号=" + s[5] + ",售货机设备编号=" + s[6] + ",出货结果="  + (s[7].equals("0")?"成功":"失败")
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
-                        Log.e(TAG, "出货记录!: " + s);
+//                        Log.e(TAG, "出货记录!: " + s);
                         final String[] info = s.split(",");
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 = "+info[5]);
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
@@ -1082,13 +1096,17 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         // 出货成功 (出货货道, 产品编号, 出货量)
                         // 根据货道获取产品code
                         GoodsInfo goodsInfo;
+                        //如果箱号为0，主机
                         if (Integer.parseInt(info[11]) == 0) {
+                            //找到商品
+                            //TODO:这里没有判断该货道是否缺货
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", roadNo).findFirst();
                         } else if (Integer.parseInt(info[11]) == 1) {
+                            //箱号为1，副柜
                             //副柜的有效为十六进制11-68，换算为十进制之后为17-104
                             String ss = Integer.toHexString(Integer.parseInt(info[0]));
                             roadNo = Integer.parseInt(ss);
-                            Log.e("COM", "货道号:" + roadNo);
+//                            Log.e("COM", "货道号:" + roadNo);
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindDeskList().get(0).getMachineSn()).findFirst();
 
@@ -1098,15 +1116,21 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 ss = ss.substring(ss.length() - 2);
                             }
                             roadNo = Integer.parseInt(ss);
-                            Log.e("COM", "货道号:" + roadNo);
+//                            Log.e("COM", "货道号:" + roadNo);
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindGeZis().get(Integer.parseInt(info[11]) - 2).getMachineSn()).findFirst();
                         }
+                        //如果出货成功，且箱号为0，主机出货成功
                         if ("0".equals(info[7]) && Integer.parseInt(info[11]) == 0) {
+                            //更新货道库存
                             updateLocalKuCun(String.valueOf(roadNo));
+                            MyApplication.getInstance().getLogBuyAndShip().d("主机出货成功，货道号 = "+roadNo);
                         }
 
+                        //如果出货成功，且箱号为1，说明副柜出货成功
                         if ("0".equals(info[7]) && Integer.parseInt(info[11]) == 1) {
+
+                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货成功，货道号 = "+roadNo);
                             updateDeskKucun(String.valueOf(roadNo));
                         }
                         machineQueryType = "";
@@ -1182,20 +1206,27 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         emptyIntoGetTime = now;
                     } else if (s.length() >= 6 && "007617".equals(s.substring(0, 6))) {
                         s = s.replace("007617", "");
-                        Log.e(TAG, "轮询信息:" + s);
+//                        Log.e(TAG, "轮询信息:" + s);
                         String[] info = s.split(",");
+                        //门关闭，处于正常销售状态
                         if ("1".equals(doorStatus) && "0".equals(info[1])) {
                             getRoadEmptyInfo();
                         }
+                        //TODO:应该使info[2]
                         doorStatus = info[1];
                         if (!"".equals(info[3]) && !"0".equals(info[3])) {
                             // 用户按了商品按钮
-                            Log.e(TAG, "用户选择了:" + info[3]);
+//                            Log.e(TAG, "用户选择了:" + info[3]);
+                            MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[3]+" ; 货道号 = "+info[4]);
                             // 取得商品code
+                            //TODO:这里应该是info[4]
                             GoodsInfo goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(info[3])).findFirst();
                             if (goodsInfo != null && !"".equals(goodsInfo.getGoodsCode())) {
+                                //TODO:这里应该是info[4]
+                                MyApplication.getInstance().getLogBuyAndShip().d("找到按键对应的商品 = "+goodsInfo.getGoodsName()+" "+goodsInfo.getGoodsCode());
                                 selectGoodByButton(info[3], goodsInfo.getGoodsCode());
                             }
+                            //如果用户投币的话，显示投币数
                             showCashCount(Integer.parseInt(info[5]) / 10);
                         } else {
                             if (!"".equals(info[5]) && !"0".equals(info[5])) {

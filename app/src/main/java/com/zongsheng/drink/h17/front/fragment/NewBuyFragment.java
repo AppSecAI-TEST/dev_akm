@@ -24,6 +24,7 @@ import com.zongsheng.drink.h17.front.adapter.MainViewPagerAdapter;
 import com.zongsheng.drink.h17.front.bean.GoodsInfo;
 import com.zongsheng.drink.h17.front.common.ShowBuyPageListener;
 import com.zongsheng.drink.h17.front.effect.DepthPageTransformer;
+import com.zongsheng.drink.h17.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,9 @@ import butterknife.OnClick;
  * Created by dxf on 2016/8/30.
  */
 public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnGoodsClickListener{
+
+    private LogUtil logBuyAndShip;
+
     @BindView(R.id.vp_goods)
     ViewPager mViewPager;
     @BindView(R.id.iv_go_up)
@@ -81,6 +85,9 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        logBuyAndShip = MyApplication.getInstance().getLogBuyAndShip();
+
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null) {
@@ -101,7 +108,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
     private void initView() {
         // 设置选中
         rlDrinkTop.setSelected(true);
-        // 假数据
+
         goodsInfoList = MyApplication.getInstance().getGoodsInfos();
 //        showList(goodsInfoList);
         mViewPagerAdapter = new MainViewPagerAdapter(goodsInfoList, getContext(), this);
@@ -274,9 +281,12 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
 
     @Override
     public void onGoodsClick(GoodsInfo goodsInfo) {
+        logBuyAndShip.d("App 点击商品 : "+goodsInfo.getGoodsName()+" ; 属于机器 : "+goodsInfo.getGoodsBelong());
         if ("1".equals(goodsInfo.getIsSoldOut())) {
+            logBuyAndShip.d("商品售空，点击无效");
             return;
         }
+        logBuyAndShip.d("商品未售空，弹出支付窗口");
         if (showBuyPageListener != null) {
             showBuyPageListener.showBuyPage(goodsInfo, "1");
         }

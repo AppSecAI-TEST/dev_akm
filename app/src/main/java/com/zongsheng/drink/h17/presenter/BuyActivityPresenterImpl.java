@@ -196,7 +196,8 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                                 String machineQueryType, String saleOrderID, int boxIndex, String saleTime, String trade_no) {
         try {
             isSaleing = false;
-            Log.e(TAG, "出货成功!: goodsCode:" + goodsCode + " machineQueryType:" + machineQueryType);
+//            Log.e(TAG, "出货成功!: goodsCode:" + goodsCode + " machineQueryType:" + machineQueryType);
+            MyApplication.getInstance().getLogBuyAndShip().d("");
             if (boxIndex == 0) { // 主柜
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
                     if (goodsCode.equals(goodsInfo.getGoodsCode())) {
@@ -486,6 +487,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
     @Override
     public void saleByCash(final int goodsCode) {
         if (isSaleing) {
+            MyApplication.getInstance().getLogBuyAndShip().d("当前占用，延迟1秒出货");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -494,6 +496,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             }, 1000);
         } else {
+            MyApplication.getInstance().getLogBuyAndShip().d("开始出货");
             isSaleing = true;
             ((ComActivity) iBuyActivityInterface).sellByCash(goodsCode);
         }
@@ -609,6 +612,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 Message msg = new Message();
                 boolean tmp = ping();
                 if (tmp) {
+                    //网络连接正常
                     msg.what = 0;
                 } else {
                     msg.what = 1;
@@ -630,6 +634,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
+                    //网络连接正常
                     if (iBuyGoodsPopWindowView != null && flag) {
                         iBuyGoodsPopWindowView.NetWorkSuccess();
                     }
@@ -645,6 +650,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         }
     };
 
+    //判断网络连接是否正常
     private boolean ping() {
         String result = null;
         Process p = null;
@@ -663,7 +669,8 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         } finally {
             assert p != null;
             p.destroy();
-            L.i("BuyActivity", "result = " + result);
+//            L.i("BuyActivity", "result = " + result);
+            MyApplication.getInstance().getLogBuyAndShip().d("网络连接状态 = "+result);
         }
         return false;
     }

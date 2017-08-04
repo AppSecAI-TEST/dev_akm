@@ -55,6 +55,7 @@ import com.zongsheng.drink.h17.presenter.IBuyActivityPresenter;
 import com.zongsheng.drink.h17.service.LogUploadService;
 import com.zongsheng.drink.h17.service.MachineFaultUploadService;
 import com.zongsheng.drink.h17.service.SaleRecordUploadService;
+import com.zongsheng.drink.h17.util.LogUtil;
 
 import java.util.List;
 import java.util.Observable;
@@ -71,6 +72,8 @@ import io.realm.RealmResults;
  * Created by 谢家勋 on 2016/8/15.
  */
 public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresenter<IBuyActivityInterface>> implements IBuyActivityInterface {
+
+    private LogUtil logBuyAndShip;
 
     @BindView(R.id.iv_logo)
     ImageView ivLogo;
@@ -180,6 +183,9 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buy);
+
+        logBuyAndShip = MyApplication.getInstance().getLogBuyAndShip();
+
         ButterKnife.bind(this);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -1011,7 +1017,8 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
 
     @Override
     protected void updateDeskKucun(String road_no) {
-        Log.e(TAG, "更新库存:" + road_no);
+//        Log.e(TAG, "更新库存:" + road_no);
+        MyApplication.getInstance().getLogBuyAndShip().d("副柜更新本地库存 : 货道号 = "+road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3")
                 .equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
@@ -1019,12 +1026,15 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    if (Integer.parseInt(goodsInfo.getKuCun()) >= 2) {
-                        goodsInfo.setKuCun(String.valueOf(Integer.parseInt(goodsInfo.getKuCun()) - 1));
-                    }
-                    if (goodsInfo.getOnlineKuCun() >= 2) {
-                        goodsInfo.setOnlineKuCun(goodsInfo.getOnlineKuCun() - 1);
-                    }
+                    //TODO:这里不对，副柜库存不会保留一件商品，应该直接减1
+//                    if (Integer.parseInt(goodsInfo.getKuCun()) >= 2) {
+//                        goodsInfo.setKuCun(String.valueOf(Integer.parseInt(goodsInfo.getKuCun()) - 1));
+//                    }
+//                    if (goodsInfo.getOnlineKuCun() >= 2) {
+//                        goodsInfo.setOnlineKuCun(goodsInfo.getOnlineKuCun() - 1);
+//                    }
+                    goodsInfo.setKuCun(String.valueOf(Integer.parseInt(goodsInfo.getKuCun())-1));
+                    goodsInfo.setOnlineKuCun(goodsInfo.getOnlineKuCun()-1);
                 }
             });
         }
