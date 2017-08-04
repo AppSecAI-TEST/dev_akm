@@ -30,6 +30,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1214,6 +1215,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         lastRoadInfo = s;
                         emptyIntoGetTime = now;
                     } else if (s.length() >= 6 && "007617".equals(s.substring(0, 6))) {
+                        // info[0] mCanSale ; info[1] mIsDoorOpen ; info[2] 箱号 ; info[3] 货道号 ; info[4] 价格 ; info[5] 投币金额
+
                         s = s.replace("007617", "");
 //                        Log.e(TAG, "轮询信息:" + s);
                         String[] info = s.split(",");
@@ -1221,21 +1224,20 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         if ("1".equals(doorStatus) && "0".equals(info[1])) {
                             getRoadEmptyInfo();
                         }
-                        //TODO:应该使info[2]
                         doorStatus = info[1];
+                        //货道号不为0，说明用户点击了售货机按钮
                         if (!"".equals(info[3]) && !"0".equals(info[3])) {
                             // 用户按了商品按钮
+                            MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[2]+" ; 货道号 = "+info[3]+" ; 价格 : "+info[4]);
+                            MyApplication.getInstance().getLogBuyAndShip().d(Arrays.toString(info));
 //                            Log.e(TAG, "用户选择了:" + info[3]);
-                            MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[3]+" ; 货道号 = "+info[4]);
                             // 取得商品code
-                            //TODO:这里应该是info[4]，把箱号当成货道号的话不可能找到商品，因为货道号不可能为0
                             GoodsInfo goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(info[3])).findFirst();
                             if (goodsInfo != null && !"".equals(goodsInfo.getGoodsCode())) {
-                                //TODO:这里应该是info[4]
                                 MyApplication.getInstance().getLogBuyAndShip().d("找到按键对应的商品 = "+goodsInfo.getGoodsName()+" "+goodsInfo.getGoodsCode());
                                 selectGoodByButton(info[3], goodsInfo.getGoodsCode());
                             }else {
-                                MyApplication.getInstance().getLogBuyAndShip().d("没有找到商品 = "+"箱号 = "+info[3]+" ; 货道号 = "+info[4]);
+                                MyApplication.getInstance().getLogBuyAndShip().d("没有找到商品 = "+"箱号 = "+info[2]+" ; 货道号 = "+info[3]);
                             }
                             //如果用户投币的话，显示投币数
                             showCashCount(Integer.parseInt(info[5]) / 10);

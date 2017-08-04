@@ -299,6 +299,7 @@ public class ComAokema {
                 break;
             case CMD_LOOP:// 轮询
                 logBasicCom.d("接收 0x76 轮询 = "+bytesToHexString(buf,buf.length));
+//                MyApplication.getInstance().getLogBuyAndShip().d("轮询 = "+bytesToHexString(buf,buf.length));
                 analyseLoopData(buf);
                 break;
             case CMD_OUT_THINGS:// 出货信息

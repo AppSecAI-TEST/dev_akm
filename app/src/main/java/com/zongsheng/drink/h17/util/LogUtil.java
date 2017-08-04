@@ -10,13 +10,12 @@ import android.util.Log;
 public class LogUtil {
     private String TAG;
     //控制所有实例是否打印Log
-    private volatile static boolean shouldPrintLogAllCtrl;
+    private volatile static boolean shouldPrintLogAllCtrl = true;
     //控制单个实例是否打印Log
     private boolean shouldPrintLog;
     public LogUtil(String TAG){
         this.TAG = TAG;
         shouldPrintLog = true;
-        shouldPrintLogAllCtrl = true;
     }
 
 
