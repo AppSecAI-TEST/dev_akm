@@ -320,8 +320,8 @@ public class GeZiFragment extends Fragment implements INetWorkRequCallBackListen
         int roadCount = 0;
         int i = 0;
 
-        MyApplication.getInstance().getLogBuHuo().d("补货 getBindGeZis = "+MyApplication.getInstance().getBindGeZis());
-        MyApplication.getInstance().getLogBuHuo().d("补货 getGeziList = "+MyApplication.getInstance().getGeziList());
+        MyApplication.getInstance().getLogBuHuo().d("补货 当前绑定的格子柜 getBindGeZis = "+MyApplication.getInstance().getBindGeZis());
+        MyApplication.getInstance().getLogBuHuo().d("补货 当前连接的格子柜箱号 getGeziList = "+MyApplication.getInstance().getGeziList());
         for (BindGeZi bindGeZi : MyApplication.getInstance().getBindGeZis()) {
             MyApplication.getInstance().getLogBuHuo().d("补货 遍历 "+i);
             if (bindGeZi.getMachineSn().equals(geZi.getMachineSn())) {
