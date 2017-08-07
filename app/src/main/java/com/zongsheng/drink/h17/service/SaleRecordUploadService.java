@@ -92,7 +92,7 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
 
     private void updatePayModels(List<PayModel> payModels) {
         for (PayModel payModel : payModels) {
-            MyApplication.getInstance().getLogBuyAndShip().d("上传销售记录(成功\\失败) = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
+            MyApplication.getInstance().getLogBuyAndShip().d("上传销售记录(成功\\失败) = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode());
             final PayModel results = realm.where(PayModel.class).equalTo("OrderSn", payModel.getOrderSn()).equalTo("isUploaded", "0").findFirst();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override

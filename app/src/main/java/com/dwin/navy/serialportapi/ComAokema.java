@@ -1393,6 +1393,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
             toVMCPara = new byte[27];
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 支付方式 : 现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
             return "";

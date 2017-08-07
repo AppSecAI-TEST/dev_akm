@@ -222,7 +222,9 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                     gezi.setMachineName(info.getMachineName());//名称
                                     gezi.setRoadCount(info.getRoadCount());//格子数
                                     gezi.setMachineType(info.getMachineType());//类型;
+                                    //TODO:添加格子柜的时候记录了添加时间，可能和箱号与格子柜的映射有关
                                     gezi.setCreateTime(new Date().getTime() + "");
+                                    MyApplication.getInstance().getLogBuHuo().d("添加的格子柜 = 编号 : "+gezi.getMachineSn()+" ; 格子数 : "+gezi.getRoadCount());
                                     realm.copyToRealmOrUpdate(gezi);
                                 }
                             });
@@ -358,11 +360,11 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     }
 
     private void initView() {
-        //从本地获得绑定的所有副柜信息
+        //从本地获得绑定的所有副柜信息，并更新Application的列表
         RealmResults<BindDesk> bindDesks = realm.where(BindDesk.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(bindDesks));
 
-        //从本地数据库里取出绑定的格子柜
+        //从本地数据库里取出绑定的格子柜，并更新Application的列表
         RealmResults<BindGeZi> bindGezis = realm.where(BindGeZi.class).findAll();
         bindGezis = bindGezis.sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(bindGezis));
@@ -370,12 +372,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         bindGeziSize = bindGezis.size();
         bindDeskSize = bindDesks.size();
         // 如果格子柜的数量为不为空
-        //TODO:我改了这里 && 变为 ||
-        if (bindGezis.size() == 0 || bindDesks.size() == 0) {
-            // 如果当前的查询不到数据,显示空布局来填充activity
-            rlNoGezilist.setVisibility(View.VISIBLE);
-            llGeziList.setVisibility(View.GONE);
-        } else {
+        if (bindGezis.size() != 0 || bindDesks.size() != 0) {
             // 如果查到数据,给geziList设置数据
             rlNoGezilist.setVisibility(View.GONE);
             llGeziList.setVisibility(View.VISIBLE);
@@ -386,6 +383,10 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             lvGezi.setAdapter(geziAdapter);
             lvDesk.setAdapter(deskAdapter);
             logUtil.d("更新绑定的格子柜、副柜列表");
+        } else {
+            // 如果当前的查询不到数据,显示空布局来填充activity
+            rlNoGezilist.setVisibility(View.VISIBLE);
+            llGeziList.setVisibility(View.GONE);
         }
     }
 
@@ -439,6 +440,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             btmp = true;
             String str[] = msg.split(",");
             String string = str[str.length - 1];
+            logUtil.d("附加柜连接状态（1表示连接） = "+string);
             nVSIGiziSize = getGeziSizeByVSI(string);
             nVSIDeskSize = getDeskSizeByVSI(string);
             logUtil.d("VMC返回实际连接的格子柜数 "+nVSIGiziSize);
@@ -458,15 +460,15 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
      * @param str
      * @return
      */
-    private int getGeziSizeByVSI(String str) {//  1|1|0|0|0|0|0|
+    private int getGeziSizeByVSI(String str) {//  1|1|0|1|0|1|0|
         //1表示连接，0表示未连接
         String string[] = str.split("\\|");
-        //TODO:为什么，难道默认格子柜按箱号顺序连接
-        for (int i = 1; i < string.length - 1; i++) {
-            if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
-                return -1;
-            }
-        }
+        //TODO:为什么，难道默认格子柜按箱号顺序连接，我注释了部分，询问清楚，注释之后格子柜的补货界面出现问题
+//        for (int i = 1; i < string.length - 1; i++) {
+//            if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
+//                return -1;
+//            }
+//        }
         int temp = 0;
         for (int i = 1; i < string.length; i++) {
             if (Integer.parseInt(string[i]) == 1) {
@@ -917,8 +919,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     }
 
     /**
-     * 从PC获取所有本地的格子柜，本地多余的删掉
-     *
+     * 从PC获取所有本地的格子柜，与服务器获取的绑定列表进行比较，本地多余的删掉
+     * TODO:要不要使用服务器获得的绑定列表更新本地数据库
      * @param list 服务器获得的格子柜和副柜编码列表
      */
     private void deleteBindGeziOrDesk(List<String> list) {

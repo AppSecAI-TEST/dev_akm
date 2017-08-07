@@ -199,7 +199,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
             isSaleing = false;
 //            Log.e(TAG, "出货成功!: goodsCode:" + goodsCode + " machineQueryType:" + machineQueryType);
             MyApplication.getInstance().getLogBuyAndShip().d("出货成功 = 订单号 : "+saleOrderID+" ; 箱号 : "+boxIndex+" ; 货道号 : "+trade_no);
-            MyApplication.getInstance().getLogBuyAndShip().d("");
+//            MyApplication.getInstance().getLogBuyAndShip().d("");
             if (boxIndex == 0) { // 主柜
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
                     if (goodsCode.equals(goodsInfo.getGoodsCode())) {

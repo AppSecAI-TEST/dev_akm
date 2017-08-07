@@ -147,6 +147,10 @@ public class BindGeZi extends RealmObject implements Serializable {
         this.roadCount = roadCount;
     }
 
+    @Override
+    public String toString() {
+        return getMachineName();
+    }
 
     /** 格子柜编码*/
     @PrimaryKey

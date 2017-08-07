@@ -409,13 +409,13 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
         machineQueryType = "2";// 非现金出货
         String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) road_no, (byte) 1, 0, 1);
-        Log.e("here", "非现金出货结果:" + s);
+//        Log.e("here", "非现金出货结果:" + s);
         if (!"".equals(s)) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) road_no, (byte) 1, 0, 1);
-                    Log.e(TAG, "非现金出货结果:" + s);
+//                    Log.e(TAG, "非现金出货结果:" + s);
                 }
             }, 500);
         }
@@ -429,13 +429,13 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //        安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
 //                * 1-钱币 2-刷卡 3-支付宝 4-微信
         String s = comVSI.toPay(dealSerialNumber, (byte) road_no, (byte) 1, money * 10, boxIndex);
-        Log.e(TAG, "澳柯玛格子柜出货结果:" + s + " " + money);
+//        Log.e(TAG, "澳柯玛格子柜出货结果:" + s + " " + money);
         if (!"".equals(s)) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     String s = comVSI.toPay(dealSerialNumber, (byte) road_no, (byte) 1, money * 10, boxIndex);
-                    Log.e(TAG, "澳柯玛格子柜出货结果1:" + s);
+//                    Log.e(TAG, "澳柯玛格子柜出货结果1:" + s);
                 }
             }, 500);
         }
@@ -451,13 +451,13 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         MyApplication.getInstance().setNoCashorderSn(orderID);
         machineQueryType = "2";// 非现金出货
         String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) road_no, (byte) 1, 0, boxIndex);
-        Log.e(TAG, "非现金出货结果:" + s);
+//        Log.e(TAG, "非现金出货结果:" + s);
         if (!"".equals(s)) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) road_no, (byte) 1, 0, boxIndex);
-                    Log.e(TAG, "非现金出货结果:" + s);
+//                    Log.e(TAG, "非现金出货结果:" + s);
                 }
             }, 500);
         }
@@ -612,7 +612,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     private void shipmentFail(PayModel payModel, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
+        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode());
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -1051,18 +1051,22 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     } else if ("0073".equals(sub)) {// 货道信息
                         s = s.replace("0073", "");
                         String[] ss = s.split(",");
-                        Log.e(TAG, "货道数: " + s);
+//                        Log.e(TAG, "货道数: " + s);
                         MyApplication.getInstance().setRoadCount(Integer.parseInt(ss[0]));
                         // 附加柜信息
                         String fujianInfo = ss[1];
-                        if (fujianInfo.endsWith("|")) {
-                            fujianInfo = fujianInfo.substring(0, fujianInfo.length() - 1);
-                        }
+//                        if (fujianInfo.endsWith("|")) {
+                            fujianInfo = fujianInfo.substring(0, fujianInfo.length() - 2);
+                        fujianInfo = fujianInfo.replaceAll(" ","");
+//                        }
+                        MyApplication.getInstance().getLogBuHuo().d("启动阶段 VMC报告 箱号信息 = "+fujianInfo);
                         fujianInfo = fujianInfo.replace("|", ",");
                         String[] fujian = fujianInfo.split(",");
                         for (int i = 1; i < fujian.length; i++) {
+                            //TODO:这里的判断问题导致geziList没有正确初始化，已修复
                             if ("1".equals(fujian[i])) {
                                 // 存在格子柜
+                                int road = i+1;
                                 MyApplication.getInstance().getGeziList().add(i + 1);
                             }
                         }
@@ -1088,7 +1092,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
 //                        Log.e(TAG, "出货记录!: " + s);
                         final String[] info = s.split(",");
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]);
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]);
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
@@ -1174,8 +1178,9 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             if (info[7].equals(Constant.SHIPMENTSUCCESS)) {
                                 cashPaySend2MQ(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), true), info[4], Constant.DELIVERYSUCCESS);
                                 if (goodsInfo.getGoodsCode() != null) {
+                                    //现金支付没有订单号，只有流水号
                                     shipmentSuccess(String.valueOf(roadNo), goodsInfo.getGoodsCode(), "1", machineQueryType, saleOrderID, Integer.parseInt(info[11]),
-                                            saleTime, info[2]);
+                                            saleTime, String.valueOf(roadNo));
                                 }
                             } else {
                                 shipmentFail(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), true), info[4], Constant.DELIVERYFAIL);

@@ -152,6 +152,7 @@ public class MyApplication extends Application {
     private int roadCount = 0;
     /**
      * 绑定的格子柜列表，查询本地数据库BindGezi，在BuyActivity启动之前初始化
+     * TODO:初始化完成后，在格子柜管理界面
      */
     private List<BindGeZi> bindGeZis = new ArrayList<>();
     /**
@@ -164,7 +165,7 @@ public class MyApplication extends Application {
     private List<GoodsInfo> cabinetTotalGoods = new ArrayList<>();
 
     /**
-     * 附加格子柜列表，当前连接的格子柜箱号列表，VMC在启动BuyActivity之前报告
+     * 附加格子柜列表，当前连接的格子柜箱号列表，从2开始，不包括副柜，VMC在启动BuyActivity之前报告
      */
     private List<Integer> geziList = new ArrayList<>();
     /**
@@ -243,7 +244,7 @@ public class MyApplication extends Application {
         logUtil.setShouldPrintLogAllCtrl(true);
 
         logBuHuo = new LogUtil("buHuo");
-        logBasicCom = new LogUtil("pc_vmv");
+        logBasicCom = new LogUtil("pc_vmc");
         logBuyAndShip = new LogUtil("buyAndShip");
         logInit = new LogUtil("init");
 
@@ -610,6 +611,7 @@ public class MyApplication extends Application {
         return geziList;
     }
 
+    //TODO:应该在启动阶段初始化
     public void setGeziList(List<Integer> geziList) {
         this.geziList = geziList;
     }

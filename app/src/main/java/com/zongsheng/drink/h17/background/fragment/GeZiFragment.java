@@ -319,19 +319,29 @@ public class GeZiFragment extends Fragment implements INetWorkRequCallBackListen
         }
         int roadCount = 0;
         int i = 0;
+
+        MyApplication.getInstance().getLogBuHuo().d("补货 getBindGeZis = "+MyApplication.getInstance().getBindGeZis());
+        MyApplication.getInstance().getLogBuHuo().d("补货 getGeziList = "+MyApplication.getInstance().getGeziList());
         for (BindGeZi bindGeZi : MyApplication.getInstance().getBindGeZis()) {
+            MyApplication.getInstance().getLogBuHuo().d("补货 遍历 "+i);
             if (bindGeZi.getMachineSn().equals(geZi.getMachineSn())) {
+                MyApplication.getInstance().getLogBuHuo().d("补货 遍历 "+i+" 等于");
+                //TODO:为什么
                 if (MyApplication.getInstance().getGeziList().size() < (i + 1)) {
+                    MyApplication.getInstance().getLogBuHuo().d("补货 遍历 "+i+" 小于");
                     break;
                 }
                 boxIndex = MyApplication.getInstance().getGeziList().get(i);
                 roadCount = MyApplication.getInstance().getGeziRoadCount().get(boxIndex);
+                MyApplication.getInstance().getLogBuHuo().d("补货 遍历 "+i+" 小于 箱号 = "+boxIndex+" ; 货道数 = "+roadCount);
                 break;
             }
             i++;
         }
         if (boxIndex == 0 || roadCount == 0) {
             tlTopMenu.setVisibility(View.GONE);
+            //TODO:这里的补货界面弹出错误，和格子柜管理界面有关
+            MyApplication.getInstance().getLogBuHuo().d("补货 箱号 : "+boxIndex+" ; 货道数 : "+roadCount);
             ToastUtils.showToast(getActivity(), Constant.GEZHI_DATA_ERROR);
             return;
         }
