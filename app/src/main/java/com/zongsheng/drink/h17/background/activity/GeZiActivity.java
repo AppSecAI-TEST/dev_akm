@@ -206,10 +206,13 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 //                    }
                 } else {
                     //nVSIGeziSize可以为 -1 0 1 ~
-                    if (nVSIGiziSize == -1 || nVSIGiziSize == 0){
-                        ToastUtils.showToast(GeZiActivity.this, "格子柜未连接或遥控器设置错误");
+                    if (nVSIGiziSize == -1){
+                        //一定在遥控器设置货道是否有效时出现了空位
+                        ToastUtils.showToast(GeZiActivity.this, "遥控器设置格子柜有效性错误，不允许空位");
                         MyApplication.getInstance().getLogBuHuo().d("VMC报告连接的格子柜数为 "+nVSIGiziSize+" 添加失败");
-                    }else {
+                    } else if (nVSIGiziSize == 0){
+                        ToastUtils.showToast(GeZiActivity.this, "遥控器设置有效格子柜数为0，请修改遥控器设置");
+                    } else {
                         if (bindGeziSize < nVSIGiziSize){
                             MyApplication.getInstance().getLogBuHuo().d("添加格子柜 = "+info.getMachineName());
                             // 点击条目后关掉选择格子柜的页面
@@ -222,7 +225,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                     gezi.setMachineName(info.getMachineName());//名称
                                     gezi.setRoadCount(info.getRoadCount());//格子数
                                     gezi.setMachineType(info.getMachineType());//类型;
-                                    //TODO:添加格子柜的时候记录了添加时间，可能和箱号与格子柜的映射有关
+                                    //添加格子柜的时候记录了添加时间，和箱号与格子柜的映射有关
                                     gezi.setCreateTime(new Date().getTime() + "");
                                     MyApplication.getInstance().getLogBuHuo().d("添加的格子柜 = 编号 : "+gezi.getMachineSn()+" ; 格子数 : "+gezi.getRoadCount());
                                     realm.copyToRealmOrUpdate(gezi);
@@ -463,13 +466,13 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     private int getGeziSizeByVSI(String str) {//  1|1|0|1|0|1|0|
         //1表示连接，0表示未连接
         String string[] = str.split("\\|");
-        //TODO:格子柜的硬件接口和遥控器设置，格子柜必须顺序连接，中间不允许有空位，但是如果有空位好像也可以，这里在软件上约束了连接方式
-        //TODO:我在这里尝试不约束，应该没问题
-//        for (int i = 1; i < string.length - 1; i++) {
-//            if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
-//                return -1;
-//            }
-//        }
+        //TODO:格子柜的硬件接口和遥控器设置，格子柜必须顺序连接，中间不允许有空位，但是如果有空位好像也可以，这里在软件上约束了连接方式，以后尝试不约束
+
+        for (int i = 1; i < string.length - 1; i++) {
+            if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
+                return -1;
+            }
+        }
         int temp = 0;
         for (int i = 1; i < string.length; i++) {
             if (Integer.parseInt(string[i]) == 1) {
