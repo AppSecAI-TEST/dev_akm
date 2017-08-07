@@ -30,7 +30,7 @@ public class Constant {
     public static final String BUHUO_NOSUBMIT                                                       = "修改信息尚未提交,确定离开？";
 
     public static final String NO_ERROR_MSG                                                         = "没有返回错误信息！";
-    public static final String ERROR_INFO_GEZI_01                                                   = "遥控多格子柜设置不合理，请重新设置";
+    public static final String ERROR_INFO_GEZI_01                                                   = "遥控多格子柜设置不合理，格子柜间有空位，请重新设置";
     public static final String ERROR_INFO_GEZI_02                                                   = "绑定格子柜的数量已经达到了设置的上限";
     public static final String ERROR_INFO_GEZI_03                                                   = "获取失败,请检查网络连接";
     public static final String APP_KILLED                                                           = "很抱歉,程序出现异常,即将退出.";

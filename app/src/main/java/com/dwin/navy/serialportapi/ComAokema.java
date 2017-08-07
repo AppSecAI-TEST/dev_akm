@@ -635,7 +635,8 @@ public class ComAokema {
             // 附加箱设置 Y21 (食品、格子柜 1 2...6) 1有效 0无效
             String fujianguiInfo = "";
             for (int j = 0; j < 7; j++) {
-                fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + " | ";
+                //TODO:这里多余的空格导致geziList没有正确初始化，已修复
+                fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + "|";
             }
 //            L.e(TAG, "附加箱设置:" + fujianguiInfo);
             logBasicCom.d("---------------饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);

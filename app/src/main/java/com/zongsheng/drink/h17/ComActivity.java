@@ -1055,18 +1055,16 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         MyApplication.getInstance().setRoadCount(Integer.parseInt(ss[0]));
                         // 附加柜信息
                         String fujianInfo = ss[1];
-//                        if (fujianInfo.endsWith("|")) {
-                            fujianInfo = fujianInfo.substring(0, fujianInfo.length() - 2);
-                        fujianInfo = fujianInfo.replaceAll(" ","");
-//                        }
+                        if (fujianInfo.endsWith("|")) {
+                            fujianInfo = fujianInfo.substring(0, fujianInfo.length() - 1);
+                        }
                         MyApplication.getInstance().getLogBuHuo().d("启动阶段 VMC报告 箱号信息 = "+fujianInfo);
                         fujianInfo = fujianInfo.replace("|", ",");
                         String[] fujian = fujianInfo.split(",");
                         for (int i = 1; i < fujian.length; i++) {
-                            //TODO:这里的判断问题导致geziList没有正确初始化，已修复
+
                             if ("1".equals(fujian[i])) {
                                 // 存在格子柜
-                                int road = i+1;
                                 MyApplication.getInstance().getGeziList().add(i + 1);
                             }
                         }

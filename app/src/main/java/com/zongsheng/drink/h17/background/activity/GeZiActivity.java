@@ -463,7 +463,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
     private int getGeziSizeByVSI(String str) {//  1|1|0|1|0|1|0|
         //1表示连接，0表示未连接
         String string[] = str.split("\\|");
-        //TODO:为什么，难道默认格子柜按箱号顺序连接，我注释了部分，询问清楚，注释之后格子柜的补货界面出现问题
+        //TODO:格子柜的硬件接口和遥控器设置，格子柜必须顺序连接，中间不允许有空位，但是如果有空位好像也可以，这里在软件上约束了连接方式
+        //TODO:我在这里尝试不约束，应该没问题
 //        for (int i = 1; i < string.length - 1; i++) {
 //            if (Integer.parseInt(string[i + 1]) > Integer.parseInt(string[i])) {
 //                return -1;
@@ -573,7 +574,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         }
                         break;
                     case GEZI_TAG:
-                        //获取主机绑定的格子柜
+                        //从服务器获取主机绑定的格子柜，本地不允许绑定服务器没有的格子柜
                         if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                             Gson gson = new Gson();
 

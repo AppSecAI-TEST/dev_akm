@@ -152,7 +152,7 @@ public class MyApplication extends Application {
     private int roadCount = 0;
     /**
      * 绑定的格子柜列表，查询本地数据库BindGezi，在BuyActivity启动之前初始化
-     * TODO:初始化完成后，在格子柜管理界面
+     *
      */
     private List<BindGeZi> bindGeZis = new ArrayList<>();
     /**
