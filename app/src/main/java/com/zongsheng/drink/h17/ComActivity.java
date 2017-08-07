@@ -1542,6 +1542,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         machineQueB(MyApplication.getInstance().getMachine_sn(), queBiFive, queBiOne);
         int failCount = MyApplication.getInstance().getConnetFailGeziList().size();
         MyApplication.getInstance().getConnetFailGeziList().clear();
+        //将连接失败的箱号存入列表
         if (s.contains("Y9-1")) {// 格子柜1连接失败
             MyApplication.getInstance().getConnetFailGeziList().add(2);
         }

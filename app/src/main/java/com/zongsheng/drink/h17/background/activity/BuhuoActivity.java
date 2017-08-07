@@ -796,7 +796,9 @@ public class BuhuoActivity extends ComActivity implements IListener {
      * 开指定格子柜门澳柯玛
      */
     public void openGeziDoorForAokema(final int boxIndex, final int roadNo) {
+        MyApplication.getInstance().getLogBuHuo().d("打开格子柜门 = 箱号 : "+boxIndex+" ; 货道号 : "+roadNo+" ; 连接失败的箱号列表 : "+MyApplication.getInstance().getConnetFailGeziList());
         if (SysConfig.MAIN_DOOR_IS_CLOSE.equals(doorStatus)) {
+            MyApplication.getInstance().getLogBuHuo().d("请先开柜门");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -816,6 +818,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
             }, 200);
             return;
         } else if (MyApplication.getInstance().getConnetFailGeziList().contains(boxIndex)) {
+            MyApplication.getInstance().getLogBuHuo().d("格子柜箱号未连接");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
