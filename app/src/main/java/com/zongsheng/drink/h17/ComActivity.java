@@ -1646,12 +1646,12 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      */
     private void machineQuehuo(String machineSn, String roads) {
         // give sub method to do
-        MyApplication.getInstance().getLogBuyAndShip().d("添加缺货信息 = 机器编号 : "+machineSn+" ; 货道号 : "+roads);
         final QueHuoRecord queHuoRecord = new QueHuoRecord();
         String usefulRoads = roads;
         if ("".equals(usefulRoads)) {
             queHuoRecord.setIsQueHuo("0");
         } else {
+            MyApplication.getInstance().getLogBuyAndShip().d("添加缺货信息 = 机器编号 : "+machineSn+" ; 货道号 : "+roads);
             queHuoRecord.setIsQueHuo("1");
         }
 

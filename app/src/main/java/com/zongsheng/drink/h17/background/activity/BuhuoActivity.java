@@ -702,7 +702,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
         dialogPingtai = LoadingUtil.createLoadingDialog(this, Constant.DEALING, 1, R.drawable.ic_ios_juhua, true);
         dialogPingtai.show();
-
+        //TODO:副柜的补货应该有问题，这里向副柜发送的补货后的各货道的商品数有问题，
         // 有空的 只能循环补货了
         if (hasEmpty) {
 //            L.e(SysConfig.ZPush, "逐条补货");
