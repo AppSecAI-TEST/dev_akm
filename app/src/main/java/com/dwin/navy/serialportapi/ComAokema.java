@@ -828,6 +828,7 @@ public class ComAokema {
                 logBasicCom.d("---------------主机料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007B", stockhave);
                 break;
+            //TODO:添加副柜缺货检查
             case 0x02:// 格子柜
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 8; j++) {
@@ -1103,14 +1104,14 @@ public class ComAokema {
     /**
      * 给机器加货
      */
-    public String addKucun(int xuhao, byte channelNumber) {
+    public String addKucun(int boxIndex, byte roadNum) {
 
         //如果是格子柜 ：11号料道需要转换为0x11
         byte cn;
-        if (xuhao > 1) {
-            cn = (byte) Integer.parseInt(channelNumber + "", 16);
+        if (boxIndex > 1) {
+            cn = (byte) Integer.parseInt(roadNum + "", 16);
         } else {
-            cn = channelNumber;
+            cn = roadNum;
         }
         byte[] resp = new byte[13];
         resp[0] = PC_HEAD_ONE;
@@ -1119,7 +1120,7 @@ public class ComAokema {
         resp[3] = 6;
         resp[4] = CMD_LOOP;
         resp[5] = 0x01;
-        resp[6] = (byte) xuhao;
+        resp[6] = (byte) boxIndex;
         resp[7] = cn;
         resp[8] = 0x01;
         resp[9] = getCountCheck(resp, 3, 9);
@@ -1128,9 +1129,9 @@ public class ComAokema {
         System.arraycopy(resp, 0, newByte, 0, 10);
         otherToVMCParaList.add(newByte);
 
-        Log.e("机器加货详情", "箱号=" + xuhao + ";" + "货道" + channelNumber);
-
-        L.e(TAG, "给机器加货:" + Arrays.toString(resp));
+//        Log.e("机器加货详情", "箱号=" + boxIndex + ";" + "货道" + roadNum);
+//
+//        L.e(TAG, "给机器加货:" + Arrays.toString(resp));
         return "";
     }
 
@@ -1138,14 +1139,14 @@ public class ComAokema {
     /**
      * 给机器加货
      */
-    public String addKucunSingle(int xuhao, byte channelNumber) {
+    public String addKucunSingle(int boxIndex, byte roadNum) {
 
         //如果是格子柜 ：11号料道需要转换为0x11
         byte cn;
-        if (xuhao > 1) {
-            cn = (byte) Integer.parseInt(channelNumber + "", 16);
+        if (boxIndex > 1) {
+            cn = (byte) Integer.parseInt(roadNum + "", 16);
         } else {
-            cn = channelNumber;
+            cn = roadNum;
         }
 
         if (!isConnected)
@@ -1158,7 +1159,7 @@ public class ComAokema {
             resp[3] = 6;
             resp[4] = CMD_LOOP;
             resp[5] = 0x01;
-            resp[6] = (byte) xuhao;
+            resp[6] = (byte) boxIndex;
             resp[7] = cn;
             resp[8] = 0x01;
             resp[9] = getCountCheck(resp, 3, 9);
@@ -1166,7 +1167,7 @@ public class ComAokema {
             toVMCPara = new byte[10];
             System.arraycopy(resp, 0, toVMCPara, 0, 10);
 
-            L.e(TAG, "给机器加货:" + Arrays.toString(resp));
+//            L.e(TAG, "给机器加货:" + Arrays.toString(resp));
             return "";
         } else {
             return "9999/正忙";
@@ -1191,15 +1192,17 @@ public class ComAokema {
     }
 
     /**
-     * 设置价格
+     * 设置指定箱号机器的货道价格
      *
      * @param boxNo
      * @param roadNo
      * @return EF　55 FE 09 76 08 00 03 00 00 00 C8 52
      */
     public String setGeziChannelPrice(int boxNo, int roadNo, int price) {
-        if (!isConnected)
+        if (!isConnected){
+            MyApplication.getInstance().getLogBuHuo().d("补货设置货道价格 机器主控失联");
             return "1000/机器主控失联";
+        }
         if (toVMCPara == null) {
             byte[] resp = new byte[13];
             resp[0] = PC_HEAD_ONE;
@@ -1228,7 +1231,7 @@ public class ComAokema {
 
             System.arraycopy(resp, 0, toVMCPara, 0, 13);
             //otherToVMCParaList.add(toVMCPara);
-
+            MyApplication.getInstance().getLogBuHuo().d("补货设置货道价格 = 货道 : "+roadNo+" ; 价格 : "+price+" ; 箱号 : "+boxNo);
             return "";
         } else {
             return "9999/正忙";
@@ -1270,6 +1273,7 @@ public class ComAokema {
 
     /**
      * 安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
+     * 现金出货
      * 1-钱币 2-刷卡 3-支付宝 4-微信
      */
     public String toPay(int dealSerialNumber, byte channelNum, byte PAY_WAY, long payMoney, int boxIndex) {
@@ -1346,6 +1350,7 @@ public class ComAokema {
 
     /**
      * 安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
+     * 非现金出货
      * 1-钱币 2-刷卡 3-支付宝 4-微信
      */
     public String toPayForNoCash(int dealSerialNumber, byte channelNum, byte PAY_WAY, long payMoney, int boxIndex) {
@@ -1394,7 +1399,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
             toVMCPara = new byte[27];
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 支付方式 : 现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 支付方式 : 非现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
             return "";

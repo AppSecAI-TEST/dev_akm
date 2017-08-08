@@ -102,7 +102,7 @@ public class GeziFragment extends Fragment {
     private void initView() {
         // 设置选中
         rlDrinkTop.setSelected(true);
-        // 假数据
+        // 加载数据
         goodsInfoList = MyApplication.getInstance().getCabinetGoods();
         mViewPagerAdapter = new MainViewPagerAdapter(goodsInfoList, getContext(), onGoodsClickListener);
         mViewPager.setPageTransformer(true, new DepthPageTransformer());
@@ -152,9 +152,11 @@ public class GeziFragment extends Fragment {
         @Override
         public void onGoodsClick(GoodsInfo goodsInfo) {
             // 显示购买页面
-            Log.e(TAG, "点击购买格子柜商品");
+//            Log.e(TAG, "点击购买格子柜商品");
+            MyApplication.getInstance().getLogBuyAndShip().d("点击了格子柜商品 = 名称 : "+goodsInfo.getGoodsName());
             if ("1".equals(goodsInfo.getIsSoldOut())) {
-                Log.e(TAG, "无货");
+                MyApplication.getInstance().getLogBuyAndShip().d("商品缺货");
+//                Log.e(TAG, "无货");
                 return;
             }
             if (showBuyPageListener != null) {

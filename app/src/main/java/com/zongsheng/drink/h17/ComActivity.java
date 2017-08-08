@@ -155,11 +155,11 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     /**
-     * 现金出货
+     * 主机现金出货
      */
     public void sellByCash(int goodsCode) {
 //        Log.i(TAG, "现金出货前查询");
-        MyApplication.getInstance().getLogBuyAndShip().d("现金出货前查询");
+        MyApplication.getInstance().getLogBuyAndShip().d("主机现金出货前查询");
         // 现金出货前查询
         machineQueryType = "1";// 现金出货
         // 根据goodsCode查找出货货道商品
@@ -174,6 +174,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
             HashSet<Integer> goodsCodeRoadNum = new HashSet<Integer>();
             for (int i = 0; i < sellEmptyArr.length; i++) {
                 if ("0".equals(sellEmptyArr[i])) { // 有货
+                    //货道从1开始
                     goodsCodeRoadNum.add((i + 1));
                 }
             }
@@ -188,6 +189,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         }
         if (saleGoodsInfo == null) {
             MyApplication.getInstance().getLogBuyAndShip().d("所选商品已售空");
+            //TODO:这里应该退币或提示如何退币
             ToastUtils.showToast(this, "所选商品已售空");
             return;
         }
@@ -221,7 +223,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 非现金出货（饮料机）
      */
     public void sellByNoCash(int goodsCode, String orderID, String saleOrderPrice) {
-        MyApplication.getInstance().getLogBuyAndShip().d("现金出货前查询");
+        MyApplication.getInstance().getLogBuyAndShip().d("非现金出货前查询");
 //        Log.i(TAG, "非现金出货前查询");
         saleOrderID = orderID;
         MyApplication.getInstance().setNoCashorderSn(orderID);
@@ -265,7 +267,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 @Override
                 public void run() {
                     String s = comVSI.toPayForNoCash(dealSerialNumber, (byte) saleGoodsInfo.getRoad_no(), (byte) 1, 0, 0);
-                    Log.e(TAG, "非现金出货结果:" + s);
+//                    Log.e(TAG, "非现金出货结果:" + s);
                 }
             }, 500);
         }
@@ -281,11 +283,9 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     public String setGeziChannelPrice(final int boxNo, final int roadNo, final int price) {
 
         String s = comVSI.setGeziChannelPrice(boxNo, roadNo, price);
-        Log.e(TAG, "非现金出货结果:" + s);
         if (!"".equals(s)) {
             SystemClock.sleep(500);
             s = comVSI.setGeziChannelPrice(boxNo, roadNo, price);
-            Log.e(TAG, "非现金出货结果:" + s);
         }
         return s;
     }
@@ -744,7 +744,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     /**
-     * 处理产品的缺货信息 是否售空 0:未空 1:售空
+     * 处理主机产品的缺货信息 是否售空 0:未空 1:售空
      * 根据VMC报告的缺货信息更新GoodsInfo数据库，间接影响售货界面和补货界面显示的货道是否有货情况
      */
     public void handleGoodsKuCun() {
@@ -793,6 +793,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     good.setOnlineKuCun(1);
                 }
             }
+            MyApplication.getInstance().getLogBuHuo().d("初始化时处理主机缺货信息");
             realm.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace();
@@ -802,11 +803,14 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     /**
-     * 处理产品的缺货信息 是否售空 0:未空 1:售空
+     * 处理格子柜产品的缺货信息 是否售空 0:未空 1:售空
+     * TODO:主机和格子柜的缺货信息判定依赖VMC发来的各货道缺货记录，可能有问题
      */
     private void handleGeziKuCun() {
+        MyApplication.getInstance().getLogBuyAndShip().d("处理格子柜的库存，更新Application列表，是否缺货");
         try {
             // 格子柜的map 机器编码, 箱号
+            // 当前实际连接成功的格子柜列表
             Map<String, Integer> bindGeziMap = new HashMap<>();
             int i = 1;
             for (BindGeZi bindGeZi : MyApplication.getInstance().getBindGeZis()) {
@@ -822,24 +826,28 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
                 i++;
             }
-            // 加载本地数据库中的商品信息
+            MyApplication.getInstance().getLogBuHuo().d("启动时获取绑定的的格子柜列表 = "+bindGeziMap);
+            // 加载本地数据库中格子柜的商品信息
             RealmResults<GoodsInfo> results = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").findAll();
             results = results.sort("road_no", Sort.ASCENDING);
             List<GoodsInfo> cabinetGoods = results;
             Map<String, Integer> checkMap1 = new HashMap<>();
-            // 缺货信息map Map<机器ID, 缺货信息;>
+            // 缺货信息map Map<机器ID, 缺货的货道;>记录该机器所有的缺货货道
             Map<String, String> queHuoInfoMap = new HashMap<>();
             MyApplication.getInstance().getCabinetTotalGoods().clear();
             MyApplication.getInstance().getCabinetGoods().clear();
             if (cabinetGoods.size() > 0) {
-                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
+//                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
+                MyApplication.getInstance().getLogBuHuo().d("启动时获取属于格子柜的所有商品数 : "+cabinetGoods.size());
                 if (!realm.isInTransaction()) {
                     realm.beginTransaction();
                 }
+                //遍历所有格子柜商品
                 for (GoodsInfo goodsInfo : cabinetGoods) {
                     if (goodsInfo == null || goodsInfo.getGoodsID() == null || "".equals(goodsInfo.getGoodsID()) || "0".equals(goodsInfo.getGoodsID())) {
                         continue;
                     }
+                    //商品所属格子柜没有连接
                     if (!bindGeziMap.containsKey(goodsInfo.getMachineID())) {
                         continue;
                     }
@@ -855,7 +863,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     goodsInfo.setPrice((int) Double.parseDouble(goodsInfo.getPrice()) + "");
                     int kucun = 0;
                     if (MyApplication.getInstance().getAokemaGeZiKuCunMap().containsKey(bindGeziMap.get(goodsInfo.getMachineID()))) {
-                        // 这里直接用货道号是不对的。 getAokemaGeZiKuCunMap里面对应的是1~80  这里的road_no 是真实的
+                        // 这里直接用货道号是不对的。 getAokemaGeZiKuCunMap里面对应的是1~80  这里的road_no 是真实的，不是1~80
+                        // 把真实货道号转换成getAokemaGeziKucunMap的格式
                         int road_no = goodsInfo.getRoad_no();
                         int index = 0;
                         if (road_no > 10) {
@@ -876,7 +885,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         } else {
                             queHuoInfoMap.put(goodsInfo.getMachineID(), goodsInfo.getRoad_no() + ";");
                         }
-                    } else {
+                    } else { // 不缺货
                         if (!queHuoInfoMap.containsKey(goodsInfo.getMachineID())) {
                             queHuoInfoMap.put(goodsInfo.getMachineID(), "");
                         }
@@ -889,6 +898,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     }
                     MyApplication.getInstance().getCabinetTotalGoods().add(goodsInfo);
                     checkMap1.put(goodsInfo.getGoodsID(), kucun);
+                    //checkMap的键为商品ID，值为该类型商品在格子柜的所有格子中的总和数
                 }
                 for (String str : checkMap1.keySet()) {
                     for (GoodsInfo goodsInfo : cabinetGoods) {
@@ -918,6 +928,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 if (queHuoInfoMap.size() > 0) {
                     for (String machineID : queHuoInfoMap.keySet()) {
                         machineQuehuo(machineID, queHuoInfoMap.get(machineID));
+
                     }
                 }
             }
@@ -1076,6 +1087,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    //查询VMC的指定箱号是否有货，这导致VMC在出货后向PC发送7B指令，导致主机、格子柜、副柜的缺货信息判断处理
                                     String result = comVSI.checkThingsHaveOrNotForNow(0);
                                     if (!"".equals(result)) {
                                         comVSI.checkThingsHaveOrNot(0);
@@ -1090,13 +1102,13 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
 //                        Log.e(TAG, "出货记录!: " + s);
                         final String[] info = s.split(",");
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]);
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
                         try {
                             PayModel payModel = realm.where(PayModel.class).equalTo("MachineTradeNo", info[2]).equalTo("PayTime", saleTime).findFirst();
                             if (payModel != null && payModel.getMachineTradeNo() != null && !"".equals(payModel.getMachineTradeNo())) {
+                                MyApplication.getInstance().getLogBuyAndShip().d("当前出货记录已经存在 = 出货序列号 : "+info[2]+" ; PayTime : "+saleTime);
                                 break;
                             }
                         } catch (Exception e) {
@@ -1109,7 +1121,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         //如果箱号为0，主机
                         if (Integer.parseInt(info[11]) == 0) {
                             //找到商品
-                            //TODO:这里没有判断该货道是否缺货
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", roadNo).findFirst();
                         } else if (Integer.parseInt(info[11]) == 1) {
                             //箱号为1，副柜
@@ -1131,6 +1142,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindGeZis().get(Integer.parseInt(info[11]) - 2).getMachineSn()).findFirst();
                         }
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+info[6]);
                         //如果出货成功，且箱号为0，主机出货成功
                         if ("0".equals(info[7]) && Integer.parseInt(info[11]) == 0) {
                             //更新货道库存
@@ -1152,13 +1164,14 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         }
                         String record;
                         // 记录信息 交易号:212,交易时间:20160910104948,交易种类:1:现金,现金扣费:10角,非现金扣费:0角,出货结果:1成功,货道号:21,商品编号:10
-                        if (payType == 49) { // 在线支付
-                            MyApplication.getInstance().getLogBuyAndShip().d("在线支付");
+                        if (payType == 49) { // 非现金支付
+                            MyApplication.getInstance().getLogBuyAndShip().d("非现金支付");
                             record = info[2] + "," + saleTime + "," + payType + ",0," + goodsInfo.getPrice() +
                                     "," + (info[7].equals("0") ? "1" : "2") + "," + roadNo + "," + goodsInfo.getGoodsCode();
                             if (info[7].equals(Constant.SHIPMENTSUCCESS)) {
                                 onlinePaySend2MQ(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), false), MyApplication.getInstance().getNoCashorderSn(), info[4], Constant.DELIVERYSUCCESS);
                             } else {
+                                //TODO:支付失败后，没有发现退款操作
                                 shipmentFail(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), false), info[4], Constant.DELIVERYFAIL);
                             }
                         } else { // 现金支付
@@ -1181,6 +1194,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                             saleTime, String.valueOf(roadNo));
                                 }
                             } else {
+                                //TODO:支付失败，只是将记录写入数据库，没有显示支付失败信息
                                 shipmentFail(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), true), info[4], Constant.DELIVERYFAIL);
                             }
                         }
@@ -1205,10 +1219,10 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     } else if ("0079".equals(sub)) {// 故障信息 TODO
                         s = s.replace("0079", "");
                         MyApplication.getInstance().setTroubleStatus(s);
-                        Log.i(TAG, "故障信息:" + s);
+//                        Log.i(TAG, "故障信息:" + s);
                         // 添加故障信息存入数据库
                         addFaultInfo(s);
-                    } else if ("007B".equals(sub)) {// 主机和格子柜货道信息是否缺货信息
+                    } else if ("007B".equals(sub)) {// 主机是否缺货信息
                         long now = new Date().getTime();
                         s = s.replace("007B", "");
                         if (now - emptyIntoGetTime < 1000) {
@@ -1234,7 +1248,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         if (!"".equals(info[3]) && !"0".equals(info[3])) {
                             // 用户按了商品按钮
                             MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[2]+" ; 货道号 = "+info[3]+" ; 价格 : "+info[4]);
-                            MyApplication.getInstance().getLogBuyAndShip().d(Arrays.toString(info));
 //                            Log.e(TAG, "用户选择了:" + info[3]);
                             // 取得商品code
                             GoodsInfo goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(info[3])).findFirst();
@@ -1251,20 +1264,24 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 showCashCount(Integer.parseInt(info[5]) / 10);
                             }
                         }
-                    } else if ("007X".equals(sub)) {// 格子柜1货道信息
+                    } else if ("007X".equals(sub)) {// 各个格子柜货道是否有货信息，和7B是同一个指令
                         long now = new Date().getTime();
                         s = s.replace("007X", "");
                         String[] info = s.split(";");
+                        //格子柜箱号
                         final int boxIndex = Integer.parseInt(info[0]);
                         if (nowBoxIndex == boxIndex) {
+                            //防止短时间内重复执行库存检查
                             if (now - geziEmptyGetTime < 1500) {
                                 break;
                             }
                         }
                         nowBoxIndex = boxIndex;
                         geziEmptyGetTime = now;
+                        //替换0和1，0表示有货，1表示无货
                         String roadInfo = info[1].replace("1", "5").replace("0", "1").replace("5", "0");
-                        Log.i(TAG, "格子柜(箱号:" + boxIndex + ")货道信息:" + roadInfo);
+//                        Log.i(TAG, "格子柜(箱号:" + boxIndex + ")货道信息:" + roadInfo);
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC发送7X指令，各个格子柜是否有货信息");
                         // 处理货道信息
                         Map<Integer, String> kucunMap = new HashMap<>();
                         int i = 1;
@@ -1370,7 +1387,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (MyApplication.getInstance().getGeziList().size() > 0) {
             geziKucunCheckCount = 1;
             // 获取格子柜货道售空信息
-            //TODO:这里只检查了1个格子柜
             String ss = comVSI.checkThingsHaveOrNot(MyApplication.getInstance().getGeziList().get(0));
         } else {
             // 信息获取完成后处理
@@ -1385,7 +1401,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
         if (!isNeedInitMachineInfo) {
             handleGoodsKuCun();
-            // 更新商品展示页面库存信息
+            // 更新商品展示页面库存信息，因为有的商品可能缺货了
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1630,6 +1646,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      */
     private void machineQuehuo(String machineSn, String roads) {
         // give sub method to do
+        MyApplication.getInstance().getLogBuyAndShip().d("添加缺货信息 = 机器编号 : "+machineSn+" ; 货道号 : "+roads);
         final QueHuoRecord queHuoRecord = new QueHuoRecord();
         String usefulRoads = roads;
         if ("".equals(usefulRoads)) {

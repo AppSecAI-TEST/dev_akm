@@ -87,7 +87,8 @@ public class ClientConnectMQ {
     }
 
     public void sendShipStatus2MQ(final String msg){
-        L.v(SysConfig.ZPush, "sendShipStatus2MQ ZPushService 连接设置--->" + factory.hashCode());
+//        L.v(SysConfig.ZPush, "sendShipStatus2MQ ZPushService 连接设置--->" + factory.hashCode());
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -97,7 +98,7 @@ public class ClientConnectMQ {
     }
 
     void receiverMsg2MQ(Context context, final Handler handler) {
-        L.v(SysConfig.ZPush, "receiverMsg2MQ ZPushService 连接设置--->" + quefactory.hashCode());
+//        L.v(SysConfig.ZPush, "receiverMsg2MQ ZPushService 连接设置--->" + quefactory.hashCode());
         try {
             //使用之前的设置，建立连接
             if (connection == null || !connection.isOpen()) {

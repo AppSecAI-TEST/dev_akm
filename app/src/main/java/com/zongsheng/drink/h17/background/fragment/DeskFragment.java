@@ -302,10 +302,11 @@ public class DeskFragment extends Fragment implements INetWorkRequCallBackListen
         int countHuodao = MyApplication.getInstance().getDeskRoadCount();
         List<Integer> roadNoList = MyApplication.getInstance().getDeskRoadList();
         machineSn = desk.getMachineSn();
+        //所有货道号对应的商品信息
         goodsInfoList = new ArrayList<>();
         goodsInfoMap = new HashMap<>();
 
-        Log.e("fugui", machineSn);
+//        Log.e("fugui", machineSn);
         for (Integer road : roadNoList) {
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setRoad_no(road);
@@ -313,7 +314,9 @@ public class DeskFragment extends Fragment implements INetWorkRequCallBackListen
             goodsInfo.setMachineID(machineSn);
             goodsInfoMap.put(road, goodsInfo);
         }
+        //获取本地数据库中所有副柜商品
         RealmResults<GoodsInfo> sort = realm.where(GoodsInfo.class).equalTo("machineID", machineSn).findAll().sort("road_no", Sort.ASCENDING);
+        //填充列表
         if (sort.size() != 0) {
             tempList = realm.copyFromRealm(sort);
             for (GoodsInfo goodsInfo : tempList) {
@@ -557,6 +560,7 @@ public class DeskFragment extends Fragment implements INetWorkRequCallBackListen
             case R.id.tv_submit:// 提交
                 // 判断是否有重复的价格不同的商品
                 Map<String, String> checkMap = new HashMap<>();
+                //遍历所有货道的商品
                 for (GoodsInfo goodsInfo : goodsInfoList) {
                     if (goodsInfo == null || goodsInfo.getGoodsCode() == null || "".equals(goodsInfo.getGoodsCode()) || "0".equals(goodsInfo.getGoodsCode())) {
                         continue;

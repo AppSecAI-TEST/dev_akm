@@ -607,13 +607,17 @@ public class BuhuoActivity extends ComActivity implements IListener {
         // 组装数据, 请求机器交互
         // 生成货道命令
         // 测试设置商品编码
+
+        //补货前所有主机商品
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").findAll();
+        //补货前货道和商品的映射
         Map<Integer, GoodsInfo> mainMachineGoodInfo = new HashMap<>();
         for (GoodsInfo goodsInfo : goodsInfos) {
             mainMachineGoodInfo.put(goodsInfo.getRoad_no(), goodsInfo);
         }
         List<UpateModel> raodInfo = new ArrayList<>();
         for (GoodsInfo goodsInfo : goodsInfoList) {
+            //取出所有属于主机的商品
             if ("1".equals(goodsInfo.getGoodsBelong())) { // 1:主机 2:格子柜
                 if ("".equals(goodsInfo.getGoodsID()) || goodsInfo.getGoodsID() == null) {
                     raodInfo.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, 0, null));
@@ -625,12 +629,20 @@ public class BuhuoActivity extends ComActivity implements IListener {
         new MachineOrderTask(BuhuoActivity.this, goodsInfoList.size(), machineOrderRstListener, raodInfo).execute();
     }
 
+    /**
+     *
+     * @param goodsInfoList 补货后各货道对应的商品列表
+     * @param machineSn 机器编码
+     * @param boxIndex 箱号
+     */
     public void confirmForDeskMachine(final List<GoodsInfo> goodsInfoList, final String machineSn, final int boxIndex) {
         if (goodsInfoList == null || goodsInfoList.size() == 0) {
             ToastUtils.showToast(this, Constant.GEZHI_DATA_ERROR);
             return;
         }
+        //补货前货道和商品的映射
         Map<Integer, GoodsInfo> reamlGoodsInfoMap = new HashMap<>();
+        //取出当前数据库中所有副柜的商品
         RealmResults<GoodsInfo> results = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3")
                 .equalTo("machineID", machineSn).findAll();
         for (GoodsInfo goodsInfo : results) {
@@ -644,37 +656,42 @@ public class BuhuoActivity extends ComActivity implements IListener {
         boolean hasEmpty = false;
         boolean priceChange = false;
 
-        List<UpateModel> roadNoList = new ArrayList<>();
+        List<UpateModel> roadNumList = new ArrayList<>();
+        //遍历补货后的所有商品
         for (GoodsInfo goodsInfo : goodsInfoList) {
             if (goodsInfo == null || goodsInfo.getGoodsCode() == null || "".equals(goodsInfo.getGoodsCode()) || "0".equals(goodsInfo.getGoodsCode())) {
                 continue;
             }
-            if ("".equals(goodsInfo.getKuCun()) && reamlGoodsInfoMap.get(goodsInfo.getRoad_no()) != null
+            //TODO:这里可能有问题，kucun不可能为空，我改为了0
+            if ("0".equals(goodsInfo.getKuCun()) && reamlGoodsInfoMap.get(goodsInfo.getRoad_no()) != null
                     && (int) Double.parseDouble(reamlGoodsInfoMap.get(goodsInfo.getRoad_no()).getPrice()) != (int) Double.parseDouble(goodsInfo.getPrice())) {
                 //售空状态且价格被修改
                 hasEmpty = true;
                 priceChange = true;
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
+                //修改库存
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
+                //修改价格
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
             } else if ("0".equals(goodsInfo.getKuCun())) {
                 //表示售空
                 hasEmpty = true;
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
+                //修改库存
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
             } else if (reamlGoodsInfoMap.get(goodsInfo.getRoad_no()) != null
                     && (int) Double.parseDouble(reamlGoodsInfoMap.get(goodsInfo.getRoad_no()).getPrice()) != (int) Double.parseDouble(goodsInfo.getPrice())) {
                 //修改价格
                 hasEmpty = true;
                 priceChange = true;
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
             } else if (reamlGoodsInfoMap.get(goodsInfo.getRoad_no()) == null) {
                 hasEmpty = true;
                 priceChange = true;
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
-                roadNoList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_STOCK, boxIndex, goodsInfo));
+                roadNumList.add(DataUtil.setUpdateModel(SysConfig.UPDATE_PRICE, boxIndex, goodsInfo));
             }
         }
 
-        if (!priceChange && roadNoList.size() < goodsInfoList.size()) {
+        if (!priceChange && roadNumList.size() < goodsInfoList.size()) {
             hasEmpty = false;
         }
 
@@ -688,12 +705,12 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
         // 有空的 只能循环补货了
         if (hasEmpty) {
-            L.e(SysConfig.ZPush, "逐条补货");
+//            L.e(SysConfig.ZPush, "逐条补货");
             // 逐条进行补货
-            new BuhuoForAKMTask(this, boxIndex, roadNoList, machineBuHuoRstListener).execute();
+            new BuhuoForAKMTask(this, boxIndex, roadNumList, machineBuHuoRstListener).execute();
         } else {
-            L.e(SysConfig.ZPush, "一键补货 " + boxIndex);
-            // 没有空的 一键补货
+//            L.e(SysConfig.ZPush, "一键补货 " + boxIndex);
+            // 没有空的 一键补货,即各料道全部补满
             String s = machineBuHuo(boxIndex, 0);
             if ("".equals(s)) {
                 dialogPingtai.dismiss();
@@ -723,21 +740,25 @@ public class BuhuoActivity extends ComActivity implements IListener {
         }
     };
 
+    //更新本地数据库商品信息
     private void updateLocalData(final String goodsBelong, String machineSn) {
         // 删除本地数据库的商品信息
         //更新成功后删除本地存储的商品信息
 
         if ("1".equals(goodsBelong)) {
             MarkLog.markLog("饮料机" + machineSn + "补货完成", SysConfig.LOG_LEVEL_IMPORTANT, machineSn);
+            MyApplication.getInstance().getLogBuHuo().d("主机补货，更新本地商品数据");
         } else if ("2".equals(goodsBelong)) {
             MarkLog.markLog("格子柜" + machineSn + "补货完成", SysConfig.LOG_LEVEL_IMPORTANT, machineSn);
+            MyApplication.getInstance().getLogBuHuo().d("格子柜补货，更新本地商品数据");
         } else {
             MarkLog.markLog("副柜" + machineSn + "补货完成", SysConfig.LOG_LEVEL_IMPORTANT, machineSn);
+            MyApplication.getInstance().getLogBuHuo().d("副柜补货，更新本地商品数据");
         }
 
         final RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", goodsBelong)
                 .equalTo("machineID", machineSn).findAll();
-        // TODO 删除机器的缺货警告信息
+        // 删除机器的缺货警告信息
         final RealmResults<QueHuoRecord> queHuoRecords = realm.where(QueHuoRecord.class).equalTo("machineSn", machineSn)
                 .equalTo("isUploaded", "0").findAll();
         realm.executeTransaction(new Realm.Transaction() {
@@ -784,6 +805,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
             request.setTag(goodsBelong);
             // 添加到请求队列
             CallServer.getRequestInstance().add(this, 1, request, httpListener, true, false);
+            MyApplication.getInstance().getLogBuHuo().d("上传补货记录");
         } else {
             dialogPingtai.dismiss();
             ToastUtils.showToast(BuhuoActivity.this, Constant.COMMIT_FAIL_NET);
@@ -944,10 +966,11 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
     /**
      * 主柜出货成功更改本地库存
+     * TODO:BuhuoActivity中这里不应该有这两个出货后更新库存的方法
      */
     @Override
     public void updateLocalKuCun(String road_no) {
-        Log.e(TAG, "更新库存:" + road_no);
+//        Log.e(TAG, "更新库存:" + road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
         if (goodsInfo != null && goodsInfo.getKuCun() != null && !"".equals(goodsInfo.getKuCun())) {
@@ -967,7 +990,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
     @Override
     protected void updateDeskKucun(String road_no) {
-        Log.e(TAG, "更新库存:" + road_no);
+//        Log.e(TAG, "更新库存:" + road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3")
                 .equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
@@ -988,7 +1011,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG, "onBackPressed()");
+//        Log.i(TAG, "onBackPressed()");
         //不允许右键退出,必须使用按钮退出
         //super.onPause();
     }
@@ -1042,6 +1065,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
                                 // 处理成功
                                 loadingDialogEnd = LoadingUtil.createLoadingDialog(BuhuoActivity.this, "处理成功", 1, R.drawable.ic_success, false);
                                 loadingDialogEnd.show();
+                                MyApplication.getInstance().getLogBuHuo().d("补货记录上传成功");
                                 new Handler().postDelayed(new Runnable() {
                                     public void run() {
                                         loadingDialogEnd.dismiss();
@@ -1076,6 +1100,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
         @Override
         public void onFailed(int what, String url, Object tag, Exception exception, int responseCode, long networkMillis) {
+            MyApplication.getInstance().getLogBuHuo().d("补货记录上传失败");
             if (dialogPingtai != null) {
                 dialogPingtai.dismiss();
             }

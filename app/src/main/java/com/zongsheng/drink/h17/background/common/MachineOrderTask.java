@@ -77,7 +77,7 @@ public class MachineOrderTask extends AsyncTask<String, Integer, String> {
                     res = activity.requestConfigindCashPrice((int)Double.parseDouble(upateModel.getPrice()) * 10 ,upateModel.getBoxindex(),upateModel.getRoad_no());
                     return res;
                 }
-                Log.e("", "货道price结果:" + res);
+//                Log.e("", "货道price结果:" + res);
                 break;
             case SysConfig.GOODSCODE://澳柯玛机器不设置商品编码
                 break;

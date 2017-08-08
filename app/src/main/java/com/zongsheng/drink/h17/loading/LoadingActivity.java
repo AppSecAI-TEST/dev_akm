@@ -89,7 +89,7 @@ public class LoadingActivity extends ComActivity implements ILoadingInterface{
     /** 机器信息获取完成后处理 */
     @Override
     protected void AfterMachineInfoGetOver() {
-        Log.d("apqx","AfterMachineInfoGetOver -----------------------------");
+        MyApplication.getInstance().getLogBuHuo().d("AfterMachineInfoGetOver -----------------------------");
         iLoadingPresenter.AfterMachineInfoGetOver();
         closeComPort();
         new Handler().postDelayed(new Runnable() {

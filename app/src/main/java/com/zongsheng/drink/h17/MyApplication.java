@@ -136,10 +136,13 @@ public class MyApplication extends Application {
      */
     private List<AdInfo> adFileList = new ArrayList<>();
     /**
-     * 主机筛选后的商品列表，查询本地数据库GoodsInfo，在BuyActivity启动之前初始化
+     * 不包含重复商品的主机商品列表，查询本地数据库GoodsInfo，在BuyActivity启动之前初始化
      */
     private List<GoodsInfo> goodsInfos = new ArrayList<>();
 
+    /**
+     * 副柜的货道号和对应商品列表，查询本地数据库，在BuyActivity启动之前初始化，在商品售卖页面使用
+     */
     private Map<Integer, GoodsInfo> deskGoodInfos = new HashMap<>();
 
     /**
@@ -156,11 +159,11 @@ public class MyApplication extends Application {
      */
     private List<BindGeZi> bindGeZis = new ArrayList<>();
     /**
-     * 格子柜显示商品列表，查询本地数据库，在BuyActivity启动之前初始化，售货界面显示的就是这个列表
+     * 实际连接的格子柜显示商品列表，查询本地数据库，在BuyActivity启动之前初始化，售货界面显示的就是这个列表，此列表中不包含重复商品，商品库存是格子柜所有格子该商品库存之和
      */
     private List<GoodsInfo> cabinetGoods = new ArrayList<>();
     /**
-     * 格子柜所有商品列表，在BuyActivity启动之前初始化
+     * 实际连接的格子柜所有商品列表，查询本地数据库，在BuyActivity启动之前初始化，此列表中包含商品ID相同但属于不同格子柜或不同格子的商品
      */
     private List<GoodsInfo> cabinetTotalGoods = new ArrayList<>();
 

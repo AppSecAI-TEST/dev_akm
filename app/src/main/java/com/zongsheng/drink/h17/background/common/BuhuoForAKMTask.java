@@ -75,7 +75,7 @@ public class BuhuoForAKMTask extends AsyncTask<String, Integer, String> {
                     SystemClock.sleep(1000);
                     str = comActivity.machineBuHuo(boxindex, upateModel.getRoad_no());
                     if (!"".equals(str)) {
-                        Log.e("", "补货失败:" + str + "(" + upateModel.getRoad_no() + ")");
+//                        Log.e("", "补货失败:" + str + "(" + upateModel.getRoad_no() + ")");
                         // 开门失败
                         return;
                     }

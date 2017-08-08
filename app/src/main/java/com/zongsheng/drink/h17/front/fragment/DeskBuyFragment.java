@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zongsheng.drink.h17.ComActivity;
 import com.zongsheng.drink.h17.MyApplication;
@@ -174,8 +175,9 @@ public class DeskBuyFragment extends Fragment {
                     edtCode.setText(code);
                 }
                 break;
-            case R.id.tv_confirm:// TODO 确认
-                Log.e("isConn", MyApplication.getInstance().getDeskConnState() + "");
+            case R.id.tv_confirm://
+//                Log.e("isConn", MyApplication.getInstance().getDeskConnState() + "");
+                MyApplication.getInstance().getLogBuyAndShip().d("副柜购货 = 货道号 : "+code);
                 if (MyApplication.getInstance().getDeskConnState()) {
                     if (code.length() > 2) {
                         ToastUtils.showToast((Activity) this.getContext(), "货道号最多不超过3位！");
@@ -187,12 +189,21 @@ public class DeskBuyFragment extends Fragment {
                         int roadNum = Integer.parseInt(code);
                         if (goodsInfoMap.containsKey(roadNum)) {
                             GoodsInfo goodsInfo1 = goodsInfoMap.get(roadNum);
-                            selectGoodInfo(goodsInfo1);
+                            //TODO:这里判断本地库存是否有货
+                            if (goodsInfo1.getKuCun().equals("0")){
+                                //如果库存为0，说明该货道已经售空
+                                ToastUtils.showToast((Activity) this.getContext(), "该货道已售空，请选择其它货道");
+                            }else {
+                                //如果货道有货，开始购买支付流程
+                                selectGoodInfo(goodsInfo1);
+                            }
                         } else {
+                            MyApplication.getInstance().getLogBuyAndShip().d("货道号 = "+code+" 未被启用");
                             ToastUtils.showToast((Activity) this.getContext(), "该货道未被启用！");
                         }
                     }
                 } else {
+                    MyApplication.getInstance().getLogBuyAndShip().d("副柜未连接");
                     ToastUtils.showToast((Activity) this.getContext(), "副柜机器未连接！");
                 }
 

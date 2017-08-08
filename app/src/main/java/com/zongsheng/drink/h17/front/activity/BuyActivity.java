@@ -782,7 +782,7 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
                 iBuyGoodsPopWindowView = null;
             }
             unRegisterPhoneState();
-            unregisterReceiver(testReceiveData);
+            unregisterReceiver(payDataReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -975,13 +975,13 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
     private void rigisterPush() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(SysConfig.PUSH_MESSAGE_ACTION);
-        registerReceiver(testReceiveData, filter);
+        registerReceiver(payDataReceiver, filter);
     }
 
     /**
-     * 推送接收
+     * 接收支付推送消息
      */
-    public BroadcastReceiver testReceiveData = new BroadcastReceiver() {
+    public BroadcastReceiver payDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String data = intent.getStringExtra("data");
@@ -990,7 +990,7 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
                 if (data == null) {
                     data = "";
                 }
-                L.d(TAG, "收到推送消息:" + data);
+//                L.d(TAG, "收到推送消息:" + data);
                 if (iBuyActivityPresenter == null) {
                     iBuyActivityPresenter = (IBuyActivityPresenter) createPresenter();
                 }
@@ -1008,13 +1008,17 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
     }
 
     /**
-     * 主柜出货成功更改本地库存
+     * 主柜出货成功并更改本地库存
      */
     @Override
     public void updateLocalKuCun(String road_no) {
         iBuyActivityPresenter.updateLocalKuncun(road_no);
     }
 
+    /**
+     * 副柜出货成功并更改本地库存
+     * @param road_no 出货货道号
+     */
     @Override
     protected void updateDeskKucun(String road_no) {
 //        Log.e(TAG, "更新库存:" + road_no);

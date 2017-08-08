@@ -153,12 +153,16 @@ public class LoadingModelImpl implements ILoadingModel {
         }
     }
 
+    /**
+     * 初始化时，更新主机商品信息
+     */
     @Override
     public void getGoods4Realm() {
         final RealmResults<GoodsInfo> result = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").findAll().sort("road_no", Sort.ASCENDING);
+        //不重复商品
         final Map<String, String> checkMap = new HashMap<>();
         if (result.size() > 0) {
-            Log.i(TAG, "取得本地保存产品数据:" + result.size());
+//            Log.i(TAG, "取得本地保存主机产品数据:" + result.size());
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
@@ -178,13 +182,16 @@ public class LoadingModelImpl implements ILoadingModel {
         }
     }
 
+    /**
+     * 初始化时，更新格子柜列表，处理缺货信息
+     */
     @Override
     public void getGeZiInfo() {
         //从本地获得绑定的所有格子柜信息，并初始化Application的列表
         RealmResults<BindGeZi> cabinetInfos = realm.where(BindGeZi.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(cabinetInfos));
 
-        Log.e("失联格子柜数:", MyApplication.getInstance().getConnetFailGeziList().size() + "");
+//        Log.e("失联格子柜数:", MyApplication.getInstance().getConnetFailGeziList().size() + "");
         if (cabinetInfos.size() > 0) {
             // 格子柜的map 机器编码, 箱号
             Map<String, Integer> bindGeziMap = new HashMap<>();
@@ -208,7 +215,7 @@ public class LoadingModelImpl implements ILoadingModel {
             List<GoodsInfo> cabinetGoods = results;
             Map<String, Integer> checkMap1 = new HashMap<>();
             if (cabinetGoods.size() > 0) {
-                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
+//                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
                 if (!realm.isInTransaction()) {
                     realm.beginTransaction();
                 }
@@ -280,7 +287,7 @@ public class LoadingModelImpl implements ILoadingModel {
                 }
                 realm.commitTransaction();
             }
-            // 处理以勒格子柜的缺货信息
+            // 处理格子柜的缺货信息
             for (BindGeZi bindGeZi : MyApplication.getInstance().getBindGeZis()) {
                 addGeZiQuehuo2Realm(bindGeZi.getMachineSn());
             }
@@ -293,13 +300,16 @@ public class LoadingModelImpl implements ILoadingModel {
         return cabinetInfos.size() > 0;
     }
 
-
+    /**
+     * 初始化时，更新副柜信息
+     */
     @Override
     public void getDeskGoods4Realm() {
+        //获取所有副柜商品
         final RealmResults<GoodsInfo> result = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3").findAll().sort("road_no", Sort.ASCENDING);
         final Map<String, String> checkMap = new HashMap<>();
         if (result.size() > 0) {
-            Log.i(TAG, "取得本地副柜保存产品数据:" + result.size());
+//            Log.i(TAG, "取得本地副柜保存产品数据:" + result.size());
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
@@ -313,11 +323,12 @@ public class LoadingModelImpl implements ILoadingModel {
 //                        }
 //                        checkMap.put(goodsInfo.getGoodsCode(), "");
                         MyApplication.getInstance().getDeskGoodsInfo().put(goodsInfo.getRoad_no(), goodsInfo);
-                        Log.i("本地副柜保存产品数据:", goodsInfo.getRoad_no() + goodsInfo.getGoodsName());
+//                        Log.i("本地副柜保存产品数据:", goodsInfo.getRoad_no() + goodsInfo.getGoodsName());
                     }
                 }
             });
         }
+        MyApplication.getInstance().getLogBuHuo().d("初始化时，副柜的所有商品数 = "+MyApplication.getInstance().getDeskGoodsInfo().size());
     }
 
     @Override

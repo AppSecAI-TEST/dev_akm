@@ -276,6 +276,7 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
 
     private void initView() {
         // 从mp中获取该机器的货道数
+        //TODO:这里有问题，不仅仅是可用的货道数，应该获取清晰的哪个货道可用
         int countHuoDao = MyApplication.getInstance().getRoadCount();
         for (int i = 0; i < countHuoDao; i++) {
             GoodsInfo goodsInfo = new GoodsInfo();
@@ -286,8 +287,7 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
             goodsInfo.setKuCun(String.valueOf(0));
             goodsInfoList.add(goodsInfo);
         }
-        // 获取当前数据库里面的goodsInfo的模版
-        // 获取当前本地数据库存储的商品信息 goodsinfo 模版
+        // 获取当前本地数据库存储的商品信息 goodsinfo
         RealmResults<GoodsInfo> sort = realm.where(GoodsInfo.class).equalTo("machineID", MyApplication.getInstance().getMachine_sn()).findAll().sort("road_no", Sort.ASCENDING);
         if (sort.size() != 0) {
             // 从数据库里面把集合copy出来
@@ -313,12 +313,12 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
         // 修改价格和最大库存
         drinkAdapter.setOnDialogShowListener(new DrinkAdapter.onDialogShowListener() {
             @Override
-            public void onClick(View v, final int position, int type, final String kucun) {
+            public void onClick(View v, final int position, int type, final String kucunOrPrice) {
                 switch (type) {
                     case 1:// 修改价格
                         //发送广播通知所有注册该接口的监听器
                         ListenerManager.getInstance().sendBroadCast("show");
-                        tvDialogTitle.setText("现在的价格  " + Float.parseFloat(kucun) / 10);
+                        tvDialogTitle.setText("现在的价格  " + Float.parseFloat(kucunOrPrice) / 10);
                         edtInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
                         edtInput.setHint("请输入新的商品价格");
                         edtInput.setText("");
@@ -352,7 +352,8 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
                                     }
                                     goodsInfoList.get(position).setPrice(String.valueOf((int) (Double.parseDouble(edtInput.getText().toString()) * 10)));
 
-                                    MarkLog.markLog("饮料机" + MyApplication.getInstance().getMachine_sn() + "商品：" + goodsInfoList.get(position).getGoodsName() + "，价格从" + Float.parseFloat(kucun) / 10 + "修改为" +
+                                    //
+                                    MarkLog.markLog("饮料机" + MyApplication.getInstance().getMachine_sn() + "商品：" + goodsInfoList.get(position).getGoodsName() + "，价格从" + Float.parseFloat(kucunOrPrice) / 10 + "修改为" +
                                             edtInput.getText().toString(), SysConfig.LOG_LEVEL_MIDDLE, MyApplication.getInstance().getMachine_sn());
                                     drinkAdapter.notifyDataSetChanged();
                                 } else {
@@ -369,7 +370,7 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
                     case 2:// 修改最大库存
                         //发送广播通知所有注册该接口的监听器
                         ListenerManager.getInstance().sendBroadCast("show");
-                        tvDialogTitle.setText("现最大库存  " + kucun);
+                        tvDialogTitle.setText("现最大库存  " + kucunOrPrice);
                         edtInput.setHint("请输入新的最大库存数");
                         edtInput.setText("");
                         edtInput.setKeyListener(DigitsKeyListener.getInstance("1234567890"));
@@ -462,12 +463,13 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
         mlvMuban.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                String mobanName = mubanInfoList.get(position).getTempleName();
+                final String mobanName = mubanInfoList.get(position).getTempleName();
                 alertView = new AlertView("提示", "确定使用模版(" + mobanName + ")替换货道商品吗?", "取消", new String[]{"确认"}, null,
                         getContext(), AlertView.Style.Alert, DataUtil.dip2px(getContext(), Double.parseDouble(getResources().getString(R.string.margin_alert_left_right))), new OnItemClickListener() {
                     @Override
                     public void onItemClick(Object o, int ss) {
-                        Log.e("模版", "模板点击了第" + position + "条");
+//                        Log.e("模版", "模板点击了第" + position + "条");
+                        MyApplication.getInstance().getLogBuHuo().d("点击了模板 = "+mobanName);
                         if (-1 == ss) {
                             alertView.dismiss();
                         } else {
@@ -505,6 +507,7 @@ public class DrinkFragment extends Fragment implements PullToRefreshLayout.OnRef
                                     }
 
                                 }
+                                //用模板里的商品信息替换原商品信息
                                 goodsInfoList.set(i, goodsInfo);
                             }
 

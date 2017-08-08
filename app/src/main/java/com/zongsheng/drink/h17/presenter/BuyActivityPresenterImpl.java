@@ -101,11 +101,13 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                         //回调出货
                         onlinePayShipment(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_SHIP);
+                        MyApplication.getInstance().getLogBuyAndShip().d("向服务器报告是出货还是退款状态 = 出货");
                     } else {
                         //退款
 //                        L.v(SysConfig.ZPush, "退款操作");
                         refundRequest(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_REFUND);
+                        MyApplication.getInstance().getLogBuyAndShip().d("向服务器报告是出货还是退款状态 = 退款");
                     }
                     ClientConnectMQ.getInstance().sendShipStatus2MQ(JsonControl.ShipStatusModel2Json(shipStatusModel));
                 }
@@ -145,30 +147,44 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
     public void refundRequest(ShipmentModel shipmentModel) {
         if (shipmentModel != null) {
             String automaticRefundState = MyApplication.getInstance().getAutomaticRefundState();
+            //如果启用了自动退款
             if (!automaticRefundState.equals(Constant.AUTOREFUNDSTATE_NOUSED)) {
                 if (iNetWorkRequInterface == null) {
                     iNetWorkRequInterface = new NetWorkRequImpl(this);
                 }
+                //如果对所有支付方式都启用了自动退款
                 if (automaticRefundState.equals(Constant.AUTOREFUNDSTATE_ALLUSED)) {
+                    //支付宝
                     if (Constant.CALLBACK_PAYTYPE_ALI.equals(shipmentModel.getPay_type())) {
-                        iNetWorkRequInterface.request(SysConfig.ALIBABA_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&trade_no=" + shipmentModel.getTrade_no() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn(), 0, RequestMethod.GET);
+                        String request = SysConfig.ALIBABA_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&trade_no=" + shipmentModel.getTrade_no() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn();
+                        iNetWorkRequInterface.request(request, 0, RequestMethod.GET);
+                        MyApplication.getInstance().getLogBuyAndShip().d("发送支付宝退款请求 = "+request);
                     } else if (Constant.CALLBACK_PAYTYPE_WECHAT.equals(shipmentModel.getPay_type())) {
-                        iNetWorkRequInterface.request(SysConfig.WECHAT_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn(), 0, RequestMethod.GET);
+                        //微信
+                        String request = SysConfig.WECHAT_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn();
+                        iNetWorkRequInterface.request(request, 0, RequestMethod.GET);
+                        MyApplication.getInstance().getLogBuyAndShip().d("发送微信退款请求 = "+request);
                     }
                 } else if (automaticRefundState.equals(Constant.AUTOREFUNDSTATE_ALIPAY) && Constant.CALLBACK_PAYTYPE_ALI.equals(shipmentModel.getPay_type())) {
-                    iNetWorkRequInterface.request(SysConfig.ALIBABA_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&trade_no=" + shipmentModel.getTrade_no() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn(), 0, RequestMethod.GET);
+                    String request = SysConfig.ALIBABA_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&trade_no=" + shipmentModel.getTrade_no() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn();
+                    MyApplication.getInstance().getLogBuyAndShip().d("发送支付宝退款请求 = "+request);
+                    iNetWorkRequInterface.request(request, 0, RequestMethod.GET);
                 } else if (automaticRefundState.equals(Constant.AUTOREFUNDSTATE_WETCH) && Constant.CALLBACK_PAYTYPE_WECHAT.equals(shipmentModel.getPay_type())) {
-                    iNetWorkRequInterface.request(SysConfig.WECHAT_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn(), 0, RequestMethod.GET);
+                    String request = SysConfig.WECHAT_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn();
+                    MyApplication.getInstance().getLogBuyAndShip().d("发送微信退款请求 = "+request);
+                    iNetWorkRequInterface.request(request, 0, RequestMethod.GET);
                 }
             }
 
-            //京东支付，暂时处理
+            //TODO:京东支付，暂时处理
             if ("3".equals(shipmentModel.getPay_type())) {
                 if (iNetWorkRequInterface == null) {
                     iNetWorkRequInterface = new NetWorkRequImpl(this);
                 }
-                Log.d("test", SysConfig.JINGDONG_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn());
-                iNetWorkRequInterface.request(SysConfig.JINGDONG_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn(), 0, RequestMethod.GET);
+//                Log.d("test", SysConfig.JINGDONG_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn());
+                String request = SysConfig.JINGDONG_REFUND_URL + "order_sn=" + shipmentModel.getOrder_sn() + "&total_fee=" + shipmentModel.getGoods_price() + "&machine_sn=" + MyApplication.getInstance().getMachine_sn();
+                MyApplication.getInstance().getLogBuyAndShip().d("发送微信退款请求 = "+request);
+                iNetWorkRequInterface.request(request, 0, RequestMethod.GET);
             }
         }
     }
@@ -259,7 +275,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
             if (!hasMachine) {
                 return;
             }
-        } else {//对是否是副柜中商品
+        } else {//是否是副柜中商品
             boolean haveDeskMachine = false;
             for (BindDesk bindDesk : MyApplication.getInstance().getBindDeskList()) {
                 if (bindDesk.getMachineSn().equals(shipmentModel.getPush_machine_sn())) {
@@ -269,9 +285,10 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
             }
             if (!haveDeskMachine) return;
         }
-        // 判断数据里有没有该订单
+        // 判断数据里是否已经存在该订单
         RealmResults<PayModel> result2 = iPayInfoModel.getPayModel4Realm(shipmentModel.getOrder_sn());
         if (result2.size() == 0) {
+            //不存在
             if ("1".equals(shipmentModel.getGoods_belong())) { // 主机
                 // 购买页面显示出货信息
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
@@ -299,7 +316,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     }
                 }
             } else {
-                Log.e("副柜", "here");
+//                Log.e("副柜", "here");
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getDeskGoodsInfo().values()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
                         MyApplication.getInstance().getLogBuyAndShip().d("副柜 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
@@ -429,7 +446,8 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                             // 有货的时候
                             roadNo = goodsInfo.getRoad_no();
                             i = bindGeziMap.get(goodsInfo.getMachineID());
-                            Log.e(TAG, "找到货物了:" + goodsInfo.getMachineID() + ";" + road_no + ";" + goodsInfo.getGoodsName() + "；" + i);
+//                            Log.e(TAG, "找到货物了:" + goodsInfo.getMachineID() + ";" + road_no + ";" + goodsInfo.getGoodsName() + "；" + i);
+                            MyApplication.getInstance().getLogBuyAndShip().d("找到了对应的商品 = 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
                             break;
                         }
                     }
@@ -438,7 +456,8 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         }
         index = String.valueOf(i);
         if ("".equals(index) || 0 == roadNo) {
-            Log.e(TAG, "没有找到可销售的货物");
+            MyApplication.getInstance().getLogBuyAndShip().d("没有找到对应的商品");
+//            Log.e(TAG, "没有找到可销售的货物");
             if (isOnLine) {
                 // 更新订单出货失败
                 PayModel payModel = ((ComActivity) iBuyActivityInterface).getBasePayModel(shipmentModel);

@@ -35,7 +35,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
 
     @Override
     public void updateLocalKuncun(String road_no) {
-        MyApplication.getInstance().getLogBuyAndShip().d("更新本地库存 : 货道号 = "+road_no);
+        MyApplication.getInstance().getLogBuyAndShip().d("主机更新本地库存 : 货道号 = "+road_no);
         RealmResults<GoodsInfo> goodsInfos = realm.where(GoodsInfo.class).equalTo("goodsBelong", "1").equalTo("road_no", Integer.parseInt(road_no)).findAll();
         final GoodsInfo goodsInfo = goodsInfos.where().findFirst();
         if (goodsInfo != null && goodsInfo.getKuCun() != null && !"".equals(goodsInfo.getKuCun())) {
@@ -58,6 +58,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
                 realm.copyToRealm(payModel);
             }
         });

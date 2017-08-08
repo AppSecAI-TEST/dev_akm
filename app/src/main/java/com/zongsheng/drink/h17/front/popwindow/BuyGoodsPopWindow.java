@@ -447,6 +447,8 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                 shipmentModel.setOrder_sn("");
                 ((BuyActivity) context).costMoneyForCabinet(shipmentModel, (int) Double.parseDouble(goodsInfo.getPrice()), false);
             } else {
+                //商品属于副柜
+                MyApplication.getInstance().getLogBuyAndShip().d("商品属于副柜柜 通过App选择，PC处理出货");
                 soldOver = true;
 //                Log.e("POP", "" + goodsInfo.getRoad_no());
                 ((BuyActivity) context).fuguiSaleTestByCash(goodsInfo.getRoad_no(), (int) Double.parseDouble(goodsInfo.getPrice()));
@@ -520,6 +522,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
     @Override
     public void shipmentSuccessByNet() {
+        MyApplication.getInstance().getLogBuyAndShip().d("非现金出货成功");
         soldOver = true;
         soleSuccess = true;
         rl_show_phone.setVisibility(View.GONE);
