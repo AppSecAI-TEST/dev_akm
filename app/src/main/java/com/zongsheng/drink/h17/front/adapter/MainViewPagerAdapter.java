@@ -122,8 +122,11 @@ public class MainViewPagerAdapter extends PagerAdapter implements View.OnClickLi
     private void initView(GridLayout gridLayout,int pagePosition,View container){
 
         width=container.getMeasuredWidth();
-        //这里无法获得ViewPager正确的高度,所以进行了处理
-        height=container.getMeasuredHeight()-offsetHeight;
+        //当使用setCurrentPage()设置ViewPager当前显示的页面时，这里的高度获取错误，所以缓存初始高度
+        if (height == 0){
+            //这里无法获得ViewPager正确的高度,所以进行了处理
+            height=container.getMeasuredHeight()-offsetHeight;
+        }
         logUtil.d("GridLayout.width = "+width);
         logUtil.d("GridLayout.height = "+height);
         //该页面的商品数

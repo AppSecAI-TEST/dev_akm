@@ -115,7 +115,7 @@ public class GeziFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                Log.i(TAG, "切换页面:" + position);
+//                Log.i(TAG, "切换页面:" + position);
                 currentPage = position + 1;
                 setPagePosition(position);
             }
