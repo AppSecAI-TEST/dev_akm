@@ -343,10 +343,10 @@ public class MyApplication extends Application {
                 e.printStackTrace();
             }
             secretInfo = result.toString();
-            L.e("读取加密的数据:", secretInfo);
+//            L.e("读取加密的数据:", secretInfo);
             if (secretInfo != null && !"".equals(secretInfo)) {
                 String machineSn = DataUtil.aesdecrypt(secretInfo);
-                L.e("读取加密的机器编码:", machineSn);
+                MyApplication.getInstance().getLogInit().d("读取加密的机器编码 = "+machineSn);
                 if (machineSn != null && !"".equals(machineSn)) {
                     this.machine_sn = machineSn;
                 }

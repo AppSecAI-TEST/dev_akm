@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.zongsheng.drink.h17.MyApplication;
+import com.zongsheng.drink.h17.common.Constant;
 import com.zongsheng.drink.h17.common.JsonControl;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.PayModel;
@@ -77,7 +78,7 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
     }
 
     private List<PayModel> getPayModelNoUpLoad() {
-        RealmResults<PayModel> results = realm.where(PayModel.class).equalTo("isUploaded", "0").findAll().sort("CreateTime", Sort.ASCENDING);
+        RealmResults<PayModel> results = realm.where(PayModel.class).equalTo("isUploaded", "0").findAll().sort("createTime", Sort.ASCENDING);
         List<PayModel> payModels = new ArrayList<>();
         int i = 0;
         for (PayModel payModel : results) {
@@ -92,8 +93,12 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
 
     private void updatePayModels(List<PayModel> payModels) {
         for (PayModel payModel : payModels) {
-            MyApplication.getInstance().getLogBuyAndShip().d("上传销售记录(成功\\失败) = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode());
-            final PayModel results = realm.where(PayModel.class).equalTo("OrderSn", payModel.getOrderSn()).equalTo("isUploaded", "0").findFirst();
+            if (payModel.getDeliveryStatus().equals("1")){
+                MyApplication.getInstance().getLogBuyAndShip().d("上传出货成功销售记录 成功 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode()+" ; 机器编码 : "+payModel.getPushMachineSn());
+            }else {
+                MyApplication.getInstance().getLogBuyAndShip().d("上传出货失败销售记录 成功 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode()+" ; 机器编码 : "+payModel.getPushMachineSn());
+            }
+            final PayModel results = realm.where(PayModel.class).equalTo("orderSn", payModel.getOrderSn()).equalTo("isUploaded", "0").findFirst();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {

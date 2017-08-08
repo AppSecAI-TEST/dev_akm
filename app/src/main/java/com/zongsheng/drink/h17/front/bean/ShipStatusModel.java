@@ -21,7 +21,7 @@ public class ShipStatusModel {
     @Override
     public String toString() {
         return "ShipStatusModel{" +
-                "OrderSn='" + OrderSn + '\'' +
+                "orderSn='" + OrderSn + '\'' +
                 ", MachineTime='" + MachineTime + '\'' +
                 ", ShipStatus='" + ShipStatus + '\'' +
                 '}';

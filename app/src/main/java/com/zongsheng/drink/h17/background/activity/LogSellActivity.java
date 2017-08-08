@@ -81,7 +81,7 @@ public class LogSellActivity extends Activity implements Observer{
 
 
         RealmResults<PayModel> results = realm.where(PayModel.class).findAll();
-        results = results.sort("CreateTime", Sort.DESCENDING);
+        results = results.sort("createTime", Sort.DESCENDING);
         for (int i = 0; i <results.size() ; i++) {
             LogSellInfo logsellInfo = new LogSellInfo();
             String recordInfo = results.get(i).getRecordInfo();

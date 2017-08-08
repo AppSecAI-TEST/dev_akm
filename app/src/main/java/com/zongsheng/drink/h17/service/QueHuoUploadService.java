@@ -10,6 +10,7 @@ import com.yolanda.nohttp.RequestMethod;
 import com.yolanda.nohttp.rest.CacheMode;
 import com.yolanda.nohttp.rest.Request;
 import com.yolanda.nohttp.rest.Response;
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.common.MyCountDownTimer;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.QueHuoRecord;
@@ -72,7 +73,7 @@ public class QueHuoUploadService extends Service {
 	/** 取得要上传的记录信息 */
 	public void getUploadRecords() {
 
-		Log.e("QueBiUploadService", "开始上传缺货记录");
+//		Log.e("QueBiUploadService", "开始上传缺货记录");
 		// 加载本地数据库中的商品信息
 		RealmResults<QueHuoRecord> result = realm.where(QueHuoRecord.class).equalTo("isUploaded", "0").findAll();
 		result = result.sort("createTime", Sort.ASCENDING);
@@ -89,9 +90,10 @@ public class QueHuoUploadService extends Service {
 		uploadRequest();
 	}
 
-	/** 上传销售记录 */
+	/** 上传缺货记录 */
 	private void uploadRequest() {
-		Log.e("uploadQuehuo", "上传缺货了");
+//		Log.e("uploadQuehuo", "上传缺货了");
+		MyApplication.getInstance().getLogBuyAndShip().d("上传缺货记录 = 机器编号 : "+firstRecord.getMachineSn()+" ; 货道号 : "+firstRecord.getRoad_no());
 		String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/post/quehuoreport?machineSn=" + firstRecord.getMachineSn() + "&alarmDesc=&isQuehuo=" + firstRecord.getIsQueHuo() + "&roadNos="+ firstRecord.getRoad_no() + "&alarmReason=&alarmCode=";
 		request = NoHttp.createStringRequest(url, RequestMethod.GET);
 		//设置为必须网络
@@ -126,6 +128,7 @@ public class QueHuoUploadService extends Service {
 								// 如果成功
 								if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS) && firstRecord != null) {
 									// 上传成功
+									MyApplication.getInstance().getLogBuyAndShip().d("缺货记录上传成功");
 									realm.executeTransaction(new Realm.Transaction() {
 										@Override
 										public void execute(Realm realm) {
@@ -152,7 +155,7 @@ public class QueHuoUploadService extends Service {
 
 	@Override
 	public void onDestroy() {
-		Log.e(SysConfig.ZPush, "上传服务已关闭");
+		Log.e(SysConfig.ZPush, "缺货上传服务已关闭");
 		if (myTimer != null) {
 			myTimer.cancel();
 		}

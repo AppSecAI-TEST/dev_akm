@@ -14,37 +14,37 @@ public class PayModel extends RealmObject implements Serializable {
     /**
      * 商品所对应的机器编号
      */
-    public String PushMachineSn;
+    public String pushMachineSn;
     // 订单编号
-    public String OrderSn;
+    public String orderSn;
     // 创建时间
-    public String CreateTime;
+    public String createTime;
 
     // 订单状态   0：订单生成，1：订单支付成功（未出货），3：已出货
-    public int OrderStatus;
+    public int orderStatus;
     //商品编码
-    public String GoodsCode;
+    public String goodsCode;
     // 购买数量
-    public String GoodsNum;
+    public String goodsNum;
     // 商品ID
-    public String GoodsId;
+    public String goodsId;
     // 商品类型 1：饮料机  2：格子柜
-    public String GoodsBelong;
+    public String goodsBelong;
     // 商品价格
-    public String GoodsPrice;
+    public String goodsPrice;
     // 主机的机器编码
-    public String MachineSn;
+    public String machineSn;
     // 支付时间
-    public String PayTime;
+    public String payTime;
     // 支付方式 0:现金支付;1:微信支付;2:支付宝支付
-    public String PayType;
+    public String payType;
     // 出货时间
-    public String DeliveryTime;
+    public String deliveryTime;
     // 机器交易编号
     // 流水号
-    public String MachineTradeNo;
+    public String machineTradeNo;
     /// 货道号
-    public String MachineRoadNo;
+    public String machineRoadNo;
     /**
      * 是否已上传 0:否 1:是
      */
@@ -68,46 +68,46 @@ public class PayModel extends RealmObject implements Serializable {
 
     public PayModel(PayModel payModel) {
 
-        this.PushMachineSn = payModel.getPushMachineSn();
-        this.CreateTime = payModel.getCreateTime();
+        this.pushMachineSn = payModel.getPushMachineSn();
+        this.createTime = payModel.getCreateTime();
         this.deliveryStatus = payModel.getDeliveryStatus();
-        this.DeliveryTime = payModel.getDeliveryTime();
-        this.GoodsBelong = payModel.getGoodsBelong();
+        this.deliveryTime = payModel.getDeliveryTime();
+        this.goodsBelong = payModel.getGoodsBelong();
         this.recordInfo = payModel.getRecordInfo();
         this.param = payModel.getParam();
         this.goodsName = payModel.getGoodsName();
         this.isUploaded = payModel.getIsUploaded();
-        this.MachineRoadNo = payModel.getMachineRoadNo();
-        this.MachineTradeNo = payModel.getMachineTradeNo();
-        this.PayType = payModel.getPayType();
-        this.PayTime = payModel.getPayTime();
-        this.MachineSn = payModel.getMachineSn();
-        this.GoodsPrice = payModel.getGoodsPrice();
-        this.GoodsId = payModel.getGoodsId();
-        this.GoodsNum = payModel.getGoodsNum();
-        this.GoodsCode = payModel.getGoodsCode();
-        this.OrderStatus = payModel.getOrderStatus();
-        this.OrderSn = payModel.getOrderSn();
+        this.machineRoadNo = payModel.getMachineRoadNo();
+        this.machineTradeNo = payModel.getMachineTradeNo();
+        this.payType = payModel.getPayType();
+        this.payTime = payModel.getPayTime();
+        this.machineSn = payModel.getMachineSn();
+        this.goodsPrice = payModel.getGoodsPrice();
+        this.goodsId = payModel.getGoodsId();
+        this.goodsNum = payModel.getGoodsNum();
+        this.goodsCode = payModel.getGoodsCode();
+        this.orderStatus = payModel.getOrderStatus();
+        this.orderSn = payModel.getOrderSn();
     }
 
     @Override
     public String toString() {
         return "PayModel{" +
-                "PushMachineSn='" + PushMachineSn + '\'' +
-                ", OrderSn='" + OrderSn + '\'' +
-                ", CreateTime='" + CreateTime + '\'' +
-                ", OrderStatus=" + OrderStatus +
-                ", GoodsCode='" + GoodsCode + '\'' +
-                ", GoodsNum='" + GoodsNum + '\'' +
-                ", GoodsId='" + GoodsId + '\'' +
-                ", GoodsBelong='" + GoodsBelong + '\'' +
-                ", GoodsPrice='" + GoodsPrice + '\'' +
-                ", MachineSn='" + MachineSn + '\'' +
-                ", PayTime='" + PayTime + '\'' +
-                ", PayType='" + PayType + '\'' +
-                ", DeliveryTime='" + DeliveryTime + '\'' +
-                ", MachineTradeNo='" + MachineTradeNo + '\'' +
-                ", MachineRoadNo='" + MachineRoadNo + '\'' +
+                "pushMachineSn='" + pushMachineSn + '\'' +
+                ", orderSn='" + orderSn + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", orderStatus=" + orderStatus +
+                ", goodsCode='" + goodsCode + '\'' +
+                ", goodsNum='" + goodsNum + '\'' +
+                ", goodsId='" + goodsId + '\'' +
+                ", goodsBelong='" + goodsBelong + '\'' +
+                ", goodsPrice='" + goodsPrice + '\'' +
+                ", machineSn='" + machineSn + '\'' +
+                ", payTime='" + payTime + '\'' +
+                ", payType='" + payType + '\'' +
+                ", deliveryTime='" + deliveryTime + '\'' +
+                ", machineTradeNo='" + machineTradeNo + '\'' +
+                ", machineRoadNo='" + machineRoadNo + '\'' +
                 ", isUploaded='" + isUploaded + '\'' +
                 ", recordInfo='" + recordInfo + '\'' +
                 ", goodsName='" + goodsName + '\'' +
@@ -161,122 +161,122 @@ public class PayModel extends RealmObject implements Serializable {
     }
 
     public String getPushMachineSn() {
-        return PushMachineSn;
+        return pushMachineSn;
     }
 
     public void setPushMachineSn(String pushMachineSn) {
-        PushMachineSn = pushMachineSn;
+        this.pushMachineSn = pushMachineSn;
     }
 
     public String getOrderSn() {
-        return OrderSn;
+        return orderSn;
     }
 
     public void setOrderSn(String orderSn) {
-        OrderSn = orderSn;
+        this.orderSn = orderSn;
     }
 
     public String getCreateTime() {
-        return CreateTime;
+        return createTime;
     }
 
     public void setCreateTime(String createTime) {
-        CreateTime = createTime;
+        this.createTime = createTime;
     }
 
     public int getOrderStatus() {
-        return OrderStatus;
+        return orderStatus;
     }
 
     public void setOrderStatus(int orderStatus) {
-        OrderStatus = orderStatus;
+        this.orderStatus = orderStatus;
     }
 
     public String getGoodsCode() {
-        return GoodsCode;
+        return goodsCode;
     }
 
     public void setGoodsCode(String goodsCode) {
-        GoodsCode = goodsCode;
+        this.goodsCode = goodsCode;
     }
 
     public String getGoodsNum() {
-        return GoodsNum;
+        return goodsNum;
     }
 
     public void setGoodsNum(String goodsNum) {
-        GoodsNum = goodsNum;
+        this.goodsNum = goodsNum;
     }
 
     public String getGoodsId() {
-        return GoodsId;
+        return goodsId;
     }
 
     public void setGoodsId(String goodsId) {
-        GoodsId = goodsId;
+        this.goodsId = goodsId;
     }
 
     public String getGoodsBelong() {
-        return GoodsBelong;
+        return goodsBelong;
     }
 
     public void setGoodsBelong(String goodsBelong) {
-        GoodsBelong = goodsBelong;
+        this.goodsBelong = goodsBelong;
     }
 
     public String getGoodsPrice() {
-        return GoodsPrice;
+        return goodsPrice;
     }
 
     public void setGoodsPrice(String goodsPrice) {
-        GoodsPrice = goodsPrice;
+        this.goodsPrice = goodsPrice;
     }
 
     public String getMachineSn() {
-        return MachineSn;
+        return machineSn;
     }
 
     public void setMachineSn(String machineSn) {
-        MachineSn = machineSn;
+        this.machineSn = machineSn;
     }
 
     public String getPayTime() {
-        return PayTime;
+        return payTime;
     }
 
     public void setPayTime(String payTime) {
-        PayTime = payTime;
+        this.payTime = payTime;
     }
 
     public String getPayType() {
-        return PayType;
+        return payType;
     }
 
     public void setPayType(String payType) {
-        PayType = payType;
+        this.payType = payType;
     }
 
     public String getDeliveryTime() {
-        return DeliveryTime;
+        return deliveryTime;
     }
 
     public void setDeliveryTime(String deliveryTime) {
-        DeliveryTime = deliveryTime;
+        this.deliveryTime = deliveryTime;
     }
 
     public String getMachineTradeNo() {
-        return MachineTradeNo;
+        return machineTradeNo;
     }
 
     public void setMachineTradeNo(String machineTradeNo) {
-        MachineTradeNo = machineTradeNo;
+        this.machineTradeNo = machineTradeNo;
     }
 
     public String getMachineRoadNo() {
-        return MachineRoadNo;
+        return machineRoadNo;
     }
 
     public void setMachineRoadNo(String machineRoadNo) {
-        MachineRoadNo = machineRoadNo;
+        this.machineRoadNo = machineRoadNo;
     }
 }

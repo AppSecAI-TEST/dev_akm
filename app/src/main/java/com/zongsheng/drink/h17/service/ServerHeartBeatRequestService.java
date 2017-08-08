@@ -29,7 +29,11 @@ import java.util.TimerTask;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-/** 机器在线状态心跳请求 60s请求一次*/
+/**
+ *  机器在线状态心跳请求 60s请求一次
+ *  服务器收到请求才认为机器在线
+ */
+
 public class ServerHeartBeatRequestService extends Service {
 
 	// 数据请求
@@ -44,16 +48,17 @@ public class ServerHeartBeatRequestService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		MyApplication.getInstance().getLogInit().d("心跳请求服务创建 ServerHeartBeatRequestService");
 		realm = Realm.getDefaultInstance();
 		uploadRequest();
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// 上传记录
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
+
 	/** task处理 */
 	TimerTask task = new TimerTask() {
 		public void run() {
@@ -65,7 +70,7 @@ public class ServerHeartBeatRequestService extends Service {
 			}, SysConfig.L_REQ_AG_TIME_30M);
 		}
 	};
-	
+
 	/** 上传记录 */
 	private void uploadRequest() {
 		String machineSn = ((MyApplication) getApplication()).getMachine_sn();
@@ -85,6 +90,7 @@ public class ServerHeartBeatRequestService extends Service {
 		request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
 		if (request != null) {
 			// 添加到请求队列
+			MyApplication.getInstance().getLogInit().d("心跳请求 = "+url);
 			CallServer.getRequestInstance().add(this, 0, request, null, true, false);
 		}
 		task.run();
@@ -96,6 +102,7 @@ public class ServerHeartBeatRequestService extends Service {
 		if (request != null) {
 			request.cancel();
 		}
+		MyApplication.getInstance().getLogInit().d("心跳请求服务销毁 ServerHeartBeatRequestService");
 		super.onDestroy();
 	}
 }

@@ -170,6 +170,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
     private void initView() {
         /* 返回按钮 */
         RelativeLayout rl_back = (RelativeLayout) view.findViewById(R.id.rl_back);
+        //点击返回按钮
         rl_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

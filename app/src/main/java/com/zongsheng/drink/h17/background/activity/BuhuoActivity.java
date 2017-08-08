@@ -630,7 +630,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
     }
 
     /**
-     *
+     * 副柜补货
      * @param goodsInfoList 补货后各货道对应的商品列表
      * @param machineSn 机器编码
      * @param boxIndex 箱号

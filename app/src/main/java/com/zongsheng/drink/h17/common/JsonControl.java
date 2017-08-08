@@ -22,21 +22,21 @@ public class JsonControl {
         try {
             for(PayModel payModel : payModels){
                 jsonObject = new JSONObject();
-                jsonObject.put("PushMachineSn",payModel.getPushMachineSn());
-                jsonObject.put("OrderSn",payModel.getOrderSn());
-                jsonObject.put("CreateTime",payModel.getCreateTime());
-                jsonObject.put("OrderStatus",payModel.getOrderStatus());
-                jsonObject.put("GoodsCode",payModel.getGoodsCode());
-                jsonObject.put("GoodsNum",payModel.getGoodsNum());
-                jsonObject.put("GoodsId",payModel.getGoodsId());
-                jsonObject.put("GoodsBelong",payModel.getGoodsBelong());
-                jsonObject.put("GoodsPrice",payModel.getGoodsPrice());
-                jsonObject.put("MachineSn",payModel.getMachineSn());
-                jsonObject.put("PayTime",payModel.getPayTime());
-                jsonObject.put("PayType",payModel.getPayType());
-                jsonObject.put("DeliveryTime",payModel.getDeliveryTime());
-                jsonObject.put("MachineTradeNo",payModel.getMachineTradeNo());
-                jsonObject.put("MachineRoadNo",payModel.getMachineRoadNo());
+                jsonObject.put("pushMachineSn",payModel.getPushMachineSn());
+                jsonObject.put("orderSn",payModel.getOrderSn());
+                jsonObject.put("createTime",payModel.getCreateTime());
+                jsonObject.put("orderStatus",payModel.getOrderStatus());
+                jsonObject.put("goodsCode",payModel.getGoodsCode());
+                jsonObject.put("goodsNum",payModel.getGoodsNum());
+                jsonObject.put("goodsId",payModel.getGoodsId());
+                jsonObject.put("goodsBelong",payModel.getGoodsBelong());
+                jsonObject.put("goodsPrice",payModel.getGoodsPrice());
+                jsonObject.put("machineSn",payModel.getMachineSn());
+                jsonObject.put("payTime",payModel.getPayTime());
+                jsonObject.put("payType",payModel.getPayType());
+                jsonObject.put("deliveryTime",payModel.getDeliveryTime());
+                jsonObject.put("machineTradeNo",payModel.getMachineTradeNo());
+                jsonObject.put("machineRoadNo",payModel.getMachineRoadNo());
                 jsonObject.put("deliveryStatus",payModel.getDeliveryStatus());
                 jsonArray.put(jsonObject);
             }
@@ -51,7 +51,7 @@ public class JsonControl {
         String res = "";
         try{
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("OrderSn",shipStatusModel.getOrderSn());
+            jsonObject.put("orderSn",shipStatusModel.getOrderSn());
             jsonObject.put("MachineTime",shipStatusModel.getMachineTime());
             jsonObject.put("ShipStatus",shipStatusModel.getShipStatus());
             res = jsonObject.toString();

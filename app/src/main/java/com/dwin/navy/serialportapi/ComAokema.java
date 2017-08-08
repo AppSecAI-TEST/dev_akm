@@ -829,6 +829,15 @@ public class ComAokema {
                 returnConsumeInfo("007B", stockhave);
                 break;
             //TODO:添加副柜缺货检查
+//            case 0x01:
+//                //只考虑48弹簧机，各料道中间可能有的料道无效
+//                for (int i = 0; i<6; i++){
+//                    for (int j= 0; j< 8; j++){
+//                        stockhave = stockhave + ((buf[6 + i] >> j) & 0x01) + ",";
+//                    }
+//                }
+//                logBasicCom.d("---------------箱号1副柜料道是否有货（从11开始） = "+stockhave);
+//                returnConsumeInfo("007X","1;"+stockhave);
             case 0x02:// 格子柜
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 8; j++) {
@@ -1399,7 +1408,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
             toVMCPara = new byte[27];
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 支付方式 : 非现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"货道号 : "+channelNum+" ; 支付方式 : 非现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
             return "";

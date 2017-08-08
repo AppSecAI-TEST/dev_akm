@@ -5,14 +5,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zongsheng.drink.h17.MyApplication;
+
 /**
  * Created by 谢家勋 on 2016/9/14.
  */
 public class ToastUtils {
 
+    //全局Toast，防止遮挡
+    private static Toast toast = Toast.makeText(MyApplication.getInstance(),"",Toast.LENGTH_LONG);
+
     public static void showToast(final Activity context, final String msg) {
         if ("main".equals(Thread.currentThread().getName())) {
-            Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
+//            Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
             setToastStyle(toast);
             toast.setText(msg);
             toast.show();
@@ -20,7 +25,7 @@ public class ToastUtils {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
+//                    Toast toast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
                     setToastStyle(toast);
                     toast.show();
                 }

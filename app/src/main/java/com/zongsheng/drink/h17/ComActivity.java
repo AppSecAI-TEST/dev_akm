@@ -807,7 +807,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * TODO:主机和格子柜的缺货信息判定依赖VMC发来的各货道缺货记录，可能有问题
      */
     private void handleGeziKuCun() {
-        MyApplication.getInstance().getLogBuyAndShip().d("处理格子柜的库存，更新Application列表，是否缺货");
+        MyApplication.getInstance().getLogBuyAndShip().d("处理格子柜的库存和缺货判定");
         try {
             // 格子柜的map 机器编码, 箱号
             // 当前实际连接成功的格子柜列表
@@ -1097,18 +1097,18 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         }
                         s = s.replace("007C", "");
 //                        36,250,9390,0,1,2176,0,0,0,2000-11-27 21:35 3',2152,1
-//                        "售卖料道编号:" + s[0]+ ",售卖金额:" + s[1] + ",出货序列号:" + s[2] + ",卡号=" + s[3] + ",支付方式=" + s[4]
+//                        "售卖料道编号:" + s[0]+ ",售卖金额:" + s[1] + ",流水号:" + s[2] + ",卡号=" + s[3] + ",支付方式=" + s[4]
 //                                + ",商品编号=" + s[5] + ",售货机设备编号=" + s[6] + ",出货结果="  + (s[7].equals("0")?"成功":"失败")
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
-//                        Log.e(TAG, "出货记录!: " + s);
                         final String[] info = s.split(",");
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC = "+Arrays.toString(info));
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
                         try {
-                            PayModel payModel = realm.where(PayModel.class).equalTo("MachineTradeNo", info[2]).equalTo("PayTime", saleTime).findFirst();
+                            PayModel payModel = realm.where(PayModel.class).equalTo("machineTradeNo", info[2]).equalTo("payTime", saleTime).findFirst();
                             if (payModel != null && payModel.getMachineTradeNo() != null && !"".equals(payModel.getMachineTradeNo())) {
-                                MyApplication.getInstance().getLogBuyAndShip().d("当前出货记录已经存在 = 出货序列号 : "+info[2]+" ; PayTime : "+saleTime);
+                                MyApplication.getInstance().getLogBuyAndShip().d("当前出货记录已经存在 = 出货序列号 : "+info[2]+" ; payTime : "+saleTime);
                                 break;
                             }
                         } catch (Exception e) {
@@ -1130,7 +1130,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                            Log.e("COM", "货道号:" + roadNo);
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindDeskList().get(0).getMachineSn()).findFirst();
-
+                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货，找到货道对应的商品 = 商品名 = "+goodsInfo.getGoodsName());
                         } else {
                             //格子柜
                             String ss = Integer.toHexString(Integer.parseInt(info[0]));
@@ -1143,20 +1143,27 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                     , MyApplication.getInstance().getBindGeZis().get(Integer.parseInt(info[11]) - 2).getMachineSn()).findFirst();
                         }
                         MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+info[6]);
-                        //如果出货成功，且箱号为0，主机出货成功
-                        if ("0".equals(info[7]) && Integer.parseInt(info[11]) == 0) {
-                            //更新货道库存
-                            updateLocalKuCun(String.valueOf(roadNo));
-                            MyApplication.getInstance().getLogBuyAndShip().d("主机出货成功，货道号 = "+roadNo);
+                        if (Constant.SHIPMENTSUCCESS.equals(info[7])){
+                            //出货成功
+                            //箱号为0，主机出货成功
+                            if (Integer.parseInt(info[11]) == 0) {
+                                //更新货道库存
+                                updateLocalKuCun(String.valueOf(roadNo));
+                                MyApplication.getInstance().getLogBuyAndShip().d("主机出货成功，货道号 = "+roadNo);
+                            }else if (Integer.parseInt(info[11]) == 1) {
+                                //箱号为1，副柜出货成功
+                                MyApplication.getInstance().getLogBuyAndShip().d("副柜出货成功，货道号 = "+roadNo);
+                                updateDeskKucun(String.valueOf(roadNo));
+                                //TODO:和主机、格子柜不同，副柜在这里检查各货道是否缺货
+                                checkDeskQueHuo(info[6],roadNo);
+                            }else {
+                                //格子柜出货成功
+                                MyApplication.getInstance().getLogBuyAndShip().d("格子柜柜出货成功，货道号 = "+roadNo);
+                            }
+                        }else {
+                            MyApplication.getInstance().getLogBuyAndShip().d("出货失败");
                         }
 
-                        //如果出货成功，且箱号为1，说明副柜出货成功
-                        if ("0".equals(info[7]) && Integer.parseInt(info[11]) == 1) {
-
-                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货成功，货道号 = "+roadNo);
-                            updateDeskKucun(String.valueOf(roadNo));
-                        }
-                        //TODO:判断支付方式可能有问题
                         machineQueryType = "";
                         int payType = 1;
                         if ("4".equals(info[4])) {// 支付了0元 非现金支付
@@ -1187,10 +1194,11 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                         ",0," + (info[7].equals("0") ? "1" : "2") + "," + roadNo + "," + goodsInfo.getGoodsCode();
                             }
                             if (info[7].equals(Constant.SHIPMENTSUCCESS)) {
-                                cashPaySend2MQ(getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), true), info[4], Constant.DELIVERYSUCCESS);
+                                PayModel payModel = getBasePayModel(record, goodsInfo, info[2], String.valueOf(roadNo), true);
+                                cashPaySend2MQ(payModel, info[4], Constant.DELIVERYSUCCESS);
                                 if (goodsInfo.getGoodsCode() != null) {
                                     //现金支付没有订单号，只有流水号
-                                    shipmentSuccess(String.valueOf(roadNo), goodsInfo.getGoodsCode(), "1", machineQueryType, saleOrderID, Integer.parseInt(info[11]),
+                                    shipmentSuccess(String.valueOf(roadNo), goodsInfo.getGoodsCode(), "1", machineQueryType, payModel.getOrderSn(), Integer.parseInt(info[11]),
                                             saleTime, String.valueOf(roadNo));
                                 }
                             } else {
@@ -1216,7 +1224,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         if (iVSICallback2ViewWeakReference != null && iVSICallback2ViewWeakReference.get() != null) {
                             iVSICallback2ViewWeakReference.get().MsgCallback(s);
                         }
-                    } else if ("0079".equals(sub)) {// 故障信息 TODO
+                    } else if ("0079".equals(sub)) {// 故障信息
                         s = s.replace("0079", "");
                         MyApplication.getInstance().setTroubleStatus(s);
 //                        Log.i(TAG, "故障信息:" + s);
@@ -1264,11 +1272,11 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 showCashCount(Integer.parseInt(info[5]) / 10);
                             }
                         }
-                    } else if ("007X".equals(sub)) {// 各个格子柜货道是否有货信息，和7B是同一个指令
+                    } else if ("007X".equals(sub)) {// 各个副柜、格子柜货道是否有货信息，和7B是同一个指令
                         long now = new Date().getTime();
                         s = s.replace("007X", "");
                         String[] info = s.split(";");
-                        //格子柜箱号
+                        //箱号
                         final int boxIndex = Integer.parseInt(info[0]);
                         if (nowBoxIndex == boxIndex) {
                             //防止短时间内重复执行库存检查
@@ -1281,7 +1289,10 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         //替换0和1，0表示有货，1表示无货
                         String roadInfo = info[1].replace("1", "5").replace("0", "1").replace("5", "0");
 //                        Log.i(TAG, "格子柜(箱号:" + boxIndex + ")货道信息:" + roadInfo);
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC发送7X指令，各个格子柜是否有货信息");
+//                        //TODO:增加副柜的缺货处理
+//                        if (boxIndex == 1){
+//                            handleDeskKucun(roadInfo);
+//                        }
                         // 处理货道信息
                         Map<Integer, String> kucunMap = new HashMap<>();
                         int i = 1;
@@ -1323,7 +1334,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
                             String roadInfo = "";
                             if (info.length > 2) {
-                                Log.e(TAG, "弹簧机有效货道信息:" + info[2]);
+//                                Log.e(TAG, "弹簧机有效货道信息:" + info[2]);
                                 roadInfo = info[2];
                             }
                             if (MyApplication.getInstance().getDeskRoadList().size() != 0) {
@@ -1334,6 +1345,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                     MyApplication.getInstance().getDeskRoadList().add(Integer.parseInt(road));
                                 }
                             }
+                            MyApplication.getInstance().getLogInit().d("弹簧机有效货道号 = "+MyApplication.getInstance().getDeskRoadList());
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
@@ -1373,16 +1385,57 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         }
     });
 
+    private void handleDeskKucun(String infoString){
+        String[] roadState = infoString.split(",");
+        int roadCount;
+        int count = 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0;i < 6;i++){
+            for (int j = 0;j < 8;j++){
+                roadCount = (i+1)*10+(j+1);
+                //此货到有效
+                if (MyApplication.getInstance().getDeskRoadList().contains(roadCount)){
+                    //此货道缺货
+                    if (roadState[count].equals("1")){
+                        stringBuilder.append(roadCount+";");
+                    }
+                }
+                count++;
+            }
+        }
+        String roadQuehuo = stringBuilder.toString();
+        roadQuehuo = roadQuehuo.substring(0,roadQuehuo.length()-1);
+        MyApplication.getInstance().getLogBuHuo().d("副柜缺货信息 = 货道号 : "+roadQuehuo);
+    }
+
+    private void checkDeskQueHuo(String machineSn,int roadNum){
+        GoodsInfo goodsInfo = MyApplication.getInstance().getDeskGoodsInfo().get(roadNum);
+        MyApplication.getInstance().getLogBuyAndShip().d("检查副柜是否缺货");
+        if (goodsInfo != null){
+            //说明缺货
+            if (Integer.parseInt(goodsInfo.getKuCun()) <= 0){
+                MyApplication.getInstance().getLogBuyAndShip().d("检查副柜是否缺货 = 找到出货货道商品 = 副柜缺货 货道号 : "+roadNum);
+                machineQuehuo(machineSn,roadNum+"");
+            }
+        }
+    }
+
     /**
      * 收到VMC发来的主机缺货信息后进行处理
      * @param s
      */
     private void doEmptyControl(String s) {
+        MyApplication.getInstance().getLogBuyAndShip().d("处理主机的库存和缺货判定");
 //        Log.i(TAG, "货道信息收到:" + s);
         //取反
         s = s.replace("1", "5").replace("0", "1").replace("5", "0");
 
 //        Log.i(TAG, "货道信息HAH:" + s);
+//        //TODO:副柜缺货信息
+//        if (MyApplication.getInstance().getBindDeskList().size()>0){
+//            //如果有副柜的话，请求VMC报告副柜缺货情况
+//            comVSI.checkThingsHaveOrNot(1);
+//        }
         // 如果有格子柜的话 不结束,继续去取得格子柜的货道是否售空信息
         if (MyApplication.getInstance().getGeziList().size() > 0) {
             geziKucunCheckCount = 1;
@@ -1431,7 +1484,10 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 i++;
             }
             // 机器缺货
-            machineQuehuo(MyApplication.getInstance().getMachine_sn(), roads);
+            //TODO:主机如果不缺货，roads为空，也会添加到缺货数据库?这里进行一个判断，不缺货就不添加
+            if (!roads.equals("")){
+                machineQuehuo(MyApplication.getInstance().getMachine_sn(), roads);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1651,7 +1707,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if ("".equals(usefulRoads)) {
             queHuoRecord.setIsQueHuo("0");
         } else {
-            MyApplication.getInstance().getLogBuyAndShip().d("添加缺货信息 = 机器编号 : "+machineSn+" ; 货道号 : "+roads);
             queHuoRecord.setIsQueHuo("1");
         }
 
@@ -1673,6 +1728,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
             }
         }
+        MyApplication.getInstance().getLogBuyAndShip().d("添加缺货信息 = 机器编号 : "+machineSn+" ; 货道号 : "+roads);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

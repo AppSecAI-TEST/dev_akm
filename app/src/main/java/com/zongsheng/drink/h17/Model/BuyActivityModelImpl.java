@@ -58,7 +58,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
+                MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 机器编码 : "+payModel.getMachineSn());
                 realm.copyToRealm(payModel);
             }
         });
@@ -66,7 +66,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
 
     @Override
     public void addPayModel2Realm(PayModel payModel, String orderSn, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+orderSn+" ; 商品名 : "+payModel.getGoodsName());
+        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+orderSn+" ; 商品名 : "+payModel.getGoodsName()+" ; 机器编码 : "+payModel.getMachineSn());
         final PayModel payModel1 = payModel.clone();
         payModel1.setOrderSn(orderSn);
         payModel1.setPayType(payType);
@@ -82,7 +82,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
     @Override
     public RealmResults<PayModel> getPayModel4Realm(String order_sn) {
         return realm.where(PayModel.class)
-                .equalTo("OrderSn", order_sn).findAll();
+                .equalTo("orderSn", order_sn).findAll();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class BuyActivityModelImpl implements IPayInfoModel {
     @Override
     public void updatePayModels(String orderSn) {
 
-        final RealmResults<PayModel> results = realm.where(PayModel.class).equalTo("OrderSn", orderSn).equalTo("isUploaded", "0").findAll();
+        final RealmResults<PayModel> results = realm.where(PayModel.class).equalTo("orderSn", orderSn).equalTo("isUploaded", "0").findAll();
         if (results.size() > 0) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
