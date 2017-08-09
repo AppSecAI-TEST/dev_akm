@@ -412,9 +412,10 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         int roadNo = 0;
         // 格子柜编号
         int i = 1;
-        // 格子柜的map 机器编码, 箱号
+        // 格子柜机器编码和箱号的映射
         Map<String, Integer> bindGeziMap = new HashMap<>();
         int j = 1;
+        //注意映射和格子柜的添加时间顺序有关
         for (BindGeZi bindGeZi : MyApplication.getInstance().getBindGeZis()) {
             bindGeziMap.put(bindGeZi.getMachineSn(), j + 1);
             j++;
@@ -430,11 +431,13 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     continue;
                 }
             }
+            //找到该种商品
             if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
-                /** 是否售空 0:未空 1:售空 */
-                // 这里直接用货道号是不对的。 getAokemaGeZiKuCunMap里面对应的是1~80  这里的road_no 是真实的
+                // 是否售空 0:未空 1:售空
+                // 这里直接用货道号是不对的，getAokemaGeZiKuCunMap里面对应的货道号是1~80，而这里是真实的货道号，需要进行对应处理 1,2,3,4,5 11,12,13,14,15 ...
                 int road_no = goodsInfo.getRoad_no();
                 int roadIndex;
+                //TODO:这里有问题，优先修改getAokemaGeZiKuCunMap，让它保存真实货道号
                 if (road_no > 10) {
                     roadIndex = road_no - (((int) (road_no * 0.1)) * 2);
                 } else {
@@ -447,7 +450,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                             roadNo = goodsInfo.getRoad_no();
                             i = bindGeziMap.get(goodsInfo.getMachineID());
 //                            Log.e(TAG, "找到货物了:" + goodsInfo.getMachineID() + ";" + road_no + ";" + goodsInfo.getGoodsName() + "；" + i);
-                            MyApplication.getInstance().getLogBuyAndShip().d("找到了对应的商品 = 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
+                            MyApplication.getInstance().getLogBuyAndShip().d("找到了要出货的商品 = 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
                             break;
                         }
                     }
@@ -507,10 +510,14 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         }
     }
 
+    /**
+     * 现金出货
+     * @param goodsCode
+     */
     @Override
     public void saleByCash(final int goodsCode) {
         if (isSaleing) {
-            MyApplication.getInstance().getLogBuyAndShip().d("当前占用，延迟1秒出货");
+            MyApplication.getInstance().getLogBuyAndShip().d("当前占用，延迟1秒发送出货指令");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -519,7 +526,6 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             }, 1000);
         } else {
-            MyApplication.getInstance().getLogBuyAndShip().d("开始出货");
             isSaleing = true;
             ((ComActivity) iBuyActivityInterface).sellByCash(goodsCode);
         }

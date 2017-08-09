@@ -66,7 +66,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
     private ShowBuyPageListener showBuyPageListener;
 
     /**
-     * 分页
+     * ViewPager页面个数
      */
     private int pageCount = 1;
     /**
@@ -122,7 +122,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
 
             @Override
             public void onPageSelected(int position) {
-                Log.i(TAG, "切换页面:" + position);
+//                Log.i(TAG, "切换页面:" + position);
                 currentPage = position + 1;
                 setPagePosition(position);
             }
@@ -137,7 +137,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
         }else{
             dd = goodsInfoList.size() / 12.0;
         }
-        Log.i(TAG, dd + ":页数dd");
+//        Log.i(TAG, dd + ":页数dd");
         if (dd > (int) dd) {
             pageCount = (int) dd + 1;
         } else {
@@ -146,7 +146,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
         if (pageCount == 0) {
             pageCount = 1;
         }
-        Log.i(TAG, pageCount + ":页数");
+//        Log.i(TAG, pageCount + ":页数");
         // 改变翻页按钮
         changePageBtn();
 
@@ -264,7 +264,8 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
     /** 更新页面展示的产品库存 */
     public void updateGoodsInfo() {
         try {
-            Log.e("货道信息HAH", "shuaxin");
+//            Log.e("货道信息HAH", "shuaxin");
+            MyApplication.getInstance().getLogBuyAndShip().d("更新页面展示的产品库存");
             //mViewPagerAdapter.setSingerList(application.getGoodsInfos());
             mViewPager.getAdapter().notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {

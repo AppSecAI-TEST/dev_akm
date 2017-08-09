@@ -176,7 +176,7 @@ public class MyApplication extends Application {
      */
     private Map<Integer, Integer> geziRoadCount = new HashMap<>();
     /**
-     * 指定箱号的格子柜有效货道号列表，VMC在启动BuyActivity之前报告
+     * 指定箱号的格子柜有效货道号（真实货道）列表，VMC在启动BuyActivity之前报告
      */
     private Map<Integer, List<Integer>> geziRoadListMap = new HashMap<>();
 
@@ -191,12 +191,12 @@ public class MyApplication extends Application {
     private int deskRoadCount;
 
     /**
-     * 弹簧机(副柜)有效货道号列表，VMC在BuyActivity启动之前报告
+     * 弹簧机(副柜)有效货道号列表（真实货道号），VMC在BuyActivity启动之前报告
      */
     private List<Integer> deskRoadList = new ArrayList<>();
 
     /**
-     * 澳柯玛格子柜库存信息 Map<箱号, Map<货道号, 是否有货 0:有 1:无>>，VMC在BuyActivity启动之前报告
+     * 澳柯玛格子柜库存信息 Map<箱号, Map<货道号（非真实货道号而是1~80）, 是否有货 0:有 1:无>>，VMC在BuyActivity启动之前报告
      */
     private Map<Integer, Map<Integer, String>> aokemaGeZiKuCunMap = new HashMap<>();
 

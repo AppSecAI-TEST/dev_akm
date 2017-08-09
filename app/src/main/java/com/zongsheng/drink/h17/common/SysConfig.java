@@ -87,6 +87,7 @@ public class SysConfig {
 
 
     /** 日志级别 0:一般 1:中等 2:重要 */
+    //TODO:可以用一个日志级别专门显示购买出货流程
     public static final long L_TIME_1S                                                              = 1000;
     public static final String LOG_LEVEL_NORMAL                                                     = "0";
     public static final String LOG_LEVEL_MIDDLE                                                     = "1";

@@ -168,9 +168,10 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
      * 初始化页面
      */
     private void initView() {
-        /* 返回按钮 */
+        //返回按钮
         RelativeLayout rl_back = (RelativeLayout) view.findViewById(R.id.rl_back);
         //点击返回按钮
+        //TODO:这里可能有问题，窗口的显示问题
         rl_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +188,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
             }
         });
 
-        /* 问号按钮 */
+        //问号按钮
         ImageView ivWenHao = (ImageView) view.findViewById(R.id.iv_wenhao);
         ivWenHao.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,7 +198,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         });
 
         rl_how = (RelativeLayout) view.findViewById(R.id.rl_how);
-        /* 关闭提示按钮 */
+        // 关闭提示按钮
         ImageView iv_close_how = (ImageView) view.findViewById(R.id.iv_close_how);
         iv_close_how.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -457,6 +458,11 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         }
     }
 
+    /**
+     * 设置弹出窗口显示的商品信息
+     * @param goodsInfo 商品信息
+     * @param selectType 弹出商品的类型  0表示按售货机按钮
+     */
     @Override
     public void setGoodsInfo(GoodsInfo goodsInfo, String selectType) {
         this.selectType = selectType;
@@ -487,12 +493,15 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         mRlNetError.setVisibility(View.GONE);
 
         if (pageCloseTimer != null) {
+            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 停止计时");
             pageCloseTimer.cancel();
         }
         /* 页面总时间 */
         long TOTAL_TIME = 46000;
         tv_second.setText(TOTAL_TIME / 1000 + "秒");
         tv_second.setVisibility(View.VISIBLE);
+        //开始计时
+        MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 开始计时 = "+TOTAL_TIME/1000+"s");
         pageCloseTimer = new PageCloseTimer(TOTAL_TIME, 1000);
         pageCloseTimer.start();
 
@@ -504,7 +513,6 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
     @Override
     public void shipmentSuccessByCash() {
-//        Log.e("chuhuo", "出货成功");
         MyApplication.getInstance().getLogBuyAndShip().d("现金出货成功");
         soldOver = true;
         soleSuccess = true;
@@ -570,6 +578,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
         @Override
         public void onFinish() {// 计时完毕
+            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 计时完毕，关闭窗口");
             if (isShowing()) {
                 dismiss();
             }

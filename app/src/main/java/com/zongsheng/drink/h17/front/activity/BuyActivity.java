@@ -872,6 +872,7 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
         @Override
         public void onFinish() {// 计时完毕
             if (flVideo.getVisibility() == View.GONE) {
+                MyApplication.getInstance().getLogInit().d("计时完毕 开始播放广告");
                 startPlayAds();
             }
         }
@@ -952,13 +953,10 @@ public class BuyActivity extends ComActivity<IBuyActivityInterface, BasePresente
      * 广告播放倒计时重新计时
      */
     public void resetPlayAdTimer() {
-        Log.i(TAG, "广告播放倒计时重新计时");
+        MyApplication.getInstance().logInit.d(TAG, "广告播放倒计时重新计时 60s");
         if (playAdTimer != null) {
             playAdTimer.cancel();
         }
-        /*
-      无操作播放广告时间
-     */
         playAdTimer = new PlayAdTimer(SysConfig.L_REQ_AG_TIME_60, SysConfig.L_REQ_AG_TIME_60);
         playAdTimer.start();
     }

@@ -247,7 +247,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
         }
 
         //获取数据库里面绑定的格子柜的数量和型号
-        RealmResults<BindGeZi> bindGeZis = realm.where(BindGeZi.class).findAll();
+        final RealmResults<BindGeZi> bindGeZis = realm.where(BindGeZi.class).findAll();
         bindGeZiList = realm.copyFromRealm(bindGeZis);
         if (bindGeZis.size() != 0) {
             isHaveGezi = true;
@@ -265,7 +265,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
         // 设置选中项目
         titlePopup.setSelectedPosition(0);
-        //TODO:这里点击切换待补货的格子柜，可能有问题
+        //TODO:这里点击切换待补货的格子柜
         titlePopup.setItemOnClickListener(new TitlePopup.OnItemOnClickListener() {
             @Override
             public void onItemClick(ActionItem item, int position) {
@@ -283,7 +283,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
                             mNotConnectTitle = bindDeskList.get(position - 1).getMachineSn();
                         }
                         if (position >= 2) {
-                            mNotConnectTitle = bindDeskList.get(position - 2).getMachineSn();
+                            mNotConnectTitle = bindGeZis.get(position - 2).getMachineSn();
                         }
                     }
                     if (!isHaveGezi && isHaveDesk) {

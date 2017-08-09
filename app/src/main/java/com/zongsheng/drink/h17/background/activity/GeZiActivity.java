@@ -924,7 +924,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 
     /**
      * 从PC获取所有本地的格子柜，与服务器获取的绑定列表进行比较，本地多余的删掉
-     * TODO:要不要使用服务器获得的绑定列表更新本地数据库
      * @param list 服务器获得的格子柜和副柜编码列表
      */
     private void deleteBindGeziOrDesk(List<String> list) {

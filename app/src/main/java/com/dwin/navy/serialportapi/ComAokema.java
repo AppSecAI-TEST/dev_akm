@@ -1281,7 +1281,7 @@ public class ComAokema {
     }
 
     /**
-     * 安卓工控机发起扣款请求 dealSerialNumber:交易序列号,channelNum:料道值 ,PAY_WAY支付方式
+     * 安卓工控机发起扣款请求 dealSerialNumber:流水号,channelNum:料道值 ,PAY_WAY支付方式
      * 现金出货
      * 1-钱币 2-刷卡 3-支付宝 4-微信
      */
@@ -1347,7 +1347,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
 //            L.e(TAG, "格子柜出货指令:" + Arrays.toString(resp));
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 支付方式 : 现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 现金 ; 价格 : "+payMoney);
             toVMCPara = new byte[27];
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
@@ -1408,7 +1408,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
             toVMCPara = new byte[27];
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"货道号 : "+channelNum+" ; 支付方式 : 非现金 ; 价格 : "+payMoney+" ; 箱号 : "+boxIndex);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = 流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 非现金 ; 价格 : "+payMoney);
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
             return "";
