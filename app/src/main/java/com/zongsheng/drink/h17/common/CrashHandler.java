@@ -27,6 +27,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.receiver.Alarmreceiver;
 
 /**
@@ -84,6 +85,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         } else {
 
             // 重新启动
+            MyApplication.getInstance().getLogInit().w("CrashHandler捕捉到崩潰信息，重啓LoadingActivity");
             Intent ii = new Intent(mContext, Alarmreceiver.class);
             ii.setAction("arui.alarm.action");
             PendingIntent sender = PendingIntent.getBroadcast(mContext, 0,
@@ -123,6 +125,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             public void run() {
                 Looper.prepare();
                 Toast.makeText(mContext, Constant.APP_KILLED, Toast.LENGTH_LONG).show();
+                MyApplication.getInstance().getLogInit().d("应用错误，即将退出并重启");
                 Looper.loop();
             }
         }.start();
@@ -169,6 +172,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * @return  返回文件名称,便于将文件传送到服务器
      */
     private String saveCrashInfo2File(Throwable ex) {
+        MyApplication.getInstance().getLogInit().d("错误日志已保存");
 
         StringBuffer sb = new StringBuffer();
         for (Map.Entry<String, String> entry : infos.entrySet()) {

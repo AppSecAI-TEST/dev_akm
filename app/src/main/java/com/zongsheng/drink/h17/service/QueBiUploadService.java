@@ -11,6 +11,7 @@ import com.yolanda.nohttp.RequestMethod;
 import com.yolanda.nohttp.rest.CacheMode;
 import com.yolanda.nohttp.rest.Request;
 import com.yolanda.nohttp.rest.Response;
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.common.DataUtil;
 import com.zongsheng.drink.h17.common.SysConfig;
 import com.zongsheng.drink.h17.front.bean.QueBiRecord;
@@ -54,6 +55,7 @@ public class QueBiUploadService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        MyApplication.getInstance().getLogInit().d("创建缺币上传服务 = QueBiUploadService");
         realm = Realm.getDefaultInstance();
         getUploadRecords();
     }
@@ -194,7 +196,8 @@ public class QueBiUploadService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.e("uploadService", "上传服务已关闭");
+//        Log.e("uploadService", "上传服务已关闭");
+        MyApplication.getInstance().getLogInit().w("销毁缺币上传服务 = QueBiUploadService");
         super.onDestroy();
     }
 }

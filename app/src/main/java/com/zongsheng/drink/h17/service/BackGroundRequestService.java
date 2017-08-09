@@ -55,6 +55,7 @@ public class BackGroundRequestService extends Service {
     @Override
     public void onCreate() {
         L.v(SysConfig.ZPush,"BackGroundRequestService onCreate...");
+        MyApplication.getInstance().getLogInit().d("创建服务 = BackgroundRequestService");
         super.onCreate();
         realm = Realm.getDefaultInstance();
         getUploadRecords();
@@ -195,6 +196,7 @@ public class BackGroundRequestService extends Service {
 
     @Override
     public void onDestroy() {
+        MyApplication.getInstance().getLogInit().w("销毁服务 = BackgroundRequestService");
         cancel();
         super.onDestroy();
     }

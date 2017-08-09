@@ -251,6 +251,7 @@ public class MyApplication extends Application {
         logBuyAndShip = new LogUtil("buyAndShip");
         logInit = new LogUtil("init");
 
+        logInit.d("Application启动");
         if (getPackageName().equals(getCurProcessName(this))) {
             L.isDebug = true;
             FileUtils.isOpen = true;
@@ -267,6 +268,7 @@ public class MyApplication extends Application {
             roadRatio = SharedPreferencesUtils.getParam(this, "roadRatio", "").toString();
             versionType = getResources().getString(R.string.versionType);
             machine_ccid = new PhoneUtil(this).getIccid();
+            MyApplication.getInstance().getLogInit().d("读取CCID =  "+machine_ccid);
             Intent intent = new Intent();
             intent.setClass(this, BackGroundRequestService.class);
             startService(intent);
@@ -307,6 +309,7 @@ public class MyApplication extends Application {
             SharedPreferencesUtils.setParam(this, Constant.SP_IS_FIRST_IN, false);
         }
         if ((System.currentTimeMillis() - (long) SharedPreferencesUtils.getParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis())) > Constant.DELETE_PERIOD) {
+            //删除5天前的PC-VMC通信记录
             FileUtils.deleteFile(Constant.PATH_NAME, Constant.FILE_NAME);
             SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
         }
@@ -342,6 +345,7 @@ public class MyApplication extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //TODO:如果这里读不到机器编码，应该提示
             secretInfo = result.toString();
 //            L.e("读取加密的数据:", secretInfo);
             if (secretInfo != null && !"".equals(secretInfo)) {
@@ -395,7 +399,8 @@ public class MyApplication extends Application {
             }
 
         }
-        L.e("hah", "本地数据库文件大小:" + size);
+//        L.e("hah", "本地数据库文件大小:" + size);
+        MyApplication.getInstance().getLogInit().d("Realm数据库大小 = "+size/1024/1024+"M");
         if (size > 1024 * 1024 * 50) {
             // 如果数据库文件大于50M 清理备份的缓存
             Realm.compactRealm(config);

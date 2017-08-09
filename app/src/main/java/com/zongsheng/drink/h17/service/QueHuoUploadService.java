@@ -44,11 +44,12 @@ public class QueHuoUploadService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		MyApplication.getInstance().getLogInit().d("创建缺货上传服务 = QueHuoUploadService");
 		realm = Realm.getDefaultInstance();
 		// 上传记录
 		getUploadRecords();
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -156,6 +157,7 @@ public class QueHuoUploadService extends Service {
 	@Override
 	public void onDestroy() {
 		Log.e(SysConfig.ZPush, "缺货上传服务已关闭");
+		MyApplication.getInstance().getLogInit().w("销毁缺货上传服务 = QueHuoUploadService");
 		if (myTimer != null) {
 			myTimer.cancel();
 		}

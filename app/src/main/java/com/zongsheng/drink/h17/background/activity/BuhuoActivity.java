@@ -265,7 +265,7 @@ public class BuhuoActivity extends ComActivity implements IListener {
 
         // 设置选中项目
         titlePopup.setSelectedPosition(0);
-        //TODO:这里点击切换待补货的格子柜
+        //TODO:这里点击切换待补货的格子柜，可能有问题
         titlePopup.setItemOnClickListener(new TitlePopup.OnItemOnClickListener() {
             @Override
             public void onItemClick(ActionItem item, int position) {

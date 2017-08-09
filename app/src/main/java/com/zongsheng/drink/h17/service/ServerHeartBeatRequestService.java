@@ -48,7 +48,7 @@ public class ServerHeartBeatRequestService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		MyApplication.getInstance().getLogInit().d("心跳请求服务创建 ServerHeartBeatRequestService");
+		MyApplication.getInstance().getLogInit().d("创建心跳服务 = ServerHeartBeatRequestService");
 		realm = Realm.getDefaultInstance();
 		uploadRequest();
 	}
@@ -74,6 +74,7 @@ public class ServerHeartBeatRequestService extends Service {
 	/** 上传记录 */
 	private void uploadRequest() {
 		String machineSn = ((MyApplication) getApplication()).getMachine_sn();
+
 		// 取得格子柜列表
 		RealmResults<BindGeZi> bgezi = realm.where(BindGeZi.class).findAll();
 		if (bgezi != null && bgezi.size() > 0) {
@@ -83,7 +84,7 @@ public class ServerHeartBeatRequestService extends Service {
 				}
 			}
  		}
-		// 创建请求对象。
+		// 创建请求对象
 		String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/put/" + machineSn +"/status/online";
 		request = NoHttp.createStringRequest(url, RequestMethod.GET);
 		//设置为必须网络
@@ -102,7 +103,7 @@ public class ServerHeartBeatRequestService extends Service {
 		if (request != null) {
 			request.cancel();
 		}
-		MyApplication.getInstance().getLogInit().d("心跳请求服务销毁 ServerHeartBeatRequestService");
+		MyApplication.getInstance().getLogInit().w("销毁心跳服务 = ServerHeartBeatRequestService");
 		super.onDestroy();
 	}
 }

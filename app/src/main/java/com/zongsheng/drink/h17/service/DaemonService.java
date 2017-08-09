@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.loading.LoadingActivity;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class DaemonService extends Service {
 
     @Override
     public void onCreate() {
+        MyApplication.getInstance().getLogInit().d("启动守护服务 = DaemonService");
         super.onCreate();
 //        Log.v("=========", "***** DaemonService *****: onCreate");
     }
@@ -42,11 +44,13 @@ public class DaemonService extends Service {
             Intent ootStartIntent = new Intent(this, LoadingActivity.class);
             ootStartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(ootStartIntent);
+            MyApplication.getInstance().getLogInit().d("从守护服务启动LoadingActivity");
         }
 
         if (!isBackRunning(this, "com.zongs.zongsheng_update")) {
             // 开启更新的APP
             startAPP("com.zongs.zongsheng_update");
+            MyApplication.getInstance().getLogInit().d("从守护服务启动更新APP");
         }
 
     }
@@ -65,6 +69,7 @@ public class DaemonService extends Service {
     //此方法是正常生命周期方法
     public void onDestroy()
     {
+        MyApplication.getInstance().getLogInit().d("销毁守护服务 = DaemonService");
         Intent localIntent = new Intent();
         localIntent.setClass(this, DaemonService.class); // 销毁时重新启动Service
         this.startService(localIntent);

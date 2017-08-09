@@ -48,12 +48,13 @@ public class LogUploadService extends Service {
 	
 	@Override
 	public void onCreate() {
+		MyApplication.getInstance().getLogInit().d("创建日志上传服务 = LogUploadService");
 		super.onCreate();
 		realm = Realm.getDefaultInstance();
 		// 上传记录
 		getUploadRecords();
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		return super.onStartCommand(intent, flags, startId);
@@ -72,11 +73,11 @@ public class LogUploadService extends Service {
 			getUploadRecords();
 		}
 	}
-	
+
 	/** 取得要上传的记录信息 */
 	public void getUploadRecords() {
-		Log.e("uploadService", "开始上传日志");
-		// 加载本地数据库中的商品信息
+//		Log.e("uploadService", "开始上传日志");
+		// 加载本地数据库中的日志信息
 		RealmResults<LogsInfo> result = realm.where(LogsInfo.class).equalTo("isUploaded", "0").findAll();
 
 		firstRecordList = realm.copyFromRealm(result);
@@ -94,10 +95,10 @@ public class LogUploadService extends Service {
 		uploadRequest();
 	}
 
-	/** 上传销售记录 */
+	/** 上传日志记录 */
 	private void uploadRequest() {
 
-		Log.e("uploadService", "上传日志1");
+//		Log.e("uploadService", "上传日志1");
 		// 创建请求对象。
 		request = NoHttp.createStringRequest(SysConfig.NET_SERVER_HOST_ADDRESS + "api/log/post/infos", RequestMethod.GET);
 		//设置为必须网络
@@ -135,6 +136,7 @@ public class LogUploadService extends Service {
 			}
 			DataUtil.requestDateContrl(paramMap, request);
 			// 添加到请求队列
+			MyApplication.getInstance().getLogInit().d("上传日志 = "+request.url());
 			CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
 		} else {
 			if (myTimer != null) {
@@ -218,6 +220,7 @@ public class LogUploadService extends Service {
 
 	@Override
 	public void onDestroy() {
+		MyApplication.getInstance().getLogInit().w("销毁日志上传服务 = LogUploadService");
 		if (myTimer != null) {
 			myTimer.cancel();
 		}

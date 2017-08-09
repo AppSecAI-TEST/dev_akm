@@ -34,6 +34,7 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
 
     @Override
     public void onCreate() {
+        MyApplication.getInstance().getLogInit().d("创建销售记录上传服务 = SalRecordUploadService");
         myThread = new MyThread(SysConfig.L_REQ_AG_TIME_30, this);
         myThread.start();
         super.onCreate();
@@ -47,6 +48,7 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
 
     @Override
     public void onDestroy() {
+        MyApplication.getInstance().getLogInit().d("销毁销售记录上传服务 = SalRecordUploadService");
         if (myThread != null) {
             myThread.killer();
         }
@@ -61,6 +63,8 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
             if (payModels.size() == 0) {
                 return;
             }
+            MyApplication.getInstance().getLogBuyAndShip().d("开始上传销售记录");
+            MyApplication.getInstance().getLogInit().d("上传销售记录");
             if (machineSnIsOK() && ClientConnectMQ.getInstance().sendMessage(JsonControl.payModels2Json(payModels), SysConfig.MQ_ADDORDER)) {
                 updatePayModels(payModels);
             }

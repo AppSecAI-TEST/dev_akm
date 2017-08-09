@@ -68,6 +68,7 @@ public class ClientConnectMQ {
 
    boolean sendMessage(String msg , String queName) {
         L.v(SysConfig.ZPush, "SendMsg ZPushService 连接设置--->" + factory.hashCode() + "---" +queName);
+       MyApplication.getInstance().getLogInit().d("通过MQ发送了消息 = "+msg);
         try {
             L.v(SysConfig.ZPush, "sendMsgsss0........" + msg);
             //创建一个连接
@@ -87,7 +88,7 @@ public class ClientConnectMQ {
     }
 
     public void sendShipStatus2MQ(final String msg){
-//        L.v(SysConfig.ZPush, "sendShipStatus2MQ ZPushService 连接设置--->" + factory.hashCode());
+        L.v(SysConfig.ZPush, "sendShipStatus2MQ ZPushService 连接设置--->" + factory.hashCode());
 
         new Thread(new Runnable() {
             @Override
@@ -98,7 +99,7 @@ public class ClientConnectMQ {
     }
 
     void receiverMsg2MQ(Context context, final Handler handler) {
-//        L.v(SysConfig.ZPush, "receiverMsg2MQ ZPushService 连接设置--->" + quefactory.hashCode());
+        L.v(SysConfig.ZPush, "receiverMsg2MQ ZPushService 连接设置--->" + quefactory.hashCode());
         try {
             //使用之前的设置，建立连接
             if (connection == null || !connection.isOpen()) {
@@ -127,6 +128,7 @@ public class ClientConnectMQ {
                 intent2.putExtra("data", message); //这个data为你要传的数据
                 intent2.putExtra("type", "2");
                 context.sendBroadcast(intent2);
+                MyApplication.getInstance().getLogInit().d("MQ收到了消息 = "+message);
             }
         } catch (Exception e1) {
             MyApplication.getInstance().setMQstate(false);

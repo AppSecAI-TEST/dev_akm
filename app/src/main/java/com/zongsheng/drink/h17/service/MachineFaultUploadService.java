@@ -58,6 +58,7 @@ public class MachineFaultUploadService extends Service {
 
     @Override
     public void onCreate() {
+        MyApplication.getInstance().getLogInit().d("创建故障上传服务 = MachineFaultUploadService");
         super.onCreate();
         realm = Realm.getDefaultInstance();
         getUploadRecords();
@@ -116,6 +117,7 @@ public class MachineFaultUploadService extends Service {
             paramMap.put("coinAlarmReason", firstRecord.getCoinAlarmReason());
             DataUtil.requestDateContrl(paramMap, request);
             // 添加到请求队列
+            MyApplication.getInstance().getLogInit().d("上传故障信息 = "+request.url());
             CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
         } else {
             HandlerTask(SysConfig.L_REQ_AG_TIME_30);
@@ -199,7 +201,8 @@ public class MachineFaultUploadService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.e("uploadService", "上传服务已关闭");
+        MyApplication.getInstance().getLogInit().w("销毁故障上传服务 = MachineFaultUploadService");
+//        Log.e("uploadService", "上传服务已关闭");
         super.onDestroy();
     }
 }
