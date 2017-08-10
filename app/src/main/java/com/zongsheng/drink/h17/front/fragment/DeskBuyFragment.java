@@ -177,7 +177,6 @@ public class DeskBuyFragment extends Fragment {
                 break;
             case R.id.tv_confirm://
 //                Log.e("isConn", MyApplication.getInstance().getDeskConnState() + "");
-                MyApplication.getInstance().getLogBuyAndShip().d("副柜购货 = 货道号 : "+code);
                 if (MyApplication.getInstance().getDeskConnState()) {
                     if (code.length() > 2) {
                         ToastUtils.showToast((Activity) this.getContext(), "货道号最多不超过3位！");
@@ -189,6 +188,8 @@ public class DeskBuyFragment extends Fragment {
                         int roadNum = Integer.parseInt(code);
                         if (goodsInfoMap.containsKey(roadNum)) {
                             GoodsInfo goodsInfo1 = goodsInfoMap.get(roadNum);
+                            MyApplication.getInstance().getLogBuyAndShip().d("==================购买流程==================");
+                            MyApplication.getInstance().getLogBuyAndShip().d("副柜购货 = 商品 : "+goodsInfo1.getGoodsName()+" ; 货道号 : "+roadNum);
                             //TODO:这里判断本地库存是否有货
                             if (goodsInfo1.getKuCun().equals("0")){
                                 //如果库存为0，说明该货道已经售空

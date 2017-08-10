@@ -1042,8 +1042,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         isMachineConnected = true;
                     } else if ("1000".equals(sub)) {
                         // 启动十秒后
-                        MyApplication.getInstance().getLogInit().e("VMC失联!");
                         if (!isNeedInitMachineInfo && (new Date().getTime() - startTime) > 20000 && !isInBackPage) {
+                            MyApplication.getInstance().getLogInit().e("VMC失联!");
                             Intent ii = new Intent(ComActivity.this, LoadingActivity.class);
                             MyApplication.getInstance().getLogInit().d("重启LoadingActivity");
                             //TODO:这里销毁当前Activity并重启LoadingActivity有问题，其它Activity怎么办
@@ -1103,7 +1103,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                                + ",商品编号=" + s[5] + ",售货机设备编号=" + s[6] + ",出货结果="  + (s[7].equals("0")?"成功":"失败")
 //                                +  ",卡剩余金额=" + s[8] + ",交易时间=" + s[9] + ",控制序列号=" + s[10] + 箱号 s[11];
                         final String[] info = s.split(",");
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC = "+Arrays.toString(info));
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC出货记录 = "+Arrays.toString(info));
                         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT_S);
                         String saleTime = sdf.format(new Date());
                         // 判断出货记录是否已经存在
@@ -1641,8 +1641,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (s.contains("Y9-0")) {// 副柜连接失败
             MyApplication.getInstance().setDeskConnState(false);
         }
-        MyApplication.getInstance().getLogBasicCom().d("解析 连接失败的格子柜箱号 = "+MyApplication.getInstance().getConnetFailGeziList());
-        MyApplication.getInstance().getLogBasicCom().d("解析 副柜是否连接 = "+MyApplication.getInstance().getDeskConnState());
+        MyApplication.getInstance().getLogBasicCom().d("PARSE 连接失败的格子柜箱号 = "+MyApplication.getInstance().getConnetFailGeziList());
+        MyApplication.getInstance().getLogBasicCom().d("PARSE 副柜是否连接 = "+MyApplication.getInstance().getDeskConnState());
         if (!isNeedInitMachineInfo) {
             if (failCount != MyApplication.getInstance().getConnetFailGeziList().size()) {
                 handleGeziKuCun();

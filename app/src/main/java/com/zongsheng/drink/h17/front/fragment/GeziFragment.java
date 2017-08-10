@@ -153,10 +153,9 @@ public class GeziFragment extends Fragment {
         public void onGoodsClick(GoodsInfo goodsInfo) {
             // 显示购买页面
             MyApplication.getInstance().getLogBuyAndShip().d("==================购买流程==================");
-            MyApplication.getInstance().getLogBuyAndShip().d("点击了格子柜商品 = 名称 : "+goodsInfo.getGoodsName());
+            MyApplication.getInstance().getLogBuyAndShip().d("点击了格子柜商品 = 名称 : "+goodsInfo.getGoodsName()+" ; 商品编码 : "+goodsInfo.getGoodsName());
             if ("1".equals(goodsInfo.getIsSoldOut())) {
                 MyApplication.getInstance().getLogBuyAndShip().d("商品缺货");
-//                Log.e(TAG, "无货");
                 return;
             }
             if (showBuyPageListener != null) {

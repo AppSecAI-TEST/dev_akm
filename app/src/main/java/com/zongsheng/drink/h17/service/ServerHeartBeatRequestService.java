@@ -91,7 +91,7 @@ public class ServerHeartBeatRequestService extends Service {
 		request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
 		if (request != null) {
 			// 添加到请求队列
-			MyApplication.getInstance().getLogInit().d("心跳请求 = "+url);
+			MyApplication.getInstance().getLogInit().d("心跳请求");
 			CallServer.getRequestInstance().add(this, 0, request, null, true, false);
 		}
 		task.run();

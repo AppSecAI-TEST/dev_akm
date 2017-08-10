@@ -39,6 +39,7 @@ import com.zongsheng.drink.h17.util.LogUtil;
 import com.zongsheng.drink.h17.util.QRCodeUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -253,7 +254,13 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
         //显示支持的网络支付方式
         gd_payMethod=(GridLayout)view.findViewById(R.id.gridLayout_payMethod);
-        List<PayMethod> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
+        //TODO:暂时关闭动态加载功能
+//        List<PayMethod> enabledPayMethods = MyApplication.getInstance().getEnabledPayMethod();
+        List<PayMethod> enabledPayMethods = new ArrayList<>();
+        enabledPayMethods.add(new PayMethod("0","支付宝","",""));
+        enabledPayMethods.add(new PayMethod("1","京东","",""));
+        enabledPayMethods.add(new PayMethod("2","微信","",""));
+
         MyApplication.getInstance().getLogBuyAndShip().d("支持的网络支付方式 = "+enabledPayMethods);
         setPayMethod(enabledPayMethods);
     }
@@ -291,9 +298,19 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                     ImageView icon=new ImageView(context);
                     //对图片加载之前进行缩放，获取GridLayout高度，以此作为边长
                     //也可以使用Glide直接加载图片
-                    Bitmap bitmap = decodeBitmapFromFile(FileUtils.getPayIconFullFilePath(payMethod.getId()),height,height);
-                    icon.setImageBitmap(bitmap);
-                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    Bitmap bitmap = decodeBitmapFromFile(FileUtils.getPayIconFullFilePath(payMethod.getId()),height,height);
+//                    icon.setImageBitmap(bitmap);
+//                    icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                    //TODO:暂时关闭动态加载
+                    if (payMethod.getId().equals("0")){
+                        icon.setImageResource(R.drawable.ic_alipay);
+                    }else if (payMethod.getId().equals("1")){
+                        icon.setImageResource(R.drawable.ic_jingdong);
+                    }else if (payMethod.getId().equals("2")){
+                        icon.setImageResource(R.drawable.ic_weixin);
+                    }
+
                     GridLayout.Spec row= GridLayout.spec(0);
                     GridLayout.Spec col=GridLayout.spec(tempCount);
                     tempCount++;
@@ -386,7 +403,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
                             + "&gc=" + goodsInfo.getGoodsCode() + "&gn=1&gi=" + goodsInfo.getGoodsID() + "&gb=" + goods_belong + "&gp=" + price_encrypt
                             + "&os=" + order_sn + "&pms=" + push_machine_sn + "&mt=" + time + "&op=1" + "&rn=" + goodsInfo.getRoad_no();
                     L.d(SysConfig.ZPush, "qCodeUrl------------------------------->" + qCodeUrl);
-                    MyApplication.getInstance().getLogBuyAndShip().d("成功生成二维码 = "+qCodeUrl);
+                    MyApplication.getInstance().getLogBuyAndShip().d("成功生成二维码");
                     iv_qrcode.setImageBitmap(QRCodeUtil.createImage(qCodeUrl, 400, 400, null));
                 } else {
                     MyApplication.getInstance().getLogBuyAndShip().d("生成二维码失败");
@@ -578,7 +595,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
 
         @Override
         public void onFinish() {// 计时完毕
-            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 计时完毕，关闭窗口");
+//            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 计时完毕，关闭窗口");
             if (isShowing()) {
                 dismiss();
             }

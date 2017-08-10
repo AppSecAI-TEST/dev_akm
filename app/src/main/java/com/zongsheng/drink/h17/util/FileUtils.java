@@ -64,8 +64,8 @@ public class FileUtils {
         try {
             //检查文件是否被删除
             if (!logFile.exists()){
-                logFile.createNewFile();
                 closeLogFileStream();
+                logFile.createNewFile();
                 raf = new RandomAccessFile(logFile, "rwd");
                 MyApplication.getInstance().getLogInit().d("日志文件被删除后重建 文件名 = "+logFile.getName());
             }

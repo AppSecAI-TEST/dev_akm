@@ -17,6 +17,14 @@ public class PayMethod {
     @SerializedName("del_flag")
     private String delFlag;
 
+    public PayMethod(){}
+
+    public PayMethod(String id,String payName,String picUrl,String delFlag){
+        this.id = id;
+        this.payName = payName;
+        this.picUrl = picUrl;
+        this.delFlag = delFlag;
+    }
     public String getDelFlag() {
         return delFlag;
     }

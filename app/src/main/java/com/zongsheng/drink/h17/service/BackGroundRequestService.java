@@ -176,7 +176,7 @@ public class BackGroundRequestService extends Service {
                                     SharedPreferencesUtils.setParam(MyApplication.getInstance(), SysConfig.JSON_KEY_USEDSTATUS, jsonObject.getString(SysConfig.JSON_KEY_USEDSTATUS));
                                     sendBroadcast(new Intent(SysConfig.RECEIVER_ACTION_DEAMON));
                                 }
-                                MyApplication.getInstance().getLogInit().d("初始化 MQIP = "+MyApplication.getInstance().getMqIP());
+                                MyApplication.getInstance().getLogInit().d("MQIP = "+MyApplication.getInstance().getMqIP());
                                 MyApplication.getInstance().getLogInit().d("自动退款状态 = "+MyApplication.getInstance().getAutomaticRefundState());
                                 MyApplication.getInstance().getLogInit().d("认证状态(0:未认证) = "+MyApplication.getInstance().getUsedStatus());
                                 deleteBackGroundReq();

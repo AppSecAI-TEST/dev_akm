@@ -113,7 +113,6 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             } else {
                 //iPayInfoModel.updatePayModels(jsonObject.getString("order_sn"));
-
             }
         } catch (Exception e) {
             e.printStackTrace();

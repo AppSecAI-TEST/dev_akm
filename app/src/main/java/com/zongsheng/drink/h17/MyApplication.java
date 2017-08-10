@@ -282,7 +282,7 @@ public class MyApplication extends Application {
             roadRatio = SharedPreferencesUtils.getParam(this, "roadRatio", "").toString();
             versionType = getResources().getString(R.string.versionType);
             machine_ccid = new PhoneUtil(this).getIccid();
-            MyApplication.getInstance().getLogInit().d("初始化 读取CCID =  "+machine_ccid);
+            MyApplication.getInstance().getLogInit().d("读取CCID =  "+machine_ccid);
             Intent intent = new Intent();
             intent.setClass(this, BackGroundRequestService.class);
             startService(intent);
@@ -663,7 +663,7 @@ public class MyApplication extends Application {
         return geziList;
     }
 
-    //TODO:应该在启动阶段初始化
+
     public void setGeziList(List<Integer> geziList) {
         this.geziList = geziList;
     }

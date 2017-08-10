@@ -153,7 +153,9 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_USEDSTATUS, jsonObject.getString(SysConfig.JSON_KEY_USEDSTATUS));
 
                                 //取出服务器定义的支付方式，下载图片
-                                parsePayMethod(jsonObject.getString(SysConfig.AUTO_PAY_PICTURE),jsonObject.getString(SysConfig.PAY_TYPE));
+//                                if (jsonObject.has(SysConfig.AUTO_PAY_PICTURE)){
+//                                    parsePayMethod(jsonObject.getString(SysConfig.AUTO_PAY_PICTURE),jsonObject.getString(SysConfig.PAY_TYPE));
+//                                }
 
                                 Intent intent = new Intent();
                                 intent.setClass((Context) iLoadingInterface, HexinService.class);
