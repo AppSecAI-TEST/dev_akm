@@ -67,7 +67,6 @@ public class FileUtils {
                 logFile.createNewFile();
                 closeLogFileStream();
                 raf = new RandomAccessFile(logFile, "rwd");
-
                 MyApplication.getInstance().getLogInit().d("日志文件被删除后重建 文件名 = "+logFile.getName());
                 MyApplication.getInstance().getLogInit().d("日志输出流打开 输出文件 = "+logFile.getName());
             }

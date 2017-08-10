@@ -311,9 +311,9 @@ public class MyApplication extends Application {
             }, 6000);
         }
         //初始化个推
-        PushManager.getInstance().initialize(this,null);
+//        PushManager.getInstance().initialize(this,null);
         //注册接收信息的Service
-        PushManager.getInstance().registerPushIntentService(this, GeTuiService.class);
+//        PushManager.getInstance().registerPushIntentService(this, GeTuiService.class);
         logInit.d("----------------Application启动---------------");
     }
 
@@ -353,6 +353,7 @@ public class MyApplication extends Application {
 
 
         }
+
         //设置本次开机日志保存的文件
         FileUtils.setLogFile(logFile);
 

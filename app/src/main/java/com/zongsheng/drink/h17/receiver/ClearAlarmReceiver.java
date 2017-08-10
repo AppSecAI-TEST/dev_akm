@@ -16,6 +16,7 @@ import io.realm.Sort;
 /**
  * 清理本地存储
  * Created by dongxiaofei on 16/9/27.
+ * TODO:清理数据库的逻辑，防止数据库无限增大
  */
 
 public class ClearAlarmReceiver extends BroadcastReceiver {
