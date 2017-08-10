@@ -79,7 +79,7 @@ public class QueBiUploadService extends Service {
      * 取得要上传的记录信息
      */
     public void getUploadRecords() {
-        Log.e("QueBiUploadService", "开始上传缺币记录");
+//        Log.e("QueBiUploadService", "开始上传缺币记录");
         // 加载本地数据库中的商品信息
         RealmResults<QueBiRecord> result = realm.where(QueBiRecord.class).equalTo("isUploaded", "0").findAll();
         result = result.sort("createTime", Sort.ASCENDING);
@@ -115,6 +115,7 @@ public class QueBiUploadService extends Service {
             DataUtil.requestDateContrl(paramMap, request);
             // 添加到请求队列
             CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
+            MyApplication.getInstance().getLogInit().d("开始上传缺币信息 = "+request);
         } else {
             HandlerTask(SysConfig.L_REQ_AG_TIME_60);
         }
@@ -156,6 +157,7 @@ public class QueBiUploadService extends Service {
                                             firstRecord.setIsUploaded("1");
                                         }
                                     });
+                                    MyApplication.getInstance().getLogInit().d("上传缺币信息 成功");
                                     firstRecord = null;
                                     task.run();
                                 }else if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_ARGS_ERROR)){
@@ -165,6 +167,7 @@ public class QueBiUploadService extends Service {
                                             firstRecord.deleteFromRealm();
                                         }
                                     });
+                                    MyApplication.getInstance().getLogInit().d("上传缺币信息 失败 = 参数错误");
                                     firstRecord = null;
                                     task.run();
                                 }else{

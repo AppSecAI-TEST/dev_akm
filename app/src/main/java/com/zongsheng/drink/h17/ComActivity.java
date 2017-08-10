@@ -748,6 +748,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 根据VMC报告的缺货信息更新GoodsInfo数据库，间接影响售货界面和补货界面显示的货道是否有货情况
      */
     public void handleGoodsKuCun() {
+        MyApplication.getInstance().getLogInit().d("处理格主机的库存和缺货判定");
         try {
             Realm realm = Realm.getDefaultInstance();
             if (MyApplication.getInstance().getSellEmptyInfo() == null || "".equals(MyApplication.getInstance().getSellEmptyInfo())) {
@@ -793,7 +794,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     good.setOnlineKuCun(1);
                 }
             }
-            MyApplication.getInstance().getLogInit().d("初始化时处理主机缺货信息");
             realm.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace();
@@ -826,7 +826,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
                 i++;
             }
-            MyApplication.getInstance().getLogInit().d("启动时获取绑定的的格子柜列表 = "+bindGeziMap);
             // 加载本地数据库中格子柜的商品信息
             RealmResults<GoodsInfo> results = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").findAll();
             results = results.sort("road_no", Sort.ASCENDING);
@@ -838,7 +837,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
             MyApplication.getInstance().getCabinetGoods().clear();
             if (cabinetGoods.size() > 0) {
 //                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
-                MyApplication.getInstance().getLogInit().d("启动时获取属于格子柜的所有商品数 : "+cabinetGoods.size());
                 if (!realm.isInTransaction()) {
                     realm.beginTransaction();
                 }
@@ -900,6 +898,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     checkMap1.put(goodsInfo.getGoodsID(), kucun);
                     //checkMap的键为商品ID，值为该类型商品在格子柜的所有格子中的总和数
                 }
+                MyApplication.getInstance().getLogInit().d("所有格子柜商品种类数 = "+MyApplication.getInstance().getCabinetGoods().size());
                 for (String str : checkMap1.keySet()) {
                     for (GoodsInfo goodsInfo : cabinetGoods) {
                         if (checkMap1.get(str) == 0) {
@@ -1034,27 +1033,32 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         Log.i(TAG, "各货道非现金价_角" + s);
                     } else if (sub.equals("E207")) {
                         s = s.replace("E207", "").replace("/各货道商品编码:", "");
-                        Log.i(TAG, "各货道商品编码" + s);
+//                        Log.i(TAG, "各货道商品编码" + s);
                         MyApplication.getInstance().setGoodsCode(s);
+                        MyApplication.getInstance().getLogInit().d("各货道商品编码 = "+MyApplication.getInstance().getGoodsCode());
                     } else if (sub.equals("1001")) {
                         Log.i(TAG, "主机连接上了");
                         // 主机连接上了
                         isMachineConnected = true;
                     } else if ("1000".equals(sub)) {
                         // 启动十秒后
+                        MyApplication.getInstance().getLogInit().e("VMC失联!");
                         if (!isNeedInitMachineInfo && (new Date().getTime() - startTime) > 20000 && !isInBackPage) {
                             Intent ii = new Intent(ComActivity.this, LoadingActivity.class);
+                            MyApplication.getInstance().getLogInit().d("重启LoadingActivity");
+                            //TODO:这里销毁当前Activity并重启LoadingActivity有问题，其它Activity怎么办
                             startActivity(ii);
                             finish();
                         }
                         // 主机断开链接
                         isMachineConnected = false;
-                        Log.e(TAG, "主机断开连接:" + isMachineConnected + " " + isNeedInitMachineInfo);
+//                        Log.e(TAG, "主机断开连接:" + isMachineConnected + " " + isNeedInitMachineInfo);
                     } else if ("0078".equals(sub)) {// 签到成功, 取得机器类型
                         s = s.replace("0078", "");
                         String[] info = s.split(",");
-                        Log.e(TAG, "签到成功!: " + s);
+//                        Log.e(TAG, "签到成功!: " + s);
                         MyApplication.getInstance().setMachineType(info[3]);
+                        MyApplication.getInstance().getLogInit().d("主机类型(1:饮料机) = "+MyApplication.getInstance().getMachineType());
                         isMachineConnected = true;
                         if (machineInfoGetTimer != null) {
                             machineInfoGetTimer.cancel();
@@ -1062,14 +1066,12 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     } else if ("0073".equals(sub)) {// 货道信息
                         s = s.replace("0073", "");
                         String[] ss = s.split(",");
-//                        Log.e(TAG, "货道数: " + s);
                         MyApplication.getInstance().setRoadCount(Integer.parseInt(ss[0]));
                         // 附加柜信息
                         String fujianInfo = ss[1];
                         if (fujianInfo.endsWith("|")) {
                             fujianInfo = fujianInfo.substring(0, fujianInfo.length() - 1);
                         }
-                        MyApplication.getInstance().getLogBuHuo().d("启动阶段 VMC报告 箱号信息 = "+fujianInfo);
                         fujianInfo = fujianInfo.replace("|", ",");
                         String[] fujian = fujianInfo.split(",");
                         for (int i = 1; i < fujian.length; i++) {
@@ -1259,6 +1261,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         //货道号不为0，说明用户点击了售货机按钮
                         if (!"".equals(info[3]) && !"0".equals(info[3])) {
                             // 用户按了商品按钮
+                            MyApplication.getInstance().getLogBuyAndShip().d("==================购买流程==================");
                             MyApplication.getInstance().getLogBuyAndShip().d("售货机按键选择商品 = "+"箱号 = "+info[2]+" ; 货道号 = "+info[3]+" ; 价格 : "+info[4]);
 //                            Log.e(TAG, "用户选择了:" + info[3]);
                             // 取得商品code
@@ -1376,7 +1379,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                     MyApplication.getInstance().getGeziRoadListMap().get(boxIndex).add(Integer.parseInt(road));
                                 }
                             }
-                            MyApplication.getInstance().getLogInit().d("箱号 "+boxIndex+" 格子柜有效货道号 = "+MyApplication.getInstance().getDeskRoadList());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1431,7 +1433,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      */
     private void doEmptyControl(String s) {
         MyApplication.getInstance().getLogBuyAndShip().d("处理主机的库存和缺货判定");
-//        Log.i(TAG, "货道信息收到:" + s);
         //取反
         s = s.replace("1", "5").replace("0", "1").replace("5", "0");
 
@@ -1456,7 +1457,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //        L.v(SysConfig.ZPush, "2-------->" + s);
         //设置Application中表示主机货道是否缺货的全局变量
         MyApplication.getInstance().setSellEmptyInfo(s);
-
+        MyApplication.getInstance().getLogInit().d("主机各货道是否有货（0:有货） = "+MyApplication.getInstance().getSellEmptyInfo());
         if (!isNeedInitMachineInfo) {
             handleGoodsKuCun();
             // 更新商品展示页面库存信息，因为有的商品可能缺货了
@@ -1642,7 +1643,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (s.contains("Y9-0")) {// 副柜连接失败
             MyApplication.getInstance().setDeskConnState(false);
         }
-
+        MyApplication.getInstance().getLogInit().d("连接失败的格子柜箱号 = "+MyApplication.getInstance().getConnetFailGeziList());
+        MyApplication.getInstance().getLogInit().d("副柜是否连接 = "+MyApplication.getInstance().getDeskConnState());
         if (!isNeedInitMachineInfo) {
             if (failCount != MyApplication.getInstance().getConnetFailGeziList().size()) {
                 handleGeziKuCun();

@@ -117,7 +117,7 @@ public class MachineFaultUploadService extends Service {
             paramMap.put("coinAlarmReason", firstRecord.getCoinAlarmReason());
             DataUtil.requestDateContrl(paramMap, request);
             // 添加到请求队列
-            MyApplication.getInstance().getLogInit().d("上传故障信息 = "+request.url());
+            MyApplication.getInstance().getLogInit().d("开始上传故障信息 = "+request.url());
             CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
         } else {
             HandlerTask(SysConfig.L_REQ_AG_TIME_30);
@@ -154,6 +154,7 @@ public class MachineFaultUploadService extends Service {
                                 // 如果成功
                                 if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS)) {
                                     // 上传成功
+                                    MyApplication.getInstance().getLogInit().d("上传故障信息 成功");
                                     realm.executeTransaction(new Realm.Transaction() {
                                         @Override
                                         public void execute(Realm realm) {
@@ -163,6 +164,7 @@ public class MachineFaultUploadService extends Service {
                                     firstRecord = null;
                                     task.run();
                                 } else if(jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_ARGS_ERROR)){
+                                    MyApplication.getInstance().getLogInit().d("上传故障信息 失败 = 参数错误");
                                     realm.executeTransaction(new Realm.Transaction() {
                                         @Override
                                         public void execute(Realm realm) {

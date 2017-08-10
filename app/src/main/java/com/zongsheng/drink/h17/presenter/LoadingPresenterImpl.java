@@ -151,6 +151,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                                 MyApplication.getInstance().setAutomaticRefundState(jsonObject.getString(SysConfig.JSON_KEY_REFUNDSTATE));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_MQIP, jsonObject.getString(SysConfig.JSON_KEY_MQIP));
                                 SharedPreferencesUtils.setParam((Context) iLoadingInterface, SysConfig.JSON_KEY_USEDSTATUS, jsonObject.getString(SysConfig.JSON_KEY_USEDSTATUS));
+
                                 //取出服务器定义的支付方式，下载图片
                                 parsePayMethod(jsonObject.getString(SysConfig.AUTO_PAY_PICTURE),jsonObject.getString(SysConfig.PAY_TYPE));
 
@@ -167,6 +168,9 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                                 String requestinterface = "api/machine/" + MyApplication.getInstance().getMachine_sn() + "/mqserverip?simCode=" + MyApplication.getInstance().getMachine_ccid();
                                 DataUtil.addBackGroundRequest(requestinterface, "", Constant.BACKGROUND_WHAT_MQ, true);
                             }
+                            MyApplication.getInstance().getLogInit().d("初始化 MQIP = "+MyApplication.getInstance().getMqIP());
+                            MyApplication.getInstance().getLogInit().d("自动退款状态 = "+MyApplication.getInstance().getAutomaticRefundState());
+                            MyApplication.getInstance().getLogInit().d("认证状态(0:未认证) = "+MyApplication.getInstance().getUsedStatus());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -368,7 +372,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         Gson gson = new Gson();
         Type type = new TypeToken<List<PayMethod>>(){}.getType();
         List<PayMethod> allPayMethods = gson.fromJson(allMethodJson,type);
-        logUtil.d("所有的支付方式 : "+allPayMethods);
+        MyApplication.getInstance().getLogInit().d("所有的网络支付方式 : "+allPayMethods);
         //下载所有的支付方式图片，目录是/sdcard/zongs/pay_icon
         String dir = MyApplication.getInstance().getSdCardPath()+"/zongs/pay_icon/";
         for (PayMethod payMethod : allPayMethods){
@@ -386,7 +390,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                 }
             }
         }
-        logUtil.d("支持的支付方式 : "+enabledPayMethods);
+        MyApplication.getInstance().getLogInit().d("支持的网络支付方式 : "+enabledPayMethods);
         MyApplication.getInstance().setEnabledPayMethod(enabledPayMethods);
     }
 

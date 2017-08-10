@@ -64,7 +64,6 @@ public class SaleRecordUploadService extends Service implements ICallBack2Servic
                 return;
             }
             MyApplication.getInstance().getLogBuyAndShip().d("开始上传销售记录");
-            MyApplication.getInstance().getLogInit().d("上传销售记录");
             if (machineSnIsOK() && ClientConnectMQ.getInstance().sendMessage(JsonControl.payModels2Json(payModels), SysConfig.MQ_ADDORDER)) {
                 updatePayModels(payModels);
             }

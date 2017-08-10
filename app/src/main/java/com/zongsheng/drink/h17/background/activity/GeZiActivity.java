@@ -273,7 +273,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                logUtil.d("按键actionId:" + actionId + " event:" + event);
                 //回车键
                 if (actionId == 5) {
                     return true;
@@ -366,11 +365,13 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         //从本地获得绑定的所有副柜信息，并更新Application的列表
         RealmResults<BindDesk> bindDesks = realm.where(BindDesk.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(bindDesks));
+        MyApplication.getInstance().getLogBuHuo().d("更新数据库绑定的副柜信息 = 数目 : "+MyApplication.getInstance().getBindDeskList().size()+" ; 列表 : "+MyApplication.getInstance().getBindDeskList());
 
         //从本地数据库里取出绑定的格子柜，并更新Application的列表
         RealmResults<BindGeZi> bindGezis = realm.where(BindGeZi.class).findAll();
         bindGezis = bindGezis.sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(bindGezis));
+        MyApplication.getInstance().getLogBuHuo().d("更新数据库绑定的格子柜信息 = 数目 : "+MyApplication.getInstance().getBindGeZis().size()+" ; 列表 : "+MyApplication.getInstance().getBindGeZis());
 
         bindGeziSize = bindGezis.size();
         bindDeskSize = bindDesks.size();
@@ -385,7 +386,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             deskAdapter = new DeskAdapter();
             lvGezi.setAdapter(geziAdapter);
             lvDesk.setAdapter(deskAdapter);
-            logUtil.d("更新绑定的格子柜、副柜列表");
         } else {
             // 如果当前的查询不到数据,显示空布局来填充activity
             rlNoGezilist.setVisibility(View.VISIBLE);
@@ -446,7 +446,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             logUtil.d("附加柜连接状态（1表示连接） = "+string);
             nVSIGiziSize = getGeziSizeByVSI(string);
             nVSIDeskSize = getDeskSizeByVSI(string);
-            logUtil.d("VMC返回实际连接的格子柜数 "+nVSIGiziSize);
+            logUtil.d("VMC返回实际连接的格子柜数 : "+nVSIGiziSize+" ; 实际箱号列表 : "+MyApplication.getInstance().getGeziList());
             logUtil.d("VMC返回实际连接的副柜数 "+nVSIDeskSize);
             if (nVSIGiziSize == -1) {
                 ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_01);
@@ -473,10 +473,12 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                 return -1;
             }
         }
+        MyApplication.getInstance().getGeziList().clear();
         int temp = 0;
         for (int i = 1; i < string.length; i++) {
             if (Integer.parseInt(string[i]) == 1) {
                 temp++;
+                MyApplication.getInstance().getGeziList().add(temp);
             }
         }
         return temp;

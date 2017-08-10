@@ -190,6 +190,7 @@ public class LoadingModelImpl implements ILoadingModel {
         //从本地获得绑定的所有格子柜信息，并初始化Application的列表
         RealmResults<BindGeZi> cabinetInfos = realm.where(BindGeZi.class).findAll().sort("createTime", Sort.ASCENDING);
         MyApplication.getInstance().setBindGeZis(realm.copyFromRealm(cabinetInfos));
+        MyApplication.getInstance().getLogInit().d("本地数据库中绑定的格子柜列表 = "+MyApplication.getInstance().getBindGeZis());
 
 //        Log.e("失联格子柜数:", MyApplication.getInstance().getConnetFailGeziList().size() + "");
         if (cabinetInfos.size() > 0) {
@@ -323,12 +324,10 @@ public class LoadingModelImpl implements ILoadingModel {
 //                        }
 //                        checkMap.put(goodsInfo.getGoodsCode(), "");
                         MyApplication.getInstance().getDeskGoodsInfo().put(goodsInfo.getRoad_no(), goodsInfo);
-//                        Log.i("本地副柜保存产品数据:", goodsInfo.getRoad_no() + goodsInfo.getGoodsName());
                     }
                 }
             });
         }
-        MyApplication.getInstance().getLogBuHuo().d("初始化时，副柜的所有商品数 = "+MyApplication.getInstance().getDeskGoodsInfo().size());
     }
 
     @Override
@@ -337,5 +336,6 @@ public class LoadingModelImpl implements ILoadingModel {
         if (deskInfos != null && deskInfos.size() > 0) {
             MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(deskInfos));
         }
+        MyApplication.getInstance().getLogInit().d("本地数据库中绑定的副柜 = 数目 : "+MyApplication.getInstance().getBindDeskList().size()+" ; 列表 : "+MyApplication.getInstance().getBindDeskList());
     }
 }

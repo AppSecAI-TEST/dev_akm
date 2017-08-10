@@ -336,7 +336,6 @@ public class GeZiFragment extends Fragment implements INetWorkRequCallBackListen
         }
         if (boxIndex == 0 || roadCount == 0) {
             tlTopMenu.setVisibility(View.GONE);
-            MyApplication.getInstance().getLogBuHuo().d("补货 箱号 : "+boxIndex+" ; 货道数 : "+roadCount);
             ToastUtils.showToast(getActivity(), Constant.GEZHI_DATA_ERROR);
             return;
         }

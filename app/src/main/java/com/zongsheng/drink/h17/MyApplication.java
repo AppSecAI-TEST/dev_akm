@@ -117,7 +117,7 @@ public class MyApplication extends Application {
     private String roadRatio;
 
     /**
-     * 是否维护状态
+     * 是否维护状态，当进入后台HomeActivity，处于维护状态，进入前台BuyActivity，处于售卖状态
      */
     private boolean isWeihu = false;
 
@@ -282,7 +282,7 @@ public class MyApplication extends Application {
             roadRatio = SharedPreferencesUtils.getParam(this, "roadRatio", "").toString();
             versionType = getResources().getString(R.string.versionType);
             machine_ccid = new PhoneUtil(this).getIccid();
-            MyApplication.getInstance().getLogInit().d("读取CCID =  "+machine_ccid);
+            MyApplication.getInstance().getLogInit().d("初始化 读取CCID =  "+machine_ccid);
             Intent intent = new Intent();
             intent.setClass(this, BackGroundRequestService.class);
             startService(intent);
@@ -321,16 +321,6 @@ public class MyApplication extends Application {
      * 初始化和定时删除生成的日志文件
      */
     private void initAndDeleteLogFileCache() {
-//        if ((boolean) SharedPreferencesUtils.getParam(this, Constant.SP_IS_FIRST_IN, true)) {
-//            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
-//            SharedPreferencesUtils.setParam(this, Constant.SP_IS_FIRST_IN, false);
-//        }
-//        if ((System.currentTimeMillis() - (long) SharedPreferencesUtils.getParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis())) > Constant.DELETE_PERIOD) {
-//            //删除5天前的PC-VMC通信记录
-//            //TODO:每天生成一个文件，这里的逻辑要修改
-//            FileUtils.deleteFile(Constant.PATH_NAME, Constant.FILE_NAME);
-//            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
-//        }
         String fileName = FileUtils.getTodayLogFileName();
         File logDir = new File(Constant.PATH_NAME);
         File logFile;

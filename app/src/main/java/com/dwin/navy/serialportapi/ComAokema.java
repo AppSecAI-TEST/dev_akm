@@ -104,7 +104,7 @@ public class ComAokema {
             mCheckisConnect.setName("checkis的串口线程：" + formatHMS.format(new Date(System.currentTimeMillis())));
             mCheckisConnect.start();
 
-            L.v(SysConfig.MT, "创建线程打开串口。。。" + mReadThread.hashCode() + "    " + mCheckisConnect.hashCode());
+//            L.v(SysConfig.MT, "创建线程打开串口。。。" + mReadThread.hashCode() + "    " + mCheckisConnect.hashCode());
         }
     }
 
@@ -133,7 +133,7 @@ public class ComAokema {
                 if (System.currentTimeMillis() - getVSITime > 10000) {  // 10秒没有数据,那就认为失联
                     // 说明失联了
                     if (isConnected) {
-                        L.i(TAG, "1000");
+//                        L.i(TAG, "1000");
                         isConnected = false;
                         returnConsumeInfo("1000", "");  // 表示失联
                     }
@@ -638,7 +638,7 @@ public class ComAokema {
                 fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + "|";
             }
 //            L.e(TAG, "附加箱设置:" + fujianguiInfo);
-            logBasicCom.d("---------------饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);
+            logBasicCom.d("解析 饮料机料道数 = "+trackNum+" ; 附加箱连接状态，箱号从1开始 = "+fujianguiInfo);
             returnConsumeInfo("0073", "" + trackNum + "," + fujianguiInfo);
         } else if (1 == buf[5]) {
             //弹簧机有效货到数
@@ -667,7 +667,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0080 弹簧机;有效货道编号 1,2,3,4……
-            logBasicCom.d("---------------副柜弹簧机有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 副柜弹簧机有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0080", "1;" + roadCount + ";" + effectiveRoad);
 
         } else if (2 == buf[5]) { // 箱号为2的格子柜
@@ -689,7 +689,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号2格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号2格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "2;" + roadCount + ";" + effectiveRoad);
         } else if (3 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -710,7 +710,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号3格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号3格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "3;" + roadCount + ";" + effectiveRoad);
         } else if (4 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -731,7 +731,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号4格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号4格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "4;" + roadCount + ";" + effectiveRoad);
         } else if (5 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -752,7 +752,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号5格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号5格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "5;" + roadCount + ";" + effectiveRoad);
         } else if (6 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -773,7 +773,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号6格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号6格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "6;" + roadCount + ";" + effectiveRoad);
         } else if (7 == buf[5]) { // 格子柜
             int roadCount = 0;
@@ -794,7 +794,7 @@ public class ComAokema {
                 effectiveRoad = effectiveRoad.substring(0, effectiveRoad.length() - 1);
             }
             // 0081 格子数;有效格子柜编号 1,2,3,4……
-            logBasicCom.d("---------------箱号7格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
+            logBasicCom.d("解析 箱号7格子柜有效货道数 = "+roadCount+" ; 有效货道号 = "+effectiveRoad);
             returnConsumeInfo("0081", "7;" + roadCount + ";" + effectiveRoad);
         }
     }

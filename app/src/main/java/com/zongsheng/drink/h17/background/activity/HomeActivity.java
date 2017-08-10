@@ -556,6 +556,7 @@ public class HomeActivity extends ComActivity implements OnItemClickListener {
                                     if (roadRatio != null && !"".equals(roadRatio)) {
                                         SharedPreferencesUtils.setParam(HomeActivity.this, "roadRatio", String.valueOf(Double.parseDouble(roadRatio)));
                                         MyApplication.getInstance().setRoadRatio(roadRatio);
+                                        MyApplication.getInstance().getLogBuHuo().d("自营货道比率 = "+MyApplication.getInstance().getRoadRatio());
                                     }
                                     MyApplication.getInstance().setSnexist(true);
                                 } else if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_REQ_ERROR)) {

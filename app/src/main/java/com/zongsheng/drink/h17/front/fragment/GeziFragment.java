@@ -152,7 +152,7 @@ public class GeziFragment extends Fragment {
         @Override
         public void onGoodsClick(GoodsInfo goodsInfo) {
             // 显示购买页面
-//            Log.e(TAG, "点击购买格子柜商品");
+            MyApplication.getInstance().getLogBuyAndShip().d("==================购买流程==================");
             MyApplication.getInstance().getLogBuyAndShip().d("点击了格子柜商品 = 名称 : "+goodsInfo.getGoodsName());
             if ("1".equals(goodsInfo.getIsSoldOut())) {
                 MyApplication.getInstance().getLogBuyAndShip().d("商品缺货");

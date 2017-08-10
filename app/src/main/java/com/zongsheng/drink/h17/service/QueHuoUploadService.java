@@ -94,13 +94,13 @@ public class QueHuoUploadService extends Service {
 	/** 上传缺货记录 */
 	private void uploadRequest() {
 //		Log.e("uploadQuehuo", "上传缺货了");
-		MyApplication.getInstance().getLogBuyAndShip().d("上传缺货记录 = 机器编号 : "+firstRecord.getMachineSn()+" ; 货道号 : "+firstRecord.getRoad_no());
 		String url = SysConfig.NET_SERVER_HOST_ADDRESS + "api/machine/post/quehuoreport?machineSn=" + firstRecord.getMachineSn() + "&alarmDesc=&isQuehuo=" + firstRecord.getIsQueHuo() + "&roadNos="+ firstRecord.getRoad_no() + "&alarmReason=&alarmCode=";
 		request = NoHttp.createStringRequest(url, RequestMethod.GET);
 		//设置为必须网络
 		request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
 		// 添加到请求队列
 		CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
+		MyApplication.getInstance().getLogBuyAndShip().d("开始上传缺货记录 = 机器编号 : "+firstRecord.getMachineSn()+" ; 货道号 : "+firstRecord.getRoad_no()+" ; url ="+request);
 		if (myTimer == null) {
 			myTimer = new MyTimer(120000, 120000);
 		}
@@ -129,7 +129,7 @@ public class QueHuoUploadService extends Service {
 								// 如果成功
 								if (jsonResult != null && jsonResult.getString("error_code").equals(SysConfig.ERROR_CODE_SUCCESS) && firstRecord != null) {
 									// 上传成功
-									MyApplication.getInstance().getLogBuyAndShip().d("缺货记录上传成功");
+									MyApplication.getInstance().getLogBuyAndShip().d("上传缺货记录 成功");
 									realm.executeTransaction(new Realm.Transaction() {
 										@Override
 										public void execute(Realm realm) {

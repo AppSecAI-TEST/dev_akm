@@ -18,6 +18,7 @@ import com.zongsheng.drink.h17.loading.LoadingActivity;
 /**
  * MODE键监听
  * Created by 董晓飞 on 2016/8/17.
+ * TODO:切换MODE时没有处理当前模式的Activity，有可能造成内存泄漏，这可能和屏蔽返回键有关
  */
 
 public class ModeButtonBroadcastReceiver extends BroadcastReceiver {
@@ -29,7 +30,7 @@ public class ModeButtonBroadcastReceiver extends BroadcastReceiver {
         Intent iii = new Intent(context, BackBtnService.class);
         context.stopService(iii);
         boolean mIsEngMode = intent.getIntExtra("state", 1) == 1;
-        Log.e("判断:", "是否在维护模式:" + mIsEngMode);
+//        Log.e("判断:", "是否在维护模式:" + mIsEngMode);
         if (mIsEngMode) {// 打开维护模式
             if (MyApplication.getInstance().isWeihu()) {// 已经在维护模式
                 return;
@@ -39,7 +40,7 @@ public class ModeButtonBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
         }
-        Log.e("执行:", "切换");
+//        Log.e("执行:", "切换");
         if (intent.getAction().equals(SysConfig.ENG_MODE_SWITCH)) {
             MyObservable.getInstance().notifyChange();
             if (mIsEngMode) {// 打开维护模式

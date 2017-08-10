@@ -282,6 +282,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
 
     @Override
     public void onGoodsClick(GoodsInfo goodsInfo) {
+        logBuyAndShip.d("==================购买流程==================");
         logBuyAndShip.d("App 点击商品 : "+goodsInfo.getGoodsName()+" ; 属于机器 : "+goodsInfo.getGoodsBelong());
         if ("1".equals(goodsInfo.getIsSoldOut())) {
             logBuyAndShip.d("商品售空，点击无效");
