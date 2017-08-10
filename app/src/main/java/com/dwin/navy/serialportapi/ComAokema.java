@@ -612,7 +612,7 @@ public class ComAokema {
         }
 
 //        L.e(TAG, "附加箱设置:" + fujianguiInfo);
-        logBasicCom.d("---------------附加箱有效信息，箱号从1开始 = "+fujianguiInfo);
+        logBasicCom.d("解析 附加箱有效信息，箱号从1开始 = "+fujianguiInfo);
 
         // 售货机编号 Y22 Y23
         // 按键对应设备地址 Y24 获取箱号：0-饮料 1-食品 ，2...-格子柜
@@ -824,7 +824,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------主机料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 主机料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007B", stockhave);
                 break;
             //TODO:添加副柜缺货检查
@@ -835,7 +835,7 @@ public class ComAokema {
 //                        stockhave = stockhave + ((buf[6 + i] >> j) & 0x01) + ",";
 //                    }
 //                }
-//                logBasicCom.d("---------------箱号1副柜料道是否有货（从11开始） = "+stockhave);
+//                logBasicCom.d("解析 箱号1副柜料道是否有货（从11开始） = "+stockhave);
 //                returnConsumeInfo("007X","1;"+stockhave);
             case 0x02:// 格子柜
                 for (int i = 0; i < 10; i++) {
@@ -847,7 +847,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号2格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号2格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "2;" + stockhave);
                 break;
             case 0x03:// 格子柜
@@ -860,7 +860,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号3格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号3格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "3;" + stockhave);
                 break;
             case 0x04:// 格子柜
@@ -873,7 +873,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号4格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号4格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "4;" + stockhave);
                 break;
             case 0x05:// 格子柜
@@ -886,7 +886,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号5格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号5格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "5;" + stockhave);
                 break;
             case 0x06:// 格子柜
@@ -899,7 +899,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号6格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号6格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "6;" + stockhave);
                 break;
             case 0x07:// 格子柜
@@ -912,7 +912,7 @@ public class ComAokema {
                 if (stockhave.length() > 0) {
                     stockhave = stockhave.substring(0, stockhave.length() - 1);
                 }
-                logBasicCom.d("---------------箱号7格子柜料道是否有货（从1开始） = "+stockhave);
+                logBasicCom.d("解析 箱号7格子柜料道是否有货（从1开始） = "+stockhave);
                 returnConsumeInfo("007X", "7;" + stockhave);
                 break;
             default:
@@ -1002,7 +1002,7 @@ public class ComAokema {
             // Y12保留
             // Y13--Y20各附柜驱动板版本号
 //            L.e(TAG, "签到结果:" + Arrays.toString(buf));
-            logBasicCom.d("---------------签到信息 : "+"主控板本 = "+mVMCmainVersion+" ; 驱动版本号 = "+mQDversion+" ; 售货机编号 = "+mDeviceNum+" ; 主机类型 = "+mDeviceType);
+            logBasicCom.d("解析 签到信息 : "+"主控板本 = "+mVMCmainVersion+" ; 驱动版本号 = "+mQDversion+" ; 售货机编号 = "+mDeviceNum+" ; 主机类型 = "+mDeviceType);
             returnConsumeInfo("0078", "" + mVMCmainVersion + ","
                     + mQDversion + ","
                     + mDeviceNum + "," + mDeviceType);

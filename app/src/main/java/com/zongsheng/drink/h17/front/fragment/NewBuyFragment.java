@@ -265,7 +265,7 @@ public class NewBuyFragment extends Fragment implements MainViewPagerAdapter.OnG
     public void updateGoodsInfo() {
         try {
 //            Log.e("货道信息HAH", "shuaxin");
-            MyApplication.getInstance().getLogBuyAndShip().d("更新页面展示的产品库存");
+//            MyApplication.getInstance().getLogBuyAndShip().d("更新页面展示的产品库存");
             //mViewPagerAdapter.setSingerList(application.getGoodsInfos());
             mViewPager.getAdapter().notifyDataSetChanged();
             new Handler().postDelayed(new Runnable() {

@@ -493,7 +493,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         mRlNetError.setVisibility(View.GONE);
 
         if (pageCloseTimer != null) {
-            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 停止计时");
+//            MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 停止计时");
             pageCloseTimer.cancel();
         }
         /* 页面总时间 */
@@ -501,7 +501,7 @@ public class BuyGoodsPopWindow extends PopupWindow implements IBuyGoodsPopWindow
         tv_second.setText(TOTAL_TIME / 1000 + "秒");
         tv_second.setVisibility(View.VISIBLE);
         //开始计时
-        MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 开始计时 = "+TOTAL_TIME/1000+"s");
+//        MyApplication.getInstance().getLogBuyAndShip().d("BuyGoodsPopWindow 开始计时 = "+TOTAL_TIME/1000+"s");
         pageCloseTimer = new PageCloseTimer(TOTAL_TIME, 1000);
         pageCloseTimer.start();
 

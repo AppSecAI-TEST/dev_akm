@@ -136,7 +136,7 @@ public class LogUploadService extends Service {
 			}
 			DataUtil.requestDateContrl(paramMap, request);
 			// 添加到请求队列
-			MyApplication.getInstance().getLogInit().d("上传日志 = "+request.url());
+//			MyApplication.getInstance().getLogInit().d("上传日志 = "+request.url());
 			CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
 		} else {
 			if (myTimer != null) {

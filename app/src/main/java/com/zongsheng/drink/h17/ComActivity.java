@@ -748,7 +748,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 根据VMC报告的缺货信息更新GoodsInfo数据库，间接影响售货界面和补货界面显示的货道是否有货情况
      */
     public void handleGoodsKuCun() {
-        MyApplication.getInstance().getLogInit().d("处理格主机的库存和缺货判定");
+//        MyApplication.getInstance().getLogInit().d("处理格主机的库存和缺货判定");
         try {
             Realm realm = Realm.getDefaultInstance();
             if (MyApplication.getInstance().getSellEmptyInfo() == null || "".equals(MyApplication.getInstance().getSellEmptyInfo())) {
@@ -807,7 +807,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * TODO:主机和格子柜的缺货信息判定依赖VMC发来的各货道缺货记录，可能有问题
      */
     private void handleGeziKuCun() {
-        MyApplication.getInstance().getLogBuyAndShip().d("处理格子柜的库存和缺货判定");
+//        MyApplication.getInstance().getLogBuyAndShip().d("处理格子柜的库存和缺货判定");
         try {
             // 格子柜的map 机器编码, 箱号
             // 当前实际连接成功的格子柜列表
@@ -898,7 +898,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     checkMap1.put(goodsInfo.getGoodsID(), kucun);
                     //checkMap的键为商品ID，值为该类型商品在格子柜的所有格子中的总和数
                 }
-                MyApplication.getInstance().getLogInit().d("所有格子柜商品种类数 = "+MyApplication.getInstance().getCabinetGoods().size());
                 for (String str : checkMap1.keySet()) {
                     for (GoodsInfo goodsInfo : cabinetGoods) {
                         if (checkMap1.get(str) == 0) {
@@ -914,6 +913,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                         }
                     }
                 }
+                MyApplication.getInstance().getLogInit().d("所有格子柜商品种类数 = "+MyApplication.getInstance().getCabinetGoods().size());
                 // 计算商品库存
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getCabinetGoods()) {
                     if (checkMap1.get(goodsInfo.getGoodsID()) > 0) {
@@ -1352,7 +1352,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                     MyApplication.getInstance().getDeskRoadList().add(Integer.parseInt(road));
                                 }
                             }
-                            MyApplication.getInstance().getLogInit().d("副柜有效货道号 = "+MyApplication.getInstance().getDeskRoadList());
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
@@ -1432,7 +1431,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * @param s
      */
     private void doEmptyControl(String s) {
-        MyApplication.getInstance().getLogBuyAndShip().d("处理主机的库存和缺货判定");
+//        MyApplication.getInstance().getLogBuyAndShip().d("处理主机的库存和缺货判定");
         //取反
         s = s.replace("1", "5").replace("0", "1").replace("5", "0");
 
@@ -1457,7 +1456,6 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //        L.v(SysConfig.ZPush, "2-------->" + s);
         //设置Application中表示主机货道是否缺货的全局变量
         MyApplication.getInstance().setSellEmptyInfo(s);
-        MyApplication.getInstance().getLogInit().d("主机各货道是否有货（0:有货） = "+MyApplication.getInstance().getSellEmptyInfo());
         if (!isNeedInitMachineInfo) {
             handleGoodsKuCun();
             // 更新商品展示页面库存信息，因为有的商品可能缺货了
@@ -1643,8 +1641,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (s.contains("Y9-0")) {// 副柜连接失败
             MyApplication.getInstance().setDeskConnState(false);
         }
-        MyApplication.getInstance().getLogInit().d("连接失败的格子柜箱号 = "+MyApplication.getInstance().getConnetFailGeziList());
-        MyApplication.getInstance().getLogInit().d("副柜是否连接 = "+MyApplication.getInstance().getDeskConnState());
+        MyApplication.getInstance().getLogBasicCom().d("解析 连接失败的格子柜箱号 = "+MyApplication.getInstance().getConnetFailGeziList());
+        MyApplication.getInstance().getLogBasicCom().d("解析 副柜是否连接 = "+MyApplication.getInstance().getDeskConnState());
         if (!isNeedInitMachineInfo) {
             if (failCount != MyApplication.getInstance().getConnetFailGeziList().size()) {
                 handleGeziKuCun();
