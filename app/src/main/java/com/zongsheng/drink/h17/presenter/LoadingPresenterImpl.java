@@ -237,7 +237,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
 
     @Override
     public void AfterMachineInfoGetOver() {
-        L.v(SysConfig.ZPush, "AfterMachineInfoGetOver....");
+//        L.v(SysConfig.ZPush, "AfterMachineInfoGetOver....");
         if ("".equals(MyApplication.getInstance().getMachine_sn())) {
             MyApplication.getInstance().getMachineSn();
         }
@@ -276,7 +276,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
         MyApplication.getInstance().setAdFileList(new ArrayList<AdInfo>());
         // 取得本地的广告信息
         String path = MyApplication.getInstance().getSdCardPath() + SysConfig.SD_CARD_PATH_AD;
-        Log.i(TAG, path + "  ");
+//        Log.i(TAG, path + "  ");
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -287,7 +287,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                 if (adFile == null || adFile.length() == 0 || adFile.getName().startsWith("._")) {
                     continue;
                 }
-                Log.i(TAG, adFile.getAbsolutePath());
+//                Log.i(TAG, adFile.getAbsolutePath());
                 String filePath = adFile.getAbsolutePath();
                 AdInfo adInfo = new AdInfo();
                 adInfo.setAdPath(filePath);
@@ -320,6 +320,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                 MyApplication.getInstance().getAdFileList().add(adInfo);
             }
         }
+        MyApplication.getInstance().getLogInit().d("初始化 本地广告数量 = "+MyApplication.getInstance().getAdFileList().size());
         MyApplication.getInstance().setCabinetGoods(new ArrayList<GoodsInfo>());
         MyApplication.getInstance().setCabinetTotalGoods(new ArrayList<GoodsInfo>());
         MyApplication.getInstance().setGoodsInfos(new ArrayList<GoodsInfo>());

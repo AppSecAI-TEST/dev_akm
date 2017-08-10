@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 
 import com.igexin.sdk.PushManager;
 import com.yolanda.nohttp.Logger;
@@ -37,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -241,8 +243,10 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
+
 
         //控制全局的日志打印
         logUtil = new LogUtil(this.getClass().getSimpleName());
@@ -252,12 +256,20 @@ public class MyApplication extends Application {
         logBasicCom = new LogUtil("pc_vmc");
         logBuyAndShip = new LogUtil("buyAndShip");
         logInit = new LogUtil("init");
+
         //控制是否输出日志到文件
         FileUtils.isOpen = true;
+        //设置要输出到磁盘的日志TAG
+        List<String> tagList = new ArrayList<>();
+        tagList.add("buHuo");
+        tagList.add("pc_vmc");
+        tagList.add("buyAndShip");
+        tagList.add("init");
+        LogUtil.setLogTags(tagList);
         initAndDeleteLogFileCache();
+
         if (getPackageName().equals(getCurProcessName(this))) {
             L.isDebug = true;
-            instance = this;
             // 获取SD卡的路径
             getSDCardPath();
             // 初始化realm数据库
@@ -302,7 +314,7 @@ public class MyApplication extends Application {
         PushManager.getInstance().initialize(this,null);
         //注册接收信息的Service
         PushManager.getInstance().registerPushIntentService(this, GeTuiService.class);
-        logInit.d("Application启动");
+        logInit.d("----------------Application启动---------------");
     }
 
     /**
@@ -332,8 +344,15 @@ public class MyApplication extends Application {
             logFile = new File(logDir,fileName);
             //如果在目录中找到今天的日志文件，说明不用生成新的日志文件
             for (File file : files){
+                String currentFileName = file.getName();
+                if (!currentFileName.startsWith("command_")){
+                    continue;
+                }
+                String dateString = currentFileName.substring(8,currentFileName.length()-4);
                 //如果记录早于20天，删除该记录
-                if (new Date().getTime() - FileUtils.fileNameFormat.parse(file.getName().substring(8,file.getName().length()-4),new ParsePosition(0)).getTime() > 20*24*60*60*1000){
+                long currentTime = new Date().getTime();
+                long fileCreateTime = FileUtils.fileNameFormat.parse(dateString,new ParsePosition(0)).getTime();
+                if (currentTime - fileCreateTime > 20*24*60*60*1000){
                     file.delete();
                 }
                 if (file.getName().equals(fileName)){

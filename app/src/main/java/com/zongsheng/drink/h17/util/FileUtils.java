@@ -2,9 +2,8 @@ package com.zongsheng.drink.h17.util;
 
 import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.common.Constant;
-import com.zongsheng.drink.h17.common.L;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
@@ -44,9 +43,10 @@ public class FileUtils {
             MyApplication.getInstance().getLogInit().d("创建日志文件失败 e = "+e);
         }
     }
-    //TODO:日志记录是很频繁的操作，不应该每次都打开和关闭流
+    //日志记录是很频繁的操作，不应该每次都打开和关闭流，每次写文件时检查该文件是否已经被删除，应该重建并写入重建标志,检查时间，是否需要生成另一个文件
     public static void writeStringToFile(String strContent) {
         if(isOpen) {
+            checkFileAndTimeStatues();
             // 每次写入时，都换行写
             String str = tempDate.format(new Date()) + strContent + "\r\n";
             try {
@@ -60,6 +60,29 @@ public class FileUtils {
         }
     }
 
+    private static void checkFileAndTimeStatues() {
+        try {
+            //检查文件是否被删除
+            if (!logFile.exists()){
+                logFile.createNewFile();
+                closeLogFileStream();
+                raf = new RandomAccessFile(logFile, "rwd");
+
+                MyApplication.getInstance().getLogInit().d("日志文件被删除后重建 文件名 = "+logFile.getName());
+                MyApplication.getInstance().getLogInit().d("日志输出流打开 输出文件 = "+logFile.getName());
+            }
+            //检查是否应该写入到新的日志文件
+            String currentFileName = getTodayLogFileName();
+            if (!logFile.getName().equals(currentFileName)){
+                logFile = new File(Constant.PATH_NAME,currentFileName);
+                setLogFile(logFile);
+            }
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     /**
      * TODO:关闭日志输出流，应该在软件退出时调用
      */
@@ -68,7 +91,7 @@ public class FileUtils {
             try {
                 raf.close();
                 raf = null;
-                MyApplication.getInstance().getLogInit().d("日志输出流关闭");
+                MyApplication.getInstance().getLogInit().d("日志输出流关闭 输出文件 = "+logFile.getName());
             } catch (IOException e) {
                 e.printStackTrace();
             }

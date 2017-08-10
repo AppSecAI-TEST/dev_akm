@@ -793,7 +793,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                     good.setOnlineKuCun(1);
                 }
             }
-            MyApplication.getInstance().getLogBuHuo().d("初始化时处理主机缺货信息");
+            MyApplication.getInstance().getLogInit().d("初始化时处理主机缺货信息");
             realm.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace();
@@ -826,7 +826,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
                 i++;
             }
-            MyApplication.getInstance().getLogBuHuo().d("启动时获取绑定的的格子柜列表 = "+bindGeziMap);
+            MyApplication.getInstance().getLogInit().d("启动时获取绑定的的格子柜列表 = "+bindGeziMap);
             // 加载本地数据库中格子柜的商品信息
             RealmResults<GoodsInfo> results = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").findAll();
             results = results.sort("road_no", Sort.ASCENDING);
@@ -838,7 +838,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
             MyApplication.getInstance().getCabinetGoods().clear();
             if (cabinetGoods.size() > 0) {
 //                Log.i(TAG, "取得本地保存格子柜产品数据:" + cabinetGoods.size());
-                MyApplication.getInstance().getLogBuHuo().d("启动时获取属于格子柜的所有商品数 : "+cabinetGoods.size());
+                MyApplication.getInstance().getLogInit().d("启动时获取属于格子柜的所有商品数 : "+cabinetGoods.size());
                 if (!realm.isInTransaction()) {
                     realm.beginTransaction();
                 }
