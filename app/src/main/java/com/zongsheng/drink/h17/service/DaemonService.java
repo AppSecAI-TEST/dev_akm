@@ -63,7 +63,8 @@ public class DaemonService extends Service {
             Intent intent = this.getPackageManager().getLaunchIntentForPackage(appPackageName);
             startActivity(intent);
         } catch (Exception e) {
-            Log.e("service", appPackageName + "未安装");
+//            Log.e("service", appPackageName + "未安装");
+            MyApplication.getInstance().getLogInit().d("更新程序未安装 = "+appPackageName);
         }
     }
     //此方法是正常生命周期方法

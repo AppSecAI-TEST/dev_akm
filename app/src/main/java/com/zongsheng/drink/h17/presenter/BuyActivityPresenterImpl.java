@@ -99,20 +99,21 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     if (canShipment(shipmentModel.getOrder_sn())) {
 //                        L.v(SysConfig.ZPush, "回调出货");
                         //回调出货
+                        MyApplication.getInstance().getLogBuyAndShip().d("开始出货");
                         onlinePayShipment(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_SHIP);
-                        MyApplication.getInstance().getLogBuyAndShip().d("向服务器报告是出货还是退款状态 = 出货");
                     } else {
-                        //退款
+                        //超时退款
 //                        L.v(SysConfig.ZPush, "退款操作");
+                        MyApplication.getInstance().getLogBuyAndShip().d("网络支付超时退款");
                         refundRequest(shipmentModel);
                         shipStatusModel.setShipStatus(SysConfig.SHIPSTATUS_REFUND);
-                        MyApplication.getInstance().getLogBuyAndShip().d("向服务器报告是出货还是退款状态 = 退款");
                     }
                     ClientConnectMQ.getInstance().sendShipStatus2MQ(JsonControl.ShipStatusModel2Json(shipStatusModel));
                 }
             } else {
                 //iPayInfoModel.updatePayModels(jsonObject.getString("order_sn"));
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -260,8 +261,10 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
 
     @Override
     public void saleWithoutCash(final ShipmentModel shipmentModel) {
+        //TODO:这些失败情况都没有退款操作
         if ("1".equals(shipmentModel.getGoods_belong())) { // 1:主机 2:格子柜 3:副柜
             if (!shipmentModel.getPush_machine_sn().equals(MyApplication.getInstance().getMachine_sn())) {
+                MyApplication.getInstance().getLogBuyAndShip().d("主机出货失败 推送的支付信息机器编码和主机器编码不一致 = "+shipmentModel.getGoods_belong()+" : "+MyApplication.getInstance().getMachine_sn());
                 return;
             }
         } else if ("2".equals(shipmentModel.getGoods_belong())) {
@@ -273,6 +276,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             }
             if (!hasMachine) {
+                MyApplication.getInstance().getLogBuyAndShip().d("格子柜出货失败 没有找到符合该支付信息机器编码的格子柜 = 推送的机器编码 : "+shipmentModel.getGoods_belong());
                 return;
             }
         } else {//是否是副柜中商品
@@ -283,7 +287,10 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     break;
                 }
             }
-            if (!haveDeskMachine) return;
+            if (!haveDeskMachine){
+                MyApplication.getInstance().getLogBuyAndShip().d("副柜出货失败 推送的支付信息机器编码和副柜机器编码不一致 = "+shipmentModel.getGoods_belong()+" : "+MyApplication.getInstance().getBindDeskList().get(0).getMachineSn());
+                return;
+            }
         }
         // 判断数据里是否已经存在该订单
         RealmResults<PayModel> result2 = iPayInfoModel.getPayModel4Realm(shipmentModel.getOrder_sn());
@@ -293,7 +300,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 // 购买页面显示出货信息
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getGoodsInfos()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
-                        MyApplication.getInstance().getLogBuyAndShip().d("主机 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
+                        MyApplication.getInstance().getLogBuyAndShip().d("主机出货 找到匹配推送支付信息的商品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName()+" ; 货道号 : "+goodsInfo.getRoad_no());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -306,7 +313,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 // 购买页面显示出货信息
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getCabinetGoods()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
-                        MyApplication.getInstance().getLogBuyAndShip().d("格子柜 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
+                        MyApplication.getInstance().getLogBuyAndShip().d("格子柜 找到匹配推送支付信息的商品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName()+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 机器编码 : "+goodsInfo.getGoodsBelong());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -319,7 +326,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
 //                Log.e("副柜", "here");
                 for (GoodsInfo goodsInfo : MyApplication.getInstance().getDeskGoodsInfo().values()) {
                     if (shipmentModel.getGoods_id().equals(goodsInfo.getGoodsCode())) {
-                        MyApplication.getInstance().getLogBuyAndShip().d("副柜 推送收到后匹配的产品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName());
+                        MyApplication.getInstance().getLogBuyAndShip().d("副柜 找到匹配推送支付信息的商品 = 商品号 : " + goodsInfo.getGoodsCode() + " ; 商品名 : " + goodsInfo.getGoodsName()+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 机器编码 : "+goodsInfo.getGoodsBelong());
                         // 非现金支付
                         if (iBuyGoodsPopWindowView != null) {
                             iBuyGoodsPopWindowView.setGoodsInfo(goodsInfo, "1");
@@ -339,6 +346,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                             isSaleing = true;
                             // 如果两次出货时间太紧的话,延时出货
                             if (((ComActivity) iBuyActivityInterface).lastSaleTime != 0 && time - ((ComActivity) iBuyActivityInterface).lastSaleTime < 1000) {
+                                MyApplication.getInstance().getLogBuyAndShip().d("两次出货时间太紧，延迟1秒出货");
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -356,6 +364,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                     isSaleing = true;
                     // 如果两次出货时间太紧的话,延时出货
                     if (((ComActivity) iBuyActivityInterface).lastSaleTime != 0 && time - ((ComActivity) iBuyActivityInterface).lastSaleTime < 1000) {
+                        MyApplication.getInstance().getLogBuyAndShip().d("两次出货时间太紧，延迟1秒出货");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -370,6 +379,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             } else if ("2".equals(shipmentModel.getGoods_belong())) { // 格子柜
                 if (((ComActivity) iBuyActivityInterface).lastSaleTime != 0 && time - ((ComActivity) iBuyActivityInterface).lastSaleTime < 1000) {
+                    MyApplication.getInstance().getLogBuyAndShip().d("两次出货时间太紧，延迟1秒出货");
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -383,6 +393,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 }
             } else {// 副柜
                 if (((ComActivity) iBuyActivityInterface).lastSaleTime != 0 && (time - ((ComActivity) iBuyActivityInterface).lastSaleTime) < 1000) {
+                    MyApplication.getInstance().getLogBuyAndShip().d("两次出货时间太紧，延迟1秒出货");
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -410,7 +421,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         String index;
         // 货道
         int roadNo = 0;
-        // 格子柜编号
+        // 格子柜箱号
         int i = 1;
         // 格子柜机器编码和箱号的映射
         Map<String, Integer> bindGeziMap = new HashMap<>();
@@ -437,7 +448,6 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                 // 这里直接用货道号是不对的，getAokemaGeZiKuCunMap里面对应的货道号是1~80，而这里是真实的货道号，需要进行对应处理 1,2,3,4,5 11,12,13,14,15 ...
                 int road_no = goodsInfo.getRoad_no();
                 int roadIndex;
-                //TODO:这里有问题，优先修改getAokemaGeZiKuCunMap，让它保存真实货道号
                 if (road_no > 10) {
                     roadIndex = road_no - (((int) (road_no * 0.1)) * 2);
                 } else {
@@ -450,7 +460,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                             roadNo = goodsInfo.getRoad_no();
                             i = bindGeziMap.get(goodsInfo.getMachineID());
 //                            Log.e(TAG, "找到货物了:" + goodsInfo.getMachineID() + ";" + road_no + ";" + goodsInfo.getGoodsName() + "；" + i);
-                            MyApplication.getInstance().getLogBuyAndShip().d("找到了要出货的商品 = 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
+                            MyApplication.getInstance().getLogBuyAndShip().d("找到了要出货的商品 = 箱号 : "+i+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
                             break;
                         }
                     }
@@ -478,7 +488,6 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         }
         ((ComActivity) iBuyActivityInterface).lastSaleTime = time;
         if (!isOnLine) { // 现金支付
-
             if (isSaleing) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -619,6 +628,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
         boolean res = false;
         try {
             Date paydate = simpleDateFormat.parse(time);
+            //当前时间 减 订单生成的时间
             long ss = (new Date().getTime() - paydate.getTime()) / 1000;
             res = ss < SysConfig.SHIPMENT_TIME_LIMIT;
         } catch (ParseException e) {

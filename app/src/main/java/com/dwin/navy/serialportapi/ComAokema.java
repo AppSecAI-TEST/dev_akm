@@ -266,7 +266,7 @@ public class ComAokema {
                 }
                 responseForVMC(CMD_CONNECT);
                 analyseConnect(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_SET_STATUS:// 料道设置状态
                 logBasicCom.d("接收 0x73 机器料道有效状态 = "+bytesToHexString(buf,buf.length));
@@ -277,25 +277,25 @@ public class ComAokema {
                 logBasicCom.d("接收 0x7d 设备运行状态信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_DEVICE_RUN_INFO);
                 analyseDevRunStatus(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_DEVICE_ERR_STATUS:// 系统故障状态
                 logBasicCom.d("接收 0x79 系统故障状态 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_DEVICE_ERR_STATUS);
                 analyseSystemErr(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_ERR_STATUS:// 料道故障状态，只对弹簧机有效
                 logBasicCom.d("接收 0x7a 料道故障状态 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_CHANNEL_ERR_STATUS);
                 //analyseChannelErrStatus(buf); 没有弹簧综合机,不处理
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_CHANNEL_THINGS_INFO:// 料道有无货信息
                 logBasicCom.d("接收 0x7b 主机和格子柜的各料道有无货信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_CHANNEL_THINGS_INFO);
                 analyseChannelHaveThings(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_LOOP:// 轮询
                 logBasicCom.d("接收 0x76 轮询 = "+bytesToHexString(buf,buf.length));
@@ -306,24 +306,24 @@ public class ComAokema {
                 logBasicCom.d("接收 0x7c 出货信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_OUT_THINGS);
                 analyseOutThingsInfo(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_BUY_INFO:// 购买信息
                 logBasicCom.d("接收 0x77 购买信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_BUY_INFO);
                 analyseBuyInfo(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             case CMD_STATISTICS_INFO:// 统计信息
                 logBasicCom.d("接收 0x74 统计信息 = "+bytesToHexString(buf,buf.length));
                 responseForVMC(CMD_STATISTICS_INFO);
                 //analyseStatisticsInfo(buf);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
             default:
                 logBasicCom.d("接收 无视的VMC指令 = "+buf[4]);
 //                L.e(TAG, "无视的VMC指令:" + buf[4]);
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
         }
     }
@@ -460,7 +460,7 @@ public class ComAokema {
                         + "," + mPushMoney + "," + mLoopType);
 
                 if (mLoopType != 7) {
-                    FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                    FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 }
                 break;
             case 3:
@@ -527,7 +527,7 @@ public class ComAokema {
                 if (MyApplication.getInstance().isCount()) {
                     MyApplication.getInstance().count++;
                 }
-                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
+//                FileUtils.writeStringToFile(bytesToHexString(buf, buf.length));
                 break;
         }
     }
@@ -540,7 +540,7 @@ public class ComAokema {
             serialPort.writeBytes(toVMCPara);
             logBasicCom.d("发送 "+bytesToHexString(toVMCPara,toVMCPara.length));
 //            L.d(TAG, "发送<<<	       " + bytesToHexString(toVMCPara, toVMCPara.length));
-            FileUtils.writeStringToFile(bytesToHexString(toVMCPara, toVMCPara.length));
+//            FileUtils.writeStringToFile(bytesToHexString(toVMCPara, toVMCPara.length));
             toVMCPara = null;
             return null;
         } else {
@@ -554,7 +554,7 @@ public class ComAokema {
                 serialPort.writeBytes(otherPara);
 //                L.d(TAG, "发送<<<	       " + bytesToHexString(otherPara, otherPara.length));
                 logBasicCom.d("发送 "+bytesToHexString(otherPara,otherPara.length));
-                FileUtils.writeStringToFile(bytesToHexString(otherPara, otherPara.length));
+//                FileUtils.writeStringToFile(bytesToHexString(otherPara, otherPara.length));
                 return otherPara;
             }
             byte[] lp = new byte[10];
@@ -635,7 +635,6 @@ public class ComAokema {
             // 附加箱设置 Y21 (食品、格子柜 1 2...6) 1有效 0无效
             String fujianguiInfo = "";
             for (int j = 0; j < 7; j++) {
-                //TODO:这里多余的空格导致geziList没有正确初始化，已修复
                 fujianguiInfo = fujianguiInfo + ((buf[7] >> j) & 0x01) + "|";
             }
 //            L.e(TAG, "附加箱设置:" + fujianguiInfo);
@@ -810,7 +809,7 @@ public class ComAokema {
         int k = 1;
 //        L.e(TAG, "是否有货货道类型:" + buf[5] + "货道有货信息" + Arrays.toString(buf));
         switch (buf[5]) {
-            case 0x00:// 饮料机
+            case 0x00:// 主机
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 8; j++) {
                         stockhave = stockhave + ((buf[6 + i] >> j) & 0x01) + ",";
@@ -1027,7 +1026,7 @@ public class ComAokema {
         logBasicCom.d("发送 "+bytesToHexString(resp,resp.length));
         serialPort.writeBytes(resp);
         L.d(TAG, "w<<<	       " + bytesToHexString(resp, resp.length));
-        FileUtils.writeStringToFile(bytesToHexString(resp, resp.length));
+//        FileUtils.writeStringToFile(bytesToHexString(resp, resp.length));
     }
 
     /**
@@ -1347,7 +1346,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
 //            L.e(TAG, "格子柜出货指令:" + Arrays.toString(resp));
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 现金 ; 价格 : "+payMoney);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款出货请求 = "+"流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 现金 ; 价格 : "+payMoney);
             toVMCPara = new byte[27];
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
@@ -1408,7 +1407,7 @@ public class ComAokema {
             resp[26] = getCountCheck(resp, 3, 26);
 
             toVMCPara = new byte[27];
-            MyApplication.getInstance().getLogBuyAndShip().d("发送扣款请求 = 流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 非现金 ; 价格 : "+payMoney);
+            MyApplication.getInstance().getLogBuyAndShip().d("发送出货请求 = 流水号 : "+dealSerialNumber+" ; 货道号 : "+channelNum+" ; 箱号 : "+boxIndex+" ; 支付方式 : 非现金 ; 价格 : "+payMoney);
             System.arraycopy(resp, 0, toVMCPara, 0, 27);
 
             return "";

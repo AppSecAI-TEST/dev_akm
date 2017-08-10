@@ -4,6 +4,8 @@ import com.zongsheng.drink.h17.MyApplication;
 import com.zongsheng.drink.h17.common.Constant;
 import com.zongsheng.drink.h17.common.L;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,26 +15,62 @@ import java.util.Date;
  * Created by xsnail on 2017/4/6.
  */
 public class FileUtils {
+    /**
+     * 是否输出日志到文件
+     */
     public static boolean isOpen = false;
-    static final SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd" + " "
-            + "hh:mm:ss" + ": ");
-    // 将字符串写入到文本文件中
-    public static void writeStringToFile(String strcontent) {
+    private static final SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd" + " " + "hh:mm:ss" + ": ");
+    public static SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyy_MM_dd");
+    private static File logFile;
+    private static LogUtil logUtil = new LogUtil("FileUtils");
+    private static RandomAccessFile raf;
+
+    /**
+     * 设置日志输出文件
+     * @param file
+     */
+    public static void setLogFile(File file){
+        closeLogFileStream();
+        logFile = file;
+        try {
+            if (!logFile.exists()) {
+                logFile.createNewFile();
+            }
+            raf = new RandomAccessFile(logFile, "rwd");
+            MyApplication.getInstance().getLogInit().d("日志输出流打开 输出文件 = "+logFile.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            MyApplication.getInstance().getLogInit().d("创建日志文件失败 e = "+e);
+        }
+    }
+    //TODO:日志记录是很频繁的操作，不应该每次都打开和关闭流
+    public static void writeStringToFile(String strContent) {
         if(isOpen) {
             // 每次写入时，都换行写
-            String strContent = tempDate.format(new Date()) + strcontent + "\r\n";
+            String str = tempDate.format(new Date()) + strContent + "\r\n";
             try {
-                File file = new File(Constant.PATH_NAME + Constant.FILE_NAME);
-                if (!file.exists()) {
-                    file.getParentFile().mkdirs();
-                    file.createNewFile();
+                if (raf != null){
+                    raf.seek(logFile.length());
+                    raf.write(str.getBytes());
                 }
-                RandomAccessFile raf = new RandomAccessFile(file, "rwd");
-                raf.seek(file.length());
-                raf.write(strContent.getBytes());
-                raf.close();
             } catch (Exception e) {
-                L.d("Create File Failed", e.toString());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * TODO:关闭日志输出流，应该在软件退出时调用
+     */
+    public static void closeLogFileStream(){
+        if (raf != null){
+            try {
+                raf.close();
+                raf = null;
+                MyApplication.getInstance().getLogInit().d("日志输出流关闭");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -70,6 +108,16 @@ public class FileUtils {
         if(file.exists()){
             file.delete();
         }
+    }
+
+    /**
+     * 获取今天应该生成的日志文件名
+     * @return 日志文件名
+     */
+    public static String getTodayLogFileName(){
+        String fileName = "command_"+fileNameFormat.format(new Date())+".txt";
+        logUtil.d("日志文件名为 = "+fileName);
+        return fileName;
     }
 
     /**

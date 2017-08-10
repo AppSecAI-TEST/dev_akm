@@ -223,7 +223,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
      * 非现金出货（饮料机）
      */
     public void sellByNoCash(int goodsCode, String orderID, String saleOrderPrice) {
-        MyApplication.getInstance().getLogBuyAndShip().d("非现金出货前查询");
+        MyApplication.getInstance().getLogBuyAndShip().d("开始发送出货指令");
 //        Log.i(TAG, "非现金出货前查询");
         saleOrderID = orderID;
         MyApplication.getInstance().setNoCashorderSn(orderID);
@@ -1208,10 +1208,8 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                                 MyApplication.getInstance().getLogBuyAndShip().d("格子柜柜出货成功，货道号 = "+roadNo);
                             }
                             //TODO:将出货结果计入日志
-                            MarkLog.markLog("VMC出货结果 成功 = 订单号:"+payModel.getOrderSn()+";货道号:"+payModel.getMachineRoadNo()+";商品名:"+payModel.getGoodsName(),SysConfig.LOG_LEVEL_NORMAL,payModel.getPushMachineSn());
                         }else {
                             MyApplication.getInstance().getLogBuyAndShip().d("出货失败");
-                            MarkLog.markLog("VMC出货结果 失败 = 订单号:"+payModel.getOrderSn()+";货道号:"+payModel.getMachineRoadNo()+";商品名:"+payModel.getGoodsName(),SysConfig.LOG_LEVEL_NORMAL,payModel.getPushMachineSn());
                         }
                     } else if (s.length() >= 6 && "007700".equals(s.substring(0, 6))) {// 货道信息
                         s = s.replace("007700", "");

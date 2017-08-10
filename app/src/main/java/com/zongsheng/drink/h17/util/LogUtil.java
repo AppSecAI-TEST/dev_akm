@@ -49,6 +49,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void d(String TAG,String text){
+        FileUtils.writeStringToFile(TAG+" - "+text);
         if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.d(TAG,text);
         }
@@ -68,6 +69,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void e(String TAG,String text){
+        FileUtils.writeStringToFile(TAG+" - "+text);
         if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.e(TAG,text);
         }
@@ -86,6 +88,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void v(String TAG,String text){
+        FileUtils.writeStringToFile(TAG+" - "+text);
         if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.v(TAG,text);
         }
@@ -104,6 +107,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void i(String TAG,String text){
+        FileUtils.writeStringToFile(TAG+" - "+text);
         if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.i(TAG,text);
         }
@@ -122,6 +126,7 @@ public class LogUtil {
      * @param text Log内容
      */
     public void w(String TAG,String text){
+        FileUtils.writeStringToFile(TAG+" - "+text);
         if (shouldPrintLogAllCtrl && shouldPrintLog){
             Log.w(TAG,text);
         }

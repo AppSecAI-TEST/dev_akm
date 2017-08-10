@@ -35,7 +35,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -250,11 +252,11 @@ public class MyApplication extends Application {
         logBasicCom = new LogUtil("pc_vmc");
         logBuyAndShip = new LogUtil("buyAndShip");
         logInit = new LogUtil("init");
-
-        logInit.d("Application启动");
+        //控制是否输出日志到文件
+        FileUtils.isOpen = true;
+        initAndDeleteLogFileCache();
         if (getPackageName().equals(getCurProcessName(this))) {
             L.isDebug = true;
-            FileUtils.isOpen = true;
             instance = this;
             // 获取SD卡的路径
             getSDCardPath();
@@ -295,24 +297,56 @@ public class MyApplication extends Application {
                     startService(intent1);
                 }
             }, 6000);
-            deleteCache();
         }
         //初始化个推
         PushManager.getInstance().initialize(this,null);
         //注册接收信息的Service
         PushManager.getInstance().registerPushIntentService(this, GeTuiService.class);
+        logInit.d("Application启动");
     }
 
-    private void deleteCache() {
-        if ((boolean) SharedPreferencesUtils.getParam(this, Constant.SP_IS_FIRST_IN, true)) {
-            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
-            SharedPreferencesUtils.setParam(this, Constant.SP_IS_FIRST_IN, false);
+    /**
+     * 初始化和定时删除生成的日志文件
+     */
+    private void initAndDeleteLogFileCache() {
+//        if ((boolean) SharedPreferencesUtils.getParam(this, Constant.SP_IS_FIRST_IN, true)) {
+//            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
+//            SharedPreferencesUtils.setParam(this, Constant.SP_IS_FIRST_IN, false);
+//        }
+//        if ((System.currentTimeMillis() - (long) SharedPreferencesUtils.getParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis())) > Constant.DELETE_PERIOD) {
+//            //删除5天前的PC-VMC通信记录
+//            //TODO:每天生成一个文件，这里的逻辑要修改
+//            FileUtils.deleteFile(Constant.PATH_NAME, Constant.FILE_NAME);
+//            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
+//        }
+        String fileName = FileUtils.getTodayLogFileName();
+        File logDir = new File(Constant.PATH_NAME);
+        File logFile;
+        if (!logDir.exists()){
+            logDir.mkdir();
         }
-        if ((System.currentTimeMillis() - (long) SharedPreferencesUtils.getParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis())) > Constant.DELETE_PERIOD) {
-            //删除5天前的PC-VMC通信记录
-            FileUtils.deleteFile(Constant.PATH_NAME, Constant.FILE_NAME);
-            SharedPreferencesUtils.setParam(this, Constant.SP_MACHINE_COMMAND, System.currentTimeMillis());
+        File[] files = logDir.listFiles();
+        if (files.length == 0){
+            logFile = new File(logDir,fileName);
+        }else {
+            logFile = new File(logDir,fileName);
+            //如果在目录中找到今天的日志文件，说明不用生成新的日志文件
+            for (File file : files){
+                //如果记录早于20天，删除该记录
+                if (new Date().getTime() - FileUtils.fileNameFormat.parse(file.getName().substring(8,file.getName().length()-4),new ParsePosition(0)).getTime() > 20*24*60*60*1000){
+                    file.delete();
+                }
+                if (file.getName().equals(fileName)){
+                    logFile = file;
+                    break;
+                }
+            }
+
+
         }
+        //设置本次开机日志保存的文件
+        FileUtils.setLogFile(logFile);
+
     }
 
     private String getCurProcessName(Context context) {
