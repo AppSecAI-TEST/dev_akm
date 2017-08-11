@@ -89,7 +89,7 @@ public class LoadingActivity extends ComActivity implements ILoadingInterface{
     /** 机器信息获取完成后处理 */
     @Override
     protected void AfterMachineInfoGetOver() {
-        MyApplication.getInstance().getLogBuHuo().d("AfterMachineInfoGetOver -----------------------------");
+        MyApplication.getInstance().getLogInit().d("AfterMachineInfoGetOver -----------------------------");
         iLoadingPresenter.AfterMachineInfoGetOver();
         //TODO:实际上并没有关闭串口
         closeComPort();
