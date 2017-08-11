@@ -243,11 +243,11 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
 
         if (getPackageName().equals(getCurProcessName(this))) {
+            instance = this;
             //控制全局的日志打印
             logUtil = new LogUtil(this.getClass().getSimpleName());
             logUtil.setShouldPrintLogAllCtrl(true);
