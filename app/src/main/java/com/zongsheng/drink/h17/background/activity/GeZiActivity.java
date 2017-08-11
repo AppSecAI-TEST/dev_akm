@@ -158,7 +158,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         MyApplication.getInstance().getLogBuHuo().d("VMC报告连接的副柜数为 0 添加失败");
                     }else {
                         if (bindDeskSize < nVSIDeskSize){
-                            MyApplication.getInstance().getLogBuHuo().d("添加副柜 = "+info.getMachineName());
+                            MyApplication.getInstance().getLogBuHuo().d("添加副柜 = "+info.getMachineSn());
                             realm.executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
@@ -214,7 +214,8 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                         ToastUtils.showToast(GeZiActivity.this, "遥控器设置有效格子柜数为0，请修改遥控器设置");
                     } else {
                         if (bindGeziSize < nVSIGiziSize){
-                            MyApplication.getInstance().getLogBuHuo().d("添加格子柜 = "+info.getMachineName());
+//                            MyApplication.getInstance().getLogBuHuo().d("添加格子柜 = "+info.getMachineName());
+                            MyApplication.getInstance().getLogBuHuo().d("添加格子柜 = "+info.getMachineSn());
                             // 点击条目后关掉选择格子柜的页面
                             realm.executeTransaction(new Realm.Transaction() {
                                 @Override
@@ -227,7 +228,6 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
                                     gezi.setMachineType(info.getMachineType());//类型;
                                     //添加格子柜的时候记录了添加时间，和箱号与格子柜的映射有关
                                     gezi.setCreateTime(new Date().getTime() + "");
-                                    MyApplication.getInstance().getLogBuHuo().d("添加的格子柜 = 编号 : "+gezi.getMachineSn()+" ; 格子数 : "+gezi.getRoadCount());
                                     realm.copyToRealmOrUpdate(gezi);
                                 }
                             });
@@ -443,11 +443,10 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             btmp = true;
             String str[] = msg.split(",");
             String string = str[str.length - 1];
-            logUtil.d("附加柜连接状态（1表示连接） = "+string);
             nVSIGiziSize = getGeziSizeByVSI(string);
             nVSIDeskSize = getDeskSizeByVSI(string);
             logUtil.d("VMC返回实际连接的格子柜数 : "+nVSIGiziSize+" ; 实际箱号列表 : "+MyApplication.getInstance().getGeziList());
-            logUtil.d("VMC返回实际连接的副柜数 : "+nVSIDeskSize+" ; 实际箱号列表 : "+MyApplication.getInstance().getBindDeskList());
+            logUtil.d("VMC返回实际连接的副柜数 : "+nVSIDeskSize);
             if (nVSIGiziSize == -1) {
                 ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_01);
             }

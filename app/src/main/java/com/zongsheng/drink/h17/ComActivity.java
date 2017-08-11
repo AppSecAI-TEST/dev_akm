@@ -1089,7 +1089,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //查询VMC的指定箱号是否有货，这导致VMC在出货后向PC发送7B指令，导致主机、格子柜的缺货信息判断处理，链式
+                                    //延时300ms,查询VMC的指定箱号是否有货，这导致VMC在出货后向PC发送7B指令，导致主机、格子柜的缺货信息判断处理，链式
                                     String result = comVSI.checkThingsHaveOrNotForNow(0);
                                     if (!"".equals(result)) {
                                         comVSI.checkThingsHaveOrNot(0);
@@ -1132,7 +1132,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                            Log.e("COM", "货道号:" + roadNo);
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindDeskList().get(0).getMachineSn()).findFirst();
-                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货，找到货道对应的商品 = 商品名 : "+goodsInfo.getGoodsName()+" : "+goodsInfo.getGoodsCode());
+//                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货，找到货道对应的商品 = 商品名 : "+goodsInfo.getGoodsName()+" : "+goodsInfo.getGoodsCode());
                         } else {
                             //格子柜
                             String ss = Integer.toHexString(Integer.parseInt(info[0]));
@@ -1144,7 +1144,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindGeZis().get(Integer.parseInt(info[11]) - 2).getMachineSn()).findFirst();
                         }
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+info[6]);
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+goodsInfo.getGoodsBelong());
 
                         machineQueryType = "";
                         int payType = 1;
@@ -1198,20 +1198,14 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             if (Integer.parseInt(info[11]) == 0) {
                                 //更新货道库存
                                 updateLocalKuCun(String.valueOf(roadNo));
-                                MyApplication.getInstance().getLogBuyAndShip().d("主机出货成功，货道号 = "+roadNo);
                             }else if (Integer.parseInt(info[11]) == 1) {
                                 //箱号为1，副柜出货成功
-                                MyApplication.getInstance().getLogBuyAndShip().d("副柜出货成功，货道号 = "+roadNo);
                                 updateDeskKucun(String.valueOf(roadNo));
                                 //TODO:和主机、格子柜不同，副柜在这里检查各货道是否缺货
                                 checkDeskQueHuo(info[6],roadNo);
                             }else {
                                 //格子柜出货成功
-                                MyApplication.getInstance().getLogBuyAndShip().d("格子柜柜出货成功，货道号 = "+roadNo);
                             }
-                            //TODO:将出货结果计入日志
-                        }else {
-                            MyApplication.getInstance().getLogBuyAndShip().d("出货失败");
                         }
                     } else if (s.length() >= 6 && "007700".equals(s.substring(0, 6))) {// 货道信息
                         s = s.replace("007700", "");
@@ -1420,7 +1414,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         if (goodsInfo != null){
             //说明缺货
             if (Integer.parseInt(goodsInfo.getKuCun()) <= 0){
-                MyApplication.getInstance().getLogBuyAndShip().d("检查副柜是否缺货 = 找到出货货道商品 = 副柜缺货 货道号 : "+roadNum);
+                MyApplication.getInstance().getLogBuyAndShip().d("检查副柜是否缺货 = 副柜缺货 货道号 : "+roadNum);
                 machineQuehuo(machineSn,roadNum+"");
             }
         }
