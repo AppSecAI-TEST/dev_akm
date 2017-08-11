@@ -18,7 +18,7 @@ public class FileUtils {
      * 是否输出日志到文件
      */
     public static boolean isOpen = false;
-    private static final SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd" + " " + "hh:mm:ss" + ": ");
+    private static final SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd" + " " + "HH:mm:ss" + ": ");
     public static SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyy_MM_dd");
     private static File logFile;
     private static LogUtil logUtil = new LogUtil("FileUtils");
