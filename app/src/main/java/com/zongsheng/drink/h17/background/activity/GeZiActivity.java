@@ -477,7 +477,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         for (int i = 1; i < string.length; i++) {
             if (Integer.parseInt(string[i]) == 1) {
                 temp++;
-                MyApplication.getInstance().getGeziList().add(i++);
+                MyApplication.getInstance().getGeziList().add(i+1);
             }
         }
         return temp;

@@ -308,6 +308,7 @@ public class MyApplication extends Application {
                     startService(intent1);
                 }
             }, 6000);
+            logInit.d("----------------IN - Application启动---------------");
         }
         //初始化个推
 //        PushManager.getInstance().initialize(this,null);

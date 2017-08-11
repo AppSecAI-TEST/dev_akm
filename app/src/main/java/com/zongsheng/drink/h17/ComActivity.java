@@ -877,6 +877,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             }
                         }
                     }
+                    //TODO:判断缺货的逻辑可能有问题
                     if (kucun == 0) { // 缺货的时候
                         if (queHuoInfoMap.containsKey(goodsInfo.getMachineID())) {
                             queHuoInfoMap.put(goodsInfo.getMachineID(), queHuoInfoMap.get(goodsInfo.getMachineID()) + goodsInfo.getRoad_no() + ";");
@@ -1144,7 +1145,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "2").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindGeZis().get(Integer.parseInt(info[11]) - 2).getMachineSn()).findFirst();
                         }
-                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+goodsInfo.getGoodsBelong());
+                        MyApplication.getInstance().getLogBuyAndShip().d("VMC返回出货记录 = 箱号 : "+info[11]+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 出货结果 : "+(info[7].equals("0")?"成功":"失败")+" ; 商品编号 : "+info[5]+" ; 支付方式 : "+info[4]+" ; 出货序列号 : "+info[2]+" ; 机器编号 : "+goodsInfo.getMachineID());
 
                         machineQueryType = "";
                         int payType = 1;
