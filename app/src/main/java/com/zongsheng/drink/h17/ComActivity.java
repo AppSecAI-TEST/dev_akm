@@ -193,7 +193,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
             ToastUtils.showToast(this, "所选商品已售空");
             return;
         }
-        MyApplication.getInstance().getLogBuyAndShip().d("找到要出货的商品 = 商品名 : "+saleGoodsInfo.getGoodsName()+" ; 商品编号 : "+saleGoodsInfo.getGoodsCode()+" ; 货道号 : "+saleGoodsInfo.getRoad_no());
+        MyApplication.getInstance().getLogBuyAndShip().d("找到要出货的商品 = 商品名 : "+saleGoodsInfo.getGoodsName()+" : "+saleGoodsInfo.getGoodsCode()+" ; 货道号 : "+saleGoodsInfo.getRoad_no());
         // 判断两次操作时间间隔
         long time = new Date().getTime();
         //两次出货时间不能小于1秒
@@ -578,7 +578,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 
 
     private void cashPaySend2MQ(PayModel payModel, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName());
+        MyApplication.getInstance().getLogBuyAndShip().d("将销售记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" : "+payModel.getGoodsCode());
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -612,7 +612,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
     }
 
     private void shipmentFail(PayModel payModel, String payType, String DeliveryStatus) {
-        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" ; 商品号 : "+payModel.getGoodsCode());
+        MyApplication.getInstance().getLogBuyAndShip().d("将出货失败记录存入数据库 = 订单号 : "+payModel.getOrderSn()+" ; 商品名 : "+payModel.getGoodsName()+" : "+payModel.getGoodsCode());
         final PayModel payModel1 = payModel.clone();
         payModel1.setDeliveryStatus(DeliveryStatus);
         payModel1.setPayType(switchPayType(payType));
@@ -1132,7 +1132,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
 //                            Log.e("COM", "货道号:" + roadNo);
                             goodsInfo = realm.where(GoodsInfo.class).equalTo("goodsBelong", "3").equalTo("road_no", roadNo).equalTo("machineID"
                                     , MyApplication.getInstance().getBindDeskList().get(0).getMachineSn()).findFirst();
-                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货，找到货道对应的商品 = 商品名 = "+goodsInfo.getGoodsName());
+                            MyApplication.getInstance().getLogBuyAndShip().d("副柜出货，找到货道对应的商品 = 商品名 : "+goodsInfo.getGoodsName()+" : "+goodsInfo.getGoodsCode());
                         } else {
                             //格子柜
                             String ss = Integer.toHexString(Integer.parseInt(info[0]));

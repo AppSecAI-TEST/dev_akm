@@ -336,6 +336,6 @@ public class LoadingModelImpl implements ILoadingModel {
         if (deskInfos != null && deskInfos.size() > 0) {
             MyApplication.getInstance().setBindDeskList(realm.copyFromRealm(deskInfos));
         }
-        MyApplication.getInstance().getLogInit().d("本地数据库中绑定的副柜 = 数目 : "+MyApplication.getInstance().getBindDeskList().size()+" ; 列表 : "+MyApplication.getInstance().getBindDeskList());
+        MyApplication.getInstance().getLogInit().d("本地数据库中绑定的副柜列表 = "+MyApplication.getInstance().getBindDeskList());
     }
 }

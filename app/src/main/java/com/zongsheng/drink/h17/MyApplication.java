@@ -247,28 +247,26 @@ public class MyApplication extends Application {
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
 
-
-        //控制全局的日志打印
-        logUtil = new LogUtil(this.getClass().getSimpleName());
-        logUtil.setShouldPrintLogAllCtrl(true);
-
-        logBuHuo = new LogUtil("buHuo");
-        logBasicCom = new LogUtil("pc_vmc");
-        logBuyAndShip = new LogUtil("buyAndShip");
-        logInit = new LogUtil("init");
-
-        //控制是否输出日志到文件
-        FileUtils.isOpen = true;
-        //设置要输出到磁盘的日志TAG
-        List<String> tagList = new ArrayList<>();
-        tagList.add("buHuo");
-        tagList.add("pc_vmc");
-        tagList.add("buyAndShip");
-        tagList.add("init");
-        LogUtil.setLogTags(tagList);
-        initAndDeleteLogFileCache();
-
         if (getPackageName().equals(getCurProcessName(this))) {
+            //控制全局的日志打印
+            logUtil = new LogUtil(this.getClass().getSimpleName());
+            logUtil.setShouldPrintLogAllCtrl(true);
+
+            logBuHuo = new LogUtil("buHuo");
+            logBasicCom = new LogUtil("pc_vmc");
+            logBuyAndShip = new LogUtil("buyAndShip");
+            logInit = new LogUtil("init");
+
+            //控制是否输出日志到文件
+            FileUtils.isOpen = true;
+            //设置要输出到磁盘的日志TAG
+            List<String> tagList = new ArrayList<>();
+            tagList.add("buHuo");
+            tagList.add("pc_vmc");
+            tagList.add("buyAndShip");
+            tagList.add("init");
+            LogUtil.setLogTags(tagList);
+            initAndDeleteLogFileCache();
             L.isDebug = true;
             // 获取SD卡的路径
             getSDCardPath();
@@ -345,6 +343,7 @@ public class MyApplication extends Application {
                 if (currentTime - fileCreateTime > 20*24*60*60*1000){
                     file.delete();
                 }
+
                 if (file.getName().equals(fileName)){
                     logFile = file;
                     break;

@@ -459,7 +459,7 @@ public class BuyActivityPresenterImpl extends BasePresenter<IBuyActivityInterfac
                             roadNo = goodsInfo.getRoad_no();
                             i = bindGeziMap.get(goodsInfo.getMachineID());
 //                            Log.e(TAG, "找到货物了:" + goodsInfo.getMachineID() + ";" + road_no + ";" + goodsInfo.getGoodsName() + "；" + i);
-                            MyApplication.getInstance().getLogBuyAndShip().d("找到了要出货的商品 = 箱号 : "+i+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName());
+                            MyApplication.getInstance().getLogBuyAndShip().d("找到了要出货的商品 = 箱号 : "+i+" ; 货道号 : "+goodsInfo.getRoad_no()+" ; 商品名 : "+goodsInfo.getGoodsName()+" : "+goodsInfo.getGoodsCode());
                             break;
                         }
                     }

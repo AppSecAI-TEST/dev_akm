@@ -326,7 +326,7 @@ public class LoadingPresenterImpl extends BasePresenter<ILoadingInterface> imple
                 MyApplication.getInstance().getAdFileList().add(adInfo);
             }
         }
-        MyApplication.getInstance().getLogInit().d("初始化 本地广告数量 = "+MyApplication.getInstance().getAdFileList().size());
+//        MyApplication.getInstance().getLogInit().d("初始化 本地广告数量 = "+MyApplication.getInstance().getAdFileList().size());
         MyApplication.getInstance().setCabinetGoods(new ArrayList<GoodsInfo>());
         MyApplication.getInstance().setCabinetTotalGoods(new ArrayList<GoodsInfo>());
         MyApplication.getInstance().setGoodsInfos(new ArrayList<GoodsInfo>());

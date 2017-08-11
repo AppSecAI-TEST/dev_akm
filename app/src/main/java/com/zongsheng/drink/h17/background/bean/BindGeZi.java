@@ -149,7 +149,7 @@ public class BindGeZi extends RealmObject implements Serializable {
 
     @Override
     public String toString() {
-        return getMachineName();
+        return machineSn;
     }
 
     /** 格子柜编码*/

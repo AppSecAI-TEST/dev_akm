@@ -148,6 +148,10 @@ public class BindDesk extends RealmObject implements Serializable {
         this.roadCount = roadCount;
     }
 
+    @Override
+    public String toString() {
+        return machineSn;
+    }
 
     /** 弹簧机副柜编码*/
     @PrimaryKey
