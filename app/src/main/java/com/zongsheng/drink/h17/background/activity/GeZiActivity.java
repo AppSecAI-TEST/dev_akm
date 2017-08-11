@@ -447,7 +447,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
             nVSIGiziSize = getGeziSizeByVSI(string);
             nVSIDeskSize = getDeskSizeByVSI(string);
             logUtil.d("VMC返回实际连接的格子柜数 : "+nVSIGiziSize+" ; 实际箱号列表 : "+MyApplication.getInstance().getGeziList());
-            logUtil.d("VMC返回实际连接的副柜数 "+nVSIDeskSize);
+            logUtil.d("VMC返回实际连接的副柜数 : "+nVSIDeskSize+" ; 实际箱号列表 : "+MyApplication.getInstance().getBindDeskList());
             if (nVSIGiziSize == -1) {
                 ToastUtils.showToast(GeZiActivity.this, Constant.ERROR_INFO_GEZI_01);
             }
@@ -478,7 +478,7 @@ public class GeZiActivity extends ComActivity implements View.OnTouchListener, I
         for (int i = 1; i < string.length; i++) {
             if (Integer.parseInt(string[i]) == 1) {
                 temp++;
-                MyApplication.getInstance().getGeziList().add(temp);
+                MyApplication.getInstance().getGeziList().add(i++);
             }
         }
         return temp;

@@ -115,7 +115,7 @@ public class QueBiUploadService extends Service {
             DataUtil.requestDateContrl(paramMap, request);
             // 添加到请求队列
             CallServer.getRequestInstance().add(this, 0, request, httpListener, true, false);
-            MyApplication.getInstance().getLogInit().d("开始上传缺币信息 = "+request);
+            MyApplication.getInstance().getLogInit().d("开始上传缺币信息 = "+paramMap);
         } else {
             HandlerTask(SysConfig.L_REQ_AG_TIME_60);
         }

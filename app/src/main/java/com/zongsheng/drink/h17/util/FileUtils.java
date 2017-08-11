@@ -44,7 +44,7 @@ public class FileUtils {
         }
     }
     //日志记录是很频繁的操作，不应该每次都打开和关闭流，每次写文件时检查该文件是否已经被删除，应该重建并写入重建标志,检查时间，是否需要生成另一个文件
-    public static void writeStringToFile(String strContent) {
+    public static synchronized void writeStringToFile(String strContent) {
         if(isOpen) {
             checkFileAndTimeStatues();
             // 每次写入时，都换行写
