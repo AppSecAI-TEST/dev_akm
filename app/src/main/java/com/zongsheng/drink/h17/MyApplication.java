@@ -267,6 +267,7 @@ public class MyApplication extends Application {
             tagList.add("init");
             LogUtil.setLogTags(tagList);
             initAndDeleteLogFileCache();
+
             L.isDebug = true;
             // 获取SD卡的路径
             getSDCardPath();

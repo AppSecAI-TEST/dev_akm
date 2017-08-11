@@ -1089,7 +1089,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //查询VMC的指定箱号是否有货，这导致VMC在出货后向PC发送7B指令，导致主机、格子柜、副柜的缺货信息判断处理
+                                    //查询VMC的指定箱号是否有货，这导致VMC在出货后向PC发送7B指令，导致主机、格子柜的缺货信息判断处理，链式
                                     String result = comVSI.checkThingsHaveOrNotForNow(0);
                                     if (!"".equals(result)) {
                                         comVSI.checkThingsHaveOrNot(0);
@@ -1435,12 +1435,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
         //取反
         s = s.replace("1", "5").replace("0", "1").replace("5", "0");
 
-//        Log.i(TAG, "货道信息HAH:" + s);
-//        //TODO:副柜缺货信息
-//        if (MyApplication.getInstance().getBindDeskList().size()>0){
-//            //如果有副柜的话，请求VMC报告副柜缺货情况
-//            comVSI.checkThingsHaveOrNot(1);
-//        }
+
         // 如果有格子柜的话 不结束,继续去取得格子柜的货道是否售空信息
         if (MyApplication.getInstance().getGeziList().size() > 0) {
             geziKucunCheckCount = 1;
@@ -1487,6 +1482,7 @@ public abstract class ComActivity<V, T extends BasePresenter<V>> extends Fragmen
                 }
                 i++;
             }
+            //TODO:这里机器返回的机器缺货信息应该更新Application的GoodsInfo列表，否则可能出现，VMC报告货道缺货，而该列表不受影响，依然发出售货指令，自然出货失败
             // 机器缺货
             //TODO:主机如果不缺货，roads为空，也会添加到缺货数据库?这里进行一个判断，不缺货就不添加
             if (!roads.equals("")){
